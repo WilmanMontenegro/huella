@@ -36,13 +36,20 @@ export function AuthNav() {
     }
 
     return (
-      <Link
-        href="/acceder"
-        className="inline-flex h-10 items-center justify-center gap-1.5 rounded-full bg-primary px-4 font-body text-label-md text-on-primary shadow-sm transition-colors hover:bg-primary/90 sm:px-5"
-      >
-        <MaterialIcon name="login" className="text-lg" />
-        Entrar
-      </Link>
+      <div className="flex items-center gap-2 sm:gap-3">
+        <Link
+          href="/acceder"
+          className="inline-flex h-10 items-center justify-center rounded-full border border-outline-variant bg-surface px-3 font-body text-label-md text-on-surface shadow-sm transition-colors hover:bg-surface-container-high sm:px-4"
+        >
+          Iniciar sesión
+        </Link>
+        <Link
+          href="/registro"
+          className="inline-flex h-10 items-center justify-center rounded-full bg-primary px-3 font-body text-label-md text-on-primary shadow-sm transition-colors hover:bg-primary/90 sm:px-4"
+        >
+          Registrarse
+        </Link>
+      </div>
     );
   }
 
