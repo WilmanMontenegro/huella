@@ -4,7 +4,6 @@ import { ProductSectionObserver } from "@/components/chat/ProductSectionObserver
 import { TopAppBar } from "@/components/layout/TopAppBar";
 import { Certifications } from "@/components/product/Certifications";
 import { FarmMap } from "@/components/product/FarmMap";
-import { LotQrCode } from "@/components/product/LotQrCode";
 import { ProductDetail } from "@/components/product/ProductDetail";
 import { ProductActions } from "@/components/product/ProductActions";
 import { ProductHero } from "@/components/product/ProductHero";
@@ -75,10 +74,6 @@ export default async function ProductoPage({ params }: PageProps) {
               }}
             />
           </div>
-
-          <section className="mx-auto max-w-xs rounded-card border border-[#E5E0D5] bg-surface-container-lowest p-6 organic-shadow">
-            <LotQrCode lotSlug={id} size={140} label="Código QR del lote" showUrl={false} />
-          </section>
 
           <div data-chat-section="product-tours">
             <TourTeaser lotId={id} experiences={experiences} />
