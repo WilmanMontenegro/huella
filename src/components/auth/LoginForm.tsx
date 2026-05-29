@@ -54,7 +54,11 @@ export function LoginForm({ redirectTo = "/", authError = false }: LoginFormProp
   function getSupabase() {
     const supabase = createClientIfConfigured();
     if (!supabase) {
-      setMessage("Configura Supabase en .env.local para activar el inicio de sesión.");
+      setMessage(
+        process.env.NODE_ENV === "production"
+          ? "El inicio de sesión aún no está disponible. Si acabas de desplegar, espera un minuto y recarga."
+          : "Añade NEXT_PUBLIC_SUPABASE_URL y NEXT_PUBLIC_SUPABASE_ANON_KEY en .env.local (ver .env.example)."
+      );
       return null;
     }
     return supabase;
