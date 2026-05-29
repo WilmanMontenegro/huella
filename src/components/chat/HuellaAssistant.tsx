@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import { MaterialIcon } from "@/components/icons/MaterialIcon";
 import { useChat } from "@/components/chat/ChatProvider";
@@ -37,7 +37,7 @@ export function HuellaAssistant() {
     messagesRef.current = messages;
   }, [messages]);
 
-  async function fetchGreeting(): Promise<string | null> {
+  const fetchGreeting = useCallback(async (): Promise<string | null> => {
     for (let attempt = 0; attempt < 3; attempt++) {
       try {
         const res = await fetch("/api/chat", {
@@ -58,7 +58,7 @@ export function HuellaAssistant() {
       }
     }
     return null;
-  }
+  }, [effectiveLotId, area]);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -84,7 +84,7 @@ export function HuellaAssistant() {
         }
       }
     })();
-  }, [isOpen, area, effectiveLotId, config.greeting]);
+  }, [isOpen, area, effectiveLotId, config.greeting, fetchGreeting]);
 
   async function sendMessage(text: string) {
     if (!text.trim() || loading) return;
