@@ -10,6 +10,7 @@ import {
   type HuellaRole,
   readRoleFromUserMetadata,
 } from "@/lib/auth/roles";
+import { buildAuthCallbackUrl } from "@/lib/auth/app-origin";
 import { signInWithPassword, signUpWithPassword } from "@/lib/auth/smart-auth";
 import { createClientIfConfigured } from "@/lib/supabase/client";
 
@@ -104,12 +105,12 @@ export function AuthForm({
   }
 
   function buildCallbackUrl() {
-    const next = encodeURIComponent(effectiveRedirect());
-    let url = `${window.location.origin}/auth/callback?next=${next}`;
-    if (initialRole && isUnified && unifiedStep === "sign-in") {
-      url += `&pending_rol=${initialRole}`;
-    }
-    return url;
+    return buildAuthCallbackUrl(
+      effectiveRedirect(),
+      initialRole && isUnified && unifiedStep === "sign-in"
+        ? { pending_rol: initialRole }
+        : undefined
+    );
   }
 
   function getSupabase() {

@@ -8,11 +8,21 @@ Copia este archivo a `supabase-auth.local.md` y completa con los valores de tu p
 https://TU-PROJECT-REF.supabase.co/auth/v1/callback
 ```
 
-## Redirect URLs (Supabase Dashboard)
+## URL Configuration (Supabase Dashboard) — obligatorio
+
+Authentication → **URL Configuration**:
+
+| Campo | Valor |
+|--------|--------|
+| **Site URL** | `https://web-omega-lilac-31.vercel.app` (no dejes `localhost` si pruebas en producción) |
+| **Redirect URLs** | Ver lista abajo |
+
+Si **Site URL** queda en `http://localhost:3000`, tras Google te manda a localhost y verás *connection refused* si no tienes `pnpm dev` corriendo.
 
 ```
 http://localhost:3000/auth/callback
-https://TU-DOMINIO.vercel.app/auth/callback
+https://web-omega-lilac-31.vercel.app/auth/callback
+https://web-omega-lilac-31.vercel.app/**
 ```
 
 ## Pantalla de Google “Sign in to continue to …supabase.co”
