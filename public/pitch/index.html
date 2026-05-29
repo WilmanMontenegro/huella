@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Huella — Pitch Hackathon Magdalena 5.0</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,500;0,600;1,500&family=Manrope:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #fdf9f4;
+        --surface: #f7f3ee;
+        --primary: #271310;
+        --secondary: #1b6d24;
+        --tertiary: #c9a900;
+        --muted: #6b5348;
+        --outline: #827472;
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: "Manrope", system-ui, sans-serif;
+        background: #1a1412;
+        color: var(--primary);
+      }
+
+      .toolbar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 100;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        align-items: center;
+        justify-content: center;
+        padding: 0.75rem 1rem;
+        background: rgba(39, 19, 16, 0.92);
+        color: #fdf9f4;
+        font-size: 0.85rem;
+      }
+
+      .toolbar button {
+        border: none;
+        border-radius: 999px;
+        padding: 0.5rem 1.1rem;
+        font-family: inherit;
+        font-weight: 600;
+        cursor: pointer;
+        background: var(--tertiary);
+        color: var(--primary);
+      }
+
+      .toolbar button.secondary {
+        background: transparent;
+        color: #fdf9f4;
+        border: 1px solid rgba(253, 249, 244, 0.35);
+      }
+
+      .deck {
+        padding-top: 3.5rem;
+      }
+
+      .slide {
+        width: 100%;
+        max-width: 1280px;
+        margin: 0 auto 2rem;
+        min-height: calc(100vh - 4rem);
+        aspect-ratio: 16 / 9;
+        background: var(--bg);
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 24px 80px rgba(0, 0, 0, 0.45);
+        display: grid;
+        position: relative;
+      }
+
+      .slide-inner {
+        padding: 3rem 3.5rem;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        z-index: 1;
+      }
+
+      .eyebrow {
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--outline);
+        margin-bottom: 0.75rem;
+      }
+
+      h1,
+      h2 {
+        font-family: "EB Garamond", Georgia, serif;
+        font-weight: 600;
+        line-height: 1.1;
+        color: var(--primary);
+      }
+
+      h1 {
+        font-size: clamp(2.5rem, 5vw, 3.75rem);
+      }
+
+      h2 {
+        font-size: clamp(1.85rem, 3.5vw, 2.65rem);
+        margin-bottom: 1rem;
+      }
+
+      .lead {
+        font-size: 1.15rem;
+        line-height: 1.55;
+        color: var(--muted);
+        max-width: 42rem;
+      }
+
+      .tag {
+        display: inline-block;
+        margin-top: 1rem;
+        padding: 0.35rem 0.85rem;
+        border-radius: 999px;
+        background: rgba(27, 109, 36, 0.12);
+        color: var(--secondary);
+        font-size: 0.8rem;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+      }
+
+      .slide--cover {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .slide--cover .slide-inner {
+        justify-content: center;
+      }
+
+      .cover-visual {
+        position: relative;
+        min-height: 100%;
+      }
+
+      .cover-visual img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .cover-visual::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(90deg, var(--bg) 0%, transparent 45%);
+      }
+
+      .slide--split {
+        grid-template-columns: 1.05fr 0.95fr;
+      }
+
+      .slide--split .media img {
+        width: 100%;
+        height: 100%;
+        min-height: 280px;
+        object-fit: cover;
+        border-radius: 1rem;
+      }
+
+      ul.bullets {
+        list-style: none;
+        margin-top: 1.25rem;
+      }
+
+      ul.bullets li {
+        position: relative;
+        padding-left: 1.35rem;
+        margin-bottom: 0.65rem;
+        font-size: 1.02rem;
+        line-height: 1.45;
+        color: var(--primary);
+      }
+
+      ul.bullets li::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0.55em;
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: var(--secondary);
+      }
+
+      .pain {
+        color: #8b2e1f;
+        font-weight: 600;
+      }
+
+      .actors {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.85rem;
+        margin-top: 1rem;
+      }
+
+      .actor {
+        background: var(--surface);
+        border: 1px solid rgba(131, 116, 114, 0.25);
+        border-radius: 0.85rem;
+        padding: 0.85rem 1rem;
+      }
+
+      .actor strong {
+        display: block;
+        font-size: 0.95rem;
+        margin-bottom: 0.25rem;
+        color: var(--secondary);
+      }
+
+      .actor span {
+        font-size: 0.82rem;
+        line-height: 1.35;
+        color: var(--muted);
+      }
+
+      .demo-steps {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 0.75rem;
+        margin-top: 1.25rem;
+      }
+
+      .step {
+        background: var(--surface);
+        border-radius: 0.85rem;
+        padding: 0.9rem;
+        text-align: center;
+        border: 1px solid rgba(131, 116, 114, 0.2);
+      }
+
+      .step .num {
+        display: inline-flex;
+        width: 1.75rem;
+        height: 1.75rem;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        background: var(--primary);
+        color: #fff;
+        font-size: 0.8rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+      }
+
+      .step p {
+        font-size: 0.78rem;
+        line-height: 1.35;
+        color: var(--muted);
+      }
+
+      .url-box {
+        margin-top: auto;
+        padding: 0.75rem 1rem;
+        background: var(--primary);
+        color: #fdf9f4;
+        border-radius: 0.5rem;
+        font-size: 0.95rem;
+        font-weight: 600;
+        text-align: center;
+      }
+
+      .tech-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.85rem;
+        margin-top: 1rem;
+      }
+
+      .tech {
+        background: #fff;
+        border: 1px solid rgba(131, 116, 114, 0.25);
+        border-radius: 0.85rem;
+        padding: 1rem;
+      }
+
+      .tech h3 {
+        font-size: 0.95rem;
+        color: var(--secondary);
+        margin-bottom: 0.35rem;
+      }
+
+      .tech p {
+        font-size: 0.82rem;
+        line-height: 1.4;
+        color: var(--muted);
+      }
+
+      .impact-cols {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+        margin-top: 0.5rem;
+        flex: 1;
+      }
+
+      .impact-cols h3 {
+        font-family: "EB Garamond", serif;
+        font-size: 1.35rem;
+        margin-bottom: 0.65rem;
+        color: var(--secondary);
+      }
+
+      .footer-note {
+        margin-top: auto;
+        font-size: 0.9rem;
+        color: var(--outline);
+        font-style: italic;
+      }
+
+      .qr-thumb {
+        width: 88px;
+        height: 88px;
+        border-radius: 8px;
+        border: 3px solid #fff;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+        margin-top: 1rem;
+      }
+
+      @media print {
+        body {
+          background: white;
+        }
+
+        .toolbar,
+        .no-print {
+          display: none !important;
+        }
+
+        .deck {
+          padding: 0;
+        }
+
+        .slide {
+          max-width: none;
+          margin: 0;
+          border-radius: 0;
+          box-shadow: none;
+          min-height: 100vh;
+          page-break-after: always;
+          page-break-inside: avoid;
+        }
+
+        .slide:last-child {
+          page-break-after: auto;
+        }
+      }
+
+      @page {
+        size: landscape;
+        margin: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="toolbar no-print">
+      <span>Huella · 6 diapositivas · material de apoyo (el pitch oral es lo principal)</span>
+      <button type="button" onclick="window.print()">Exportar a PDF</button>
+      <button type="button" class="secondary" onclick="location.href='guion.html'">Ver guion oral</button>
+    </div>
+
+    <main class="deck">
+      <!-- 1 Portada -->
+      <section class="slide slide--cover">
+        <div class="slide-inner">
+          <p class="eyebrow">Hackathon Regional Magdalena · Colombia 5.0</p>
+          <h1>Huella</h1>
+          <p class="lead" style="font-size: 1.35rem; color: var(--primary); font-family: 'EB Garamond', serif">
+            Del campo al turista, con historia verificable
+          </p>
+          <span class="tag">Trazabilidad agro-turística</span>
+          <p class="footer-note" style="margin-top: 2rem">web-omega-lilac-31.vercel.app</p>
+        </div>
+        <div class="cover-visual">
+          <img
+            src="https://images.unsplash.com/photo-1559056199-641a0ac8b55c?w=1200&q=80&auto=format&fit=crop"
+            alt="Café de especialidad"
+          />
+        </div>
+      </section>
+
+      <!-- 2 Problema -->
+      <section class="slide slide--split">
+        <div class="slide-inner">
+          <p class="eyebrow">Problemática · que duela</p>
+          <h2>La confianza se pierde en el camino</h2>
+          <ul class="bullets">
+            <li>
+              Un turista <span class="pain">prueba el mejor café</span> en Santa Marta y no puede llevárselo
+              con confianza a su país.
+            </li>
+            <li>El <span class="pain">productor</span> no conecta su historia con quien compra ni con el operador.</li>
+            <li>El <span class="pain">exportador</span> no ve pedidos ni trazabilidad en un solo lugar.</li>
+            <li>
+              Certificaciones <span class="pain">Fairtrade / Rainforest</span> en papel — no en la experiencia del
+              comprador.
+            </li>
+          </ul>
+        </div>
+        <div class="slide-inner media" style="padding-left: 0">
+          <img
+            src="https://images.unsplash.com/photo-1497933601403-0c6688de566e?w=1200&q=80&auto=format&fit=crop"
+            alt="Cultivo en finca"
+          />
+        </div>
+      </section>
+
+      <!-- 3 Solución + usuarios -->
+      <section class="slide">
+        <div class="slide-inner">
+          <p class="eyebrow">Solución · ojos del usuario</p>
+          <h2>Un QR → historia verificable + compra</h2>
+          <p class="lead">No es un ERP: es el puente <strong>campo → turista → exportación</strong>.</p>
+          <div class="actors">
+            <div class="actor">
+              <strong>Comprador / turista</strong>
+              <span>Escanea, ve finca y lote, certificaciones, asistente IA, compra.</span>
+            </div>
+            <div class="actor">
+              <strong>Operador turístico</strong>
+              <span>Comparte con ?ref= y mide escaneos y pedidos referidos.</span>
+            </div>
+            <div class="actor">
+              <strong>Exportador</strong>
+              <span>Aprueba pedidos internacionales desde su panel.</span>
+            </div>
+            <div class="actor">
+              <strong>Productor</strong>
+              <span>Registra lote, genera QR, vende con trazabilidad.</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4 Demo -->
+      <section class="slide slide--split">
+        <div class="slide-inner">
+          <p class="eyebrow">Prototipo funcional · 60 s en vivo</p>
+          <h2>Demo en producción</h2>
+          <div class="demo-steps">
+            <div class="step">
+              <div class="num">1</div>
+              <p>Escanear QR del lote</p>
+            </div>
+            <div class="step">
+              <div class="num">2</div>
+              <p>Trazabilidad + mapa</p>
+            </div>
+            <div class="step">
+              <div class="num">3</div>
+              <p>IA con datos del lote</p>
+            </div>
+            <div class="step">
+              <div class="num">4</div>
+              <p>Checkout + paneles</p>
+            </div>
+          </div>
+          <div class="url-box">https://web-omega-lilac-31.vercel.app/producto/finca-la-esperanza</div>
+        </div>
+        <div class="slide-inner media" style="align-items: center; justify-content: center; background: var(--surface)">
+          <div style="text-align: center; padding: 1rem">
+            <img class="qr-thumb" src="qr-finca-la-esperanza.png" alt="QR Finca La Esperanza" width="140" height="140" />
+            <p style="margin-top: 1rem; font-size: 0.85rem; color: var(--muted)">
+              Lleva el QR impreso o abre la URL en el celular
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 5 Tech -->
+      <section class="slide">
+        <div class="slide-inner">
+          <p class="eyebrow">Técnico · IA justificada</p>
+          <h2>Por qué estas tecnologías</h2>
+          <div class="tech-grid">
+            <div class="tech">
+              <h3>Next.js + Vercel</h3>
+              <p>Deploy en minutos; demo estable ante el jurado sin servidores propios.</p>
+            </div>
+            <div class="tech">
+              <h3>Supabase</h3>
+              <p>Auth con Google, PostgreSQL y APIs — un backend listo en 48 h de hackathon.</p>
+            </div>
+            <div class="tech">
+              <h3>Gemini (IA)</h3>
+              <p>Asistente en la ficha del producto: responde con datos del lote, no marketing genérico.</p>
+            </div>
+            <div class="tech">
+              <h3>Polygon Amoy</h3>
+              <p>Hash público de verificación — integridad del lote en cadena.</p>
+            </div>
+          </div>
+          <p class="footer-note">Coherente con el reto: conectar actores del ecosistema agro-turístico del Magdalena.</p>
+        </div>
+      </section>
+
+      <!-- 6 Impacto -->
+      <section class="slide slide--split">
+        <div class="slide-inner">
+          <p class="eyebrow">Impacto y viabilidad</p>
+          <h2>¿Qué cambia en el territorio?</h2>
+          <div class="impact-cols">
+            <div>
+              <h3>Impacto</h3>
+              <ul class="bullets">
+                <li>Confianza y precio justo percibido para el productor.</li>
+                <li>Operadores convierten la experiencia en venta medible.</li>
+                <li>Exportadores con visibilidad de demanda internacional.</li>
+              </ul>
+            </div>
+            <div>
+              <h3>Viabilidad</h3>
+              <ul class="bullets">
+                <li>MVP en producción — roles y pedidos funcionando.</li>
+                <li>Siguiente paso: piloto con 2–3 fincas + 1 operador en Santa Marta.</li>
+              </ul>
+            </div>
+          </div>
+          <p style="margin-top: 1.5rem; font-family: 'EB Garamond', serif; font-size: 1.5rem; color: var(--primary)">
+            Huella — trazabilidad que se <strong>escanea</strong>, no que se archiva.
+          </p>
+          <p class="footer-note">¿Preguntas? · Gracias</p>
+        </div>
+        <div class="slide-inner media" style="padding-left: 0">
+          <img
+            src="https://images.unsplash.com/photo-1447933601403-0c6688de566e?w=1200&q=80&auto=format&fit=crop"
+            alt="Finca"
+          />
+        </div>
+      </section>
+    </main>
+  </body>
+</html>
