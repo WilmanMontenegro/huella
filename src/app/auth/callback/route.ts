@@ -22,7 +22,7 @@ async function applyRoleIfNeeded(
   if (!user) return;
 
   const existing = readRoleFromUserMetadata(user.user_metadata as Record<string, unknown>);
-  if (existing) return;
+  if (existing === role) return;
 
   await supabase.auth.updateUser({
     data: { [HUELLA_ROLE_KEY]: role },

@@ -27,7 +27,7 @@ export function isValidNextPath(path: string | undefined): path is string {
 /** `/acceder` con query string; fuente única para enlaces de login. */
 export function buildAccederUrl(params: AccederUrlParams = {}): string {
   const q = new URLSearchParams();
-  if (params.role && params.role !== "turista") q.set("rol", params.role);
+  if (params.role) q.set("rol", params.role);
   if (params.next) q.set("next", params.next);
   if (params.completarPerfil) q.set("completar", "1");
   if (params.authError) q.set("error", "auth");
@@ -38,10 +38,7 @@ export function buildAccederUrl(params: AccederUrlParams = {}): string {
 /** Login con rol preseleccionado y destino al panel correspondiente. */
 export function buildAccederUrlForRole(role: HuellaRole, next?: string): string {
   const destination = next ?? getPanelPathForRole(role);
-  return buildAccederUrl({
-    role: role === "turista" ? undefined : role,
-    next: destination,
-  });
+  return buildAccederUrl({ role, next: destination });
 }
 
 export function getOperadorDashboardPath(agenciaSlug = DEFAULT_OPERADOR_AGENCIA_SLUG): string {
@@ -59,13 +56,14 @@ export function getPanelPathForRole(
   return getHomePathForRole(role);
 }
 
-/** Tras login: respeta `next` válido; si no, panel del rol en la cuenta. */
+/** Tras login: destino explícito (`next` distinto de `/`); si no, panel del rol. */
 export function resolveRedirectAfterAuth(
   next: string | undefined,
   roleFromUser: HuellaRole | null
 ): string {
-  if (isValidNextPath(next)) return next;
+  if (isValidNextPath(next) && next !== "/") return next;
   if (roleFromUser) return getPanelPathForRole(roleFromUser);
+  if (isValidNextPath(next)) return next;
   return "/";
 }
 

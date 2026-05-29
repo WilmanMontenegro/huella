@@ -20,6 +20,9 @@ export const ROLE_OPTIONS: RoleOption[] = [
     title: "Turista / comprador",
     description: "Escaneas QR, compras bolsas o sigues tus pedidos.",
     icon: "travel_explore",
+    landingCta: "Soy turista / comprador",
+    landingButtonClassName:
+      "flex h-14 w-full items-center justify-center gap-2 rounded-full border border-secondary/40 bg-surface font-body text-label-md text-secondary transition-colors hover:bg-secondary/10",
   },
   {
     id: "productor",

@@ -16,9 +16,6 @@ import {
   type HuellaRole,
 } from "@/lib/auth";
 import { useSupabaseUser } from "@/hooks/useSupabaseUser";
-import { DEMO_LOT_ID } from "@/data/mock/lots";
-
-const DEMO_PRODUCT_PATH = `/producto/${DEMO_LOT_ID}`;
 
 function GuestAudienceActions() {
   const presentation = isAuthDisabled();
@@ -31,7 +28,7 @@ function GuestAudienceActions() {
           : "Elige cómo quieres usar Huella o escanea un producto"}
       </p>
       <div className="flex flex-col items-stretch gap-3">
-        <ScanProductButton instantProductPath={DEMO_PRODUCT_PATH} />
+        <ScanProductButton />
         {LANDING_GUEST_ROLES.map((option) => (
           <Link
             key={option.id}
@@ -77,7 +74,7 @@ function LoggedInHomeMenu({
           <MaterialIcon name="badge" />
           Completar mi perfil
         </Link>
-        <ScanProductButton instantProductPath={DEMO_PRODUCT_PATH} />
+        <ScanProductButton />
       </div>
     );
   }
@@ -101,7 +98,7 @@ function LoggedInHomeMenu({
         {getPanelCtaLabel(role)}
       </Link>
 
-      <ScanProductButton instantProductPath={DEMO_PRODUCT_PATH} />
+      <ScanProductButton />
     </div>
   );
 }

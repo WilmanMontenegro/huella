@@ -109,12 +109,15 @@ export function AuthForm({
     return redirectTo;
   }
 
+  function pendingRoleForOAuth(): HuellaRole | null {
+    return role ?? initialRole;
+  }
+
   function buildCallbackUrl() {
+    const pending = pendingRoleForOAuth();
     return buildAuthCallbackUrl(
-      effectiveRedirect(),
-      initialRole && isUnified && unifiedStep === "sign-in"
-        ? { pending_rol: initialRole }
-        : undefined
+      effectiveRedirect(pending),
+      pending ? { pending_rol: pending } : undefined
     );
   }
 
@@ -160,7 +163,7 @@ export function AuthForm({
     } = await supabase.auth.getUser();
     const storedRole = readRoleFromUserMetadata(user?.user_metadata as Record<string, unknown>);
     if (storedRole) {
-      window.location.href = getPanelPathForRole(storedRole);
+      window.location.href = effectiveRedirect(storedRole);
       return;
     }
     if (isUnified) {
@@ -221,7 +224,7 @@ export function AuthForm({
         setMessage(body.error ?? "No pudimos guardar tu perfil.");
         return;
       }
-      window.location.href = getPanelPathForRole(pickedRole);
+      window.location.href = effectiveRedirect(pickedRole);
       return;
     }
 
@@ -246,7 +249,7 @@ export function AuthForm({
       setMessage(result.message);
       return;
     }
-    window.location.href = getPanelPathForRole(pickedRole);
+    window.location.href = effectiveRedirect(pickedRole);
   }
 
   async function continueWithEmail(e: React.FormEvent) {
