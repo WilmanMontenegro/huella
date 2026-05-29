@@ -4,16 +4,11 @@ import { SignOutButton } from "@/components/auth/SignOutButton";
 import { MaterialIcon } from "@/components/icons/MaterialIcon";
 import { TopAppBar } from "@/components/layout/TopAppBar";
 import { OperadorShareKit } from "@/components/operador/OperadorShareKit";
-import { createClientIfConfigured } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
-import { buildAccederUrl, buildAccederUrlForRole, getOperadorDashboardPath, isAuthDisabled } from "@/lib/auth";
+import { getOperadorDashboardPath, isAuthDisabled } from "@/lib/auth";
+import { requireOperadorPanel } from "@/lib/auth/panel-access";
 import { DEFAULT_OPERADOR_AGENCIA_ID, DEFAULT_OPERADOR_AGENCIA_SLUG } from "@/lib/constants/operador";
-import {
-  getAgenciaBySlug,
-  getAgenciaExperiences,
-  getOperadorStats,
-  resolveOperadorAgencia,
-} from "@/lib/data/agencia-repository";
+import { getAgenciaBySlug, getAgenciaExperiences, getOperadorStats } from "@/lib/data/agencia-repository";
 
 export const dynamic = "force-dynamic";
 
@@ -52,28 +47,15 @@ export default async function OperadorDashboardPage({ searchParams }: PageProps)
     );
   }
 
-  const supabase = await createClientIfConfigured();
-  if (!supabase) redirect(buildAccederUrl({ next: loginNext }));
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) redirect(buildAccederUrlForRole("operador", loginNext));
-
-  const agencia =
-    (await resolveOperadorAgencia(user.id, agenciaParam)) ??
-    (await resolveOperadorAgencia(user.id, "huella-tours"));
-  if (!agencia) {
-    redirect(buildAccederUrl({ role: "operador", next: loginNext, authError: true }));
-  }
+  const session = await requireOperadorPanel(agenciaParam);
+  if (!session) redirect(loginNext);
 
   return (
     <OperadorDashboardContent
-      agenciaSlug={agencia.slug}
-      agenciaName={agencia.name}
-      agenciaId={agencia.id}
-      userEmail={user.email ?? null}
+      agenciaSlug={session.agencia.slug}
+      agenciaName={session.agencia.name}
+      agenciaId={session.agencia.id}
+      userEmail={session.user.email ?? null}
       demoMode={false}
     />
   );

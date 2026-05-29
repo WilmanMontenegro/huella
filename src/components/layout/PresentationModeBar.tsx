@@ -1,4 +1,4 @@
-import { isAuthDisabled } from "@/lib/auth/presentation";
+import { isAuthDisabled } from "@/lib/auth";
 
 /** Aviso discreto cuando el login está desactivado para la pitch. */
 export function PresentationModeBar() {

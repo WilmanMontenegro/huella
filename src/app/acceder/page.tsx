@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { TopAppBar } from "@/components/layout/TopAppBar";
+import { AccederPageLayout } from "@/app/acceder/AccederPageLayout";
 import { AuthForm } from "@/components/auth/AuthForm";
 import {
   getAccederIntro,
@@ -40,40 +40,26 @@ export default async function AccederPage({ searchParams }: PageProps) {
         }
 
         return (
-          <>
-            <TopAppBar title={intro.title} backHref="/" />
-            <main className="mx-auto flex min-h-screen max-w-content flex-col items-center justify-center px-margin-mobile pb-24 pt-24 md:px-margin-desktop">
-              <p className="mb-4 max-w-md text-center font-body text-body-sm text-on-surface-variant">
-                {intro.subtitle}
-              </p>
-              <AuthForm
-                mode="unified"
-                redirectTo={redirectTo}
-                authError={searchParams.error === "auth"}
-                initialRole={initialRole}
-                needsRoleCompletion
-              />
-            </main>
-          </>
+          <AccederPageLayout title={intro.title} subtitle={intro.subtitle}>
+            <AuthForm
+              redirectTo={redirectTo}
+              authError={searchParams.error === "auth"}
+              initialRole={initialRole}
+              needsRoleCompletion
+            />
+          </AccederPageLayout>
         );
       }
     }
   }
 
   return (
-    <>
-      <TopAppBar title={intro.title} backHref="/" />
-      <main className="mx-auto flex min-h-screen max-w-content flex-col items-center justify-center px-margin-mobile pb-24 pt-24 md:px-margin-desktop">
-        <p className="mb-4 max-w-md text-center font-body text-body-sm text-on-surface-variant">
-          {intro.subtitle}
-        </p>
-        <AuthForm
-          mode="unified"
-          redirectTo={redirectTo}
-          authError={searchParams.error === "auth"}
-          initialRole={initialRole}
-        />
-      </main>
-    </>
+    <AccederPageLayout title={intro.title} subtitle={intro.subtitle}>
+      <AuthForm
+        redirectTo={redirectTo}
+        authError={searchParams.error === "auth"}
+        initialRole={initialRole}
+      />
+    </AccederPageLayout>
   );
 }

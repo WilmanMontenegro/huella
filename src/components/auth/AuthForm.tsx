@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useState } from "react";
 import { MaterialIcon } from "@/components/icons/MaterialIcon";
 import { AuthFormCard } from "@/components/auth/AuthFormCard";
@@ -11,21 +10,19 @@ import {
   getAccederIntro,
   getPanelCtaLabel,
   getPanelPathForRole,
+  isValidNextPath,
   type HuellaRole,
   readRoleFromUserMetadata,
 } from "@/lib/auth";
 import { signInWithPassword, signUpWithPassword } from "@/lib/auth/smart-auth";
 import { createClientIfConfigured } from "@/lib/supabase/client";
 
-export type AuthFormMode = "login" | "register" | "unified";
-
-type UnifiedStep = "sign-in" | "pick-role";
+type AuthStep = "sign-in" | "pick-role";
 
 interface AuthFormProps {
-  mode: AuthFormMode;
   redirectTo?: string;
   authError?: boolean;
-  /** Preselección desde /acceder?rol=operador (solo paso de perfil) */
+  /** Preselección desde /acceder?rol=… */
   initialRole?: HuellaRole | null;
   /** Tras Google/correo sin rol: elegir perfil */
   needsRoleCompletion?: boolean;
@@ -66,21 +63,13 @@ function isSuccessMessage(message: string): boolean {
 }
 
 export function AuthForm({
-  mode,
   redirectTo = "/",
   authError = false,
   initialRole = null,
   needsRoleCompletion = false,
 }: AuthFormProps) {
-  const isRegister = mode === "register";
-  const isUnified = mode === "unified";
-
-  const [unifiedStep, setUnifiedStep] = useState<UnifiedStep>(
-    needsRoleCompletion ? "pick-role" : "sign-in"
-  );
-  const [role, setRole] = useState<HuellaRole | null>(
-    isRegister ? (initialRole ?? null) : initialRole ?? null
-  );
+  const [step, setStep] = useState<AuthStep>(needsRoleCompletion ? "pick-role" : "sign-in");
+  const [role, setRole] = useState<HuellaRole | null>(initialRole ?? null);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -90,25 +79,15 @@ export function AuthForm({
   );
   const [showEmailForm, setShowEmailForm] = useState(false);
   /** unified: entrar (solo correo+clave) vs crear cuenta (pide confirmar) */
-  const [emailIntent, setEmailIntent] = useState<"sign-in" | "sign-up">(
-    isRegister ? "sign-up" : "sign-in"
-  );
+  const [emailIntent, setEmailIntent] = useState<"sign-in" | "sign-up">("sign-in");
 
-  const onPickRoleStep = isUnified && unifiedStep === "pick-role";
-  const showConfirmPassword = isRegister || emailIntent === "sign-up";
-  const showRolePicker = isRegister || onPickRoleStep;
+  const onPickRoleStep = step === "pick-role";
+  const showConfirmPassword = emailIntent === "sign-up";
   const roleIntro = getAccederIntro(initialRole);
 
   function effectiveRedirect(forRole?: HuellaRole | null): string {
     const r = forRole ?? role;
-    if (
-      redirectTo.startsWith("/") &&
-      redirectTo !== "/login" &&
-      redirectTo !== "/registro" &&
-      redirectTo !== "/acceder"
-    ) {
-      return redirectTo;
-    }
+    if (isValidNextPath(redirectTo)) return redirectTo;
     if (r) return getPanelPathForRole(r);
     return redirectTo;
   }
@@ -139,7 +118,6 @@ export function AuthForm({
   }
 
   function requireRole(): HuellaRole | null {
-    if (!showRolePicker) return "turista";
     if (role) return role;
     setMessage("Elige cómo quieres usar Huella para continuar.");
     return null;
@@ -170,12 +148,8 @@ export function AuthForm({
       window.location.href = effectiveRedirect(storedRole);
       return;
     }
-    if (isUnified) {
-      setUnifiedStep("pick-role");
-      setMessage("¡Bienvenido! Elige tu perfil para terminar el registro.");
-      return;
-    }
-    window.location.href = effectiveRedirect();
+    setStep("pick-role");
+    setMessage("¡Bienvenido! Elige tu perfil para terminar el registro.");
   }
 
   async function continueWithGoogle() {
@@ -270,7 +244,6 @@ export function AuthForm({
     setLoading("email");
     setMessage(null);
 
-    const callbackUrl = buildCallbackUrl();
     const normalizedEmail = email.trim();
 
     if (!validatePasswordPair(showConfirmPassword)) {
@@ -278,36 +251,10 @@ export function AuthForm({
       return;
     }
 
-    if (isUnified && emailIntent === "sign-up") {
+    if (emailIntent === "sign-up") {
       setLoading(null);
-      setUnifiedStep("pick-role");
+      setStep("pick-role");
       setMessage("Elige tu perfil para terminar el registro.");
-      return;
-    }
-
-    if (isRegister) {
-      const pickedRole = requireRole();
-      if (!pickedRole) {
-        setLoading(null);
-        return;
-      }
-      const result = await signUpWithPassword(
-        supabase,
-        normalizedEmail,
-        password,
-        pickedRole,
-        callbackUrl
-      );
-      setLoading(null);
-      if (!result.ok) {
-        setMessage(result.message);
-        return;
-      }
-      if (result.kind === "sign-up-pending") {
-        setMessage(result.message);
-        return;
-      }
-      await goAfterAuth(supabase);
       return;
     }
 
@@ -317,9 +264,9 @@ export function AuthForm({
     if (!result.ok) {
       const needsRegister =
         result.message.includes("regístrate") || result.message.includes("registr");
-      if (isUnified && needsRegister) {
+      if (needsRegister) {
         if (!validatePasswordPair(true)) return;
-        setUnifiedStep("pick-role");
+        setStep("pick-role");
         setMessage("Cuenta nueva: elige tu perfil para terminar el registro.");
         return;
       }
@@ -449,21 +396,10 @@ export function AuthForm({
     );
   }
 
-  const signInTitle = isUnified
-    ? initialRole
-      ? roleIntro.title
-      : "Entrar a Huella"
-    : isRegister
-      ? "Crear cuenta"
-      : "Iniciar sesión";
-
-  const signInSubtitle = isUnified
-    ? initialRole
-      ? roleIntro.subtitle
-      : "Continúa con Google o correo. Si es tu primera vez, eliges tu perfil después."
-    : isRegister
-      ? "Elige tu perfil una sola vez. Luego entras directo a tu panel."
-      : "Entra con el correo con el que te registraste.";
+  const signInTitle = initialRole ? roleIntro.title : "Entrar a Huella";
+  const signInSubtitle = initialRole
+    ? roleIntro.subtitle
+    : "Continúa con Google o correo. Si es tu primera vez, eliges tu perfil después.";
 
   return (
     <AuthFormCard>
@@ -471,12 +407,6 @@ export function AuthForm({
       <p className="mb-6 text-center font-body text-body-md text-on-surface-variant">{signInSubtitle}</p>
 
       {initialRole && <RoleContextBanner role={initialRole} />}
-
-      {isRegister && (
-        <div className="mb-6">
-          <RolePicker value={role} onChange={setRole} />
-        </div>
-      )}
 
       {message && (
         <div
@@ -526,41 +456,39 @@ export function AuthForm({
       ) : (
         <form onSubmit={continueWithEmail} className="space-y-4">
           <EmailPasswordFields idPrefix="auth" showConfirm={showConfirmPassword} />
-          {isUnified && (
-            <p className="font-body text-label-sm text-outline">
-              {emailIntent === "sign-in" ? (
-                <>
-                  ¿Primera vez?{" "}
-                  <button
-                    type="button"
-                    className="text-secondary hover:underline"
-                    onClick={() => {
-                      setEmailIntent("sign-up");
-                      setConfirmPassword("");
-                      setMessage(null);
-                    }}
-                  >
-                    Crear cuenta
-                  </button>
-                </>
-              ) : (
-                <>
-                  ¿Ya tienes cuenta?{" "}
-                  <button
-                    type="button"
-                    className="text-secondary hover:underline"
-                    onClick={() => {
-                      setEmailIntent("sign-in");
-                      setConfirmPassword("");
-                      setMessage(null);
-                    }}
-                  >
-                    Iniciar sesión
-                  </button>
-                </>
-              )}
-            </p>
-          )}
+          <p className="font-body text-label-sm text-outline">
+            {emailIntent === "sign-in" ? (
+              <>
+                ¿Primera vez?{" "}
+                <button
+                  type="button"
+                  className="text-secondary hover:underline"
+                  onClick={() => {
+                    setEmailIntent("sign-up");
+                    setConfirmPassword("");
+                    setMessage(null);
+                  }}
+                >
+                  Crear cuenta
+                </button>
+              </>
+            ) : (
+              <>
+                ¿Ya tienes cuenta?{" "}
+                <button
+                  type="button"
+                  className="text-secondary hover:underline"
+                  onClick={() => {
+                    setEmailIntent("sign-in");
+                    setConfirmPassword("");
+                    setMessage(null);
+                  }}
+                >
+                  Iniciar sesión
+                </button>
+              </>
+            )}
+          </p>
           <button
             type="submit"
             disabled={loading !== null}
@@ -569,42 +497,14 @@ export function AuthForm({
             {loading === "email" && (
               <MaterialIcon name="progress_activity" className="animate-spin text-lg" />
             )}
-            {isUnified
-              ? emailIntent === "sign-up"
-                ? "Continuar"
-                : "Entrar"
-              : isRegister
-                ? "Crear cuenta"
-                : "Entrar"}
+            {emailIntent === "sign-up" ? "Continuar" : "Entrar"}
           </button>
         </form>
       )}
 
-      {!isUnified && (
-        <p className="mt-8 text-center font-body text-label-sm text-outline">
-          {isRegister ? (
-            <>
-              ¿Ya tienes cuenta?{" "}
-              <Link href="/acceder" className="text-secondary hover:underline">
-                Entrar / Registrarse
-              </Link>
-            </>
-          ) : (
-            <>
-              ¿Primera vez?{" "}
-              <Link href="/acceder" className="text-secondary hover:underline">
-                Crear cuenta aquí
-              </Link>
-            </>
-          )}
-        </p>
-      )}
-
-      {(isUnified || !isRegister) && (
-        <p className="mt-3 text-center font-body text-label-sm text-outline">
-          Escanear productos y ver trazabilidad no requiere cuenta.
-        </p>
-      )}
+      <p className="mt-3 text-center font-body text-label-sm text-outline">
+        Escanear productos y ver trazabilidad no requiere cuenta.
+      </p>
     </AuthFormCard>
   );
 }

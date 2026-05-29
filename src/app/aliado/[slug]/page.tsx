@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { MaterialIcon } from "@/components/icons/MaterialIcon";
 import { TopAppBar } from "@/components/layout/TopAppBar";
 import { ExperienceProviderCard } from "@/components/product/ExperienceProviderCard";
-import { OperadorLoginPrompt } from "@/components/operador/OperadorAuthGate";
+import { OperadorLoginPrompt } from "@/components/operador/OperadorLoginPrompt";
 import { getAgenciaBySlug, getAgenciaExperiences } from "@/lib/data/agencia-repository";
 import { QR_PUBLIC_LOTS } from "@/data/qr-lots";
 

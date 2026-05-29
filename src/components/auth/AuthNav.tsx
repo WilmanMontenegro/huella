@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { MaterialIcon } from "@/components/icons/MaterialIcon";
-import { createClientIfConfigured } from "@/lib/supabase/client";
+import { SignOutButton } from "@/components/auth/SignOutButton";
 import {
   displayNameFromAuthUser,
   getPanelPathOrCompleteProfile,
@@ -14,13 +14,6 @@ import { useSupabaseUser } from "@/hooks/useSupabaseUser";
 
 export function AuthNav() {
   const { user, loading } = useSupabaseUser();
-
-  async function signOut() {
-    const supabase = createClientIfConfigured();
-    if (!supabase) return;
-    await supabase.auth.signOut();
-    window.location.href = "/";
-  }
 
   if (loading) {
     return (
@@ -78,13 +71,7 @@ export function AuthNav() {
       >
         {label}
       </span>
-      <button
-        type="button"
-        onClick={signOut}
-        className="font-body text-label-sm text-outline hover:text-primary"
-      >
-        Salir
-      </button>
+      <SignOutButton />
     </div>
   );
 }

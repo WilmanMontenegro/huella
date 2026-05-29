@@ -1,49 +1,52 @@
-# Módulo `lib/auth`
+# Auth — Huella
 
-Un solo lugar para **roles**, **rutas de panel** y **URLs de login**. Evita armar `/acceder?rol=…` a mano en cada pantalla.
+Un solo flujo de acceso: **`/acceder`** (Google + correo). `/login` y `/registro` redirigen aquí.
 
-## Import recomendado
+## Importar
 
 ```ts
 import {
   buildAccederUrl,
   buildAccederUrlForRole,
   getPanelPathForRole,
-  getOperadorDashboardPath,
   resolveRedirectAfterAuth,
-  readRoleFromUserMetadata,
-  LANDING_GUEST_ROLES,
+  isAuthDisabled,
 } from "@/lib/auth";
 ```
 
-## Funciones clave
+Paneles protegidos (solo server):
 
-| Función | Uso |
-|---------|-----|
-| `buildAccederUrl({ role, next, completarPerfil, authError })` | Cualquier enlace a login |
-| `buildAccederUrlForRole("operador")` | Registro/login con destino al panel del rol |
-| `getPanelPathForRole(role)` | Botón "Mi panel" / redirect post-login |
-| `getOperadorDashboardPath(agenciaSlug?)` | Solo operador turístico |
-| `resolveRedirectAfterAuth(next, role)` | Callback OAuth y `/acceder` |
-| `displayNameFromAuthUser(user)` | Saludo en landing |
-| `LANDING_GUEST_ROLES` | Botones de la home sin sesión (config en `roles.ts`) |
+```ts
+import { requirePanelRole, requireOperadorPanel } from "@/lib/auth/panel-access";
+```
 
-## Añadir un rol nuevo
+Cliente (checkout, etc.):
 
-1. Extender tipo `HuellaRole` y entrada en `ROLE_OPTIONS` (`roles.ts`).
-2. Añadir ruta en `getHomePathForRole` si el panel tiene path fijo.
-3. Si el panel necesita query (como operador + `agencia`), extender `getPanelPathForRole` en `navigation.ts`.
-4. Opcional: `landingCta` + `landingButtonClassName` para el botón en la landing.
+```ts
+import { ClientAuthGate } from "@/components/auth/ClientAuthGate";
+import { RoleAccederLink } from "@/components/auth/RoleAccederLink";
+```
 
-## Modo presentación (sin login)
+## Rutas por rol
 
-Variable `NEXT_PUBLIC_AUTH_DISABLED=true`: la home enlaza directo a cada panel, checkout sin sesión, `/acceder` redirige al inicio. Ver `presentation.ts`. **Desactivar después del pitch.**
+| Rol | Panel |
+|-----|--------|
+| turista | `/mis-pedidos` |
+| productor | `/productor/dashboard` |
+| operador | `/operador/dashboard?agencia=huella-tours` |
+| exportador | `/exportador/dashboard` |
 
-## Archivos
+## Landing
 
-- `roles.ts` — tipos, metadata `huella_role`, textos de UI por rol
-- `presentation.ts` — flag de demo sin autenticación
-- `navigation.ts` — construcción de URLs (parámetros)
-- `app-origin.ts` — callback OAuth en producción
-- `smart-auth.ts` — correo/contraseña (Supabase)
-- `index.ts` — reexport público
+- **Turista:** escanear QR (sin cuenta) o **Entrar** en el header.
+- **Productor / operador / exportador:** tarjetas → `/acceder?rol=…&next=…`.
+
+## Verificación
+
+```bash
+pnpm auth:verify
+```
+
+## Modo presentación
+
+`NEXT_PUBLIC_AUTH_DISABLED=true` — sin login; paneles directos. Desactivar en producción real.

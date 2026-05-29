@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { linkUserToAgencia } from "@/lib/data/agencia-repository";
+import { assignDefaultOperadorAgencia } from "@/lib/auth/operador-onboarding";
 import { HUELLA_ROLE_KEY, parseHuellaRole } from "@/lib/auth/roles";
 import { createClientIfConfigured } from "@/lib/supabase/server";
 
@@ -31,7 +31,7 @@ export async function POST(request: Request) {
     }
 
     if (role === "operador") {
-      await linkUserToAgencia(user.id, "huella-tours");
+      await assignDefaultOperadorAgencia(user.id);
     }
 
     return NextResponse.json({ ok: true, role });

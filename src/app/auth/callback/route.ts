@@ -1,7 +1,7 @@
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
-import { linkUserToAgencia } from "@/lib/data/agencia-repository";
+import { assignDefaultOperadorAgencia } from "@/lib/auth/operador-onboarding";
 import {
   HUELLA_ROLE_KEY,
   parseHuellaRole,
@@ -29,7 +29,7 @@ async function applyRoleIfNeeded(
   });
 
   if (role === "operador") {
-    await linkUserToAgencia(user.id, "huella-tours");
+    await assignDefaultOperadorAgencia(user.id);
   }
 }
 

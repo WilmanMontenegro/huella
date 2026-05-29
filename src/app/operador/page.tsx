@@ -1,10 +1,10 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
+import { RoleAccederLink } from "@/components/auth/RoleAccederLink";
 import { MaterialIcon } from "@/components/icons/MaterialIcon";
 import { HuellaLogo } from "@/components/brand/HuellaLogo";
 import { DEFAULT_OPERADOR_AGENCIA_SLUG } from "@/lib/constants/operador";
 import {
-  buildAccederUrlForRole,
   getOperadorDashboardPath,
   isAuthDisabled,
   readRoleFromUserMetadata,
@@ -12,11 +12,7 @@ import {
 import { createClientIfConfigured } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
 
-const operadorDashboard = getOperadorDashboardPath();
-const accederOperador = buildAccederUrlForRole("operador");
-const operadorEntradaHref = isAuthDisabled() ? operadorDashboard : accederOperador;
-
-/** Vitrina del operador; el login único es /acceder (evita doble pantalla). */
+/** Vitrina del operador; login en /acceder?rol=operador */
 export default async function OperadorLandingPage() {
   if (!isAuthDisabled() && isSupabaseConfigured()) {
     const supabase = await createClientIfConfigured();
@@ -27,10 +23,7 @@ export default async function OperadorLandingPage() {
 
       if (user) {
         const role = readRoleFromUserMetadata(user.user_metadata as Record<string, unknown>);
-        if (role === "operador") redirect(operadorDashboard);
-        redirect(accederOperador);
-      } else {
-        redirect(accederOperador);
+        if (role === "operador") redirect(getOperadorDashboardPath());
       }
     }
   }
@@ -61,13 +54,7 @@ export default async function OperadorLandingPage() {
           ))}
         </div>
 
-        <Link
-          href={operadorEntradaHref}
-          className="inline-flex h-12 items-center justify-center gap-2 rounded-full bg-primary px-6 font-body text-label-md text-on-primary"
-        >
-          <MaterialIcon name={isAuthDisabled() ? "dashboard" : "login"} />
-          {isAuthDisabled() ? "Ir al panel operador" : "Entrar / Registrarse"}
-        </Link>
+        <RoleAccederLink role="operador" next={getOperadorDashboardPath()} />
 
         <p className="mt-6 font-body text-label-sm text-outline">
           <Link href={`/aliado/${DEFAULT_OPERADOR_AGENCIA_SLUG}`} className="text-secondary hover:underline">
