@@ -153,25 +153,34 @@ export function HuellaAssistant() {
           type="button"
           onClick={openChat}
           className={cn(
-            "group fixed z-40 flex items-center justify-center gap-2.5 overflow-hidden rounded-full sm:rounded-2xl",
-            "border border-tertiary-fixed-dim bg-tertiary-fixed text-on-tertiary-fixed shadow-fab-yellow",
-            "transition-all duration-300 hover:scale-105 hover:bg-tertiary-fixed-dim active:scale-95",
-            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-tertiary-container/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background",
-            "h-14 w-14 p-0 sm:h-auto sm:w-auto sm:justify-start sm:py-3 sm:pl-3.5 sm:pr-5",
+            "group fixed z-40 p-[2.5px] rounded-full sm:rounded-2xl",
+            "bg-gradient-to-br from-primary via-secondary to-tertiary-container shadow-fab-yellow",
+            "transition-all duration-300 hover:scale-105 active:scale-95",
+            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background",
             "right-margin-mobile md:right-margin-desktop",
             fabBottomClass
           )}
           aria-label="Abrir asistente Huella"
         >
-          <MaterialIcon
-            name="auto_awesome"
-            className="text-2xl transition-transform group-hover:rotate-12 md:text-3xl"
-          />
-          <span className="hidden min-w-0 flex-col items-start pr-0.5 sm:flex">
-            <span className="font-body text-[10px] font-medium uppercase tracking-wider text-on-tertiary-fixed/80">
-              Asistente
+          <span
+            className={cn(
+              "flex h-14 w-14 items-center justify-center gap-2.5 rounded-full sm:rounded-[14px]",
+              "bg-tertiary-fixed sm:bg-surface-container-lowest",
+              "sm:h-auto sm:w-auto sm:justify-start sm:py-2.5 sm:pl-2.5 sm:pr-4"
+            )}
+          >
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-tertiary-fixed text-on-tertiary-fixed shadow-[0_4px_14px_rgba(201,169,0,0.35)]">
+              <MaterialIcon
+                name="auto_awesome"
+                className="text-2xl transition-transform group-hover:rotate-12 md:text-[26px]"
+              />
             </span>
-            <span className="font-display text-[15px] leading-tight text-on-tertiary-fixed">Huella</span>
+            <span className="hidden min-w-0 flex-col items-start sm:flex">
+              <span className="font-body text-[10px] font-semibold uppercase tracking-wider text-secondary">
+                Asistente
+              </span>
+              <span className="font-display text-[15px] leading-tight text-primary">Huella</span>
+            </span>
           </span>
         </button>
       )}
@@ -179,25 +188,39 @@ export function HuellaAssistant() {
       {isOpen && (
         <div className="fixed inset-0 z-[1200] flex items-end justify-center bg-black/40 p-4 md:items-center">
           <div className="flex max-h-[85vh] w-full max-w-lg flex-col overflow-hidden rounded-card bg-surface-container-lowest organic-shadow">
-            <div className="flex items-center justify-between border-b border-outline-variant/30 p-4">
-              <div className="flex items-center gap-2">
-                <MaterialIcon name="auto_awesome" className="text-tertiary-container" />
-                <h2 className="font-display text-headline-md text-primary">{config.title}</h2>
+            <div className="relative border-b border-outline-variant/30 bg-surface-container-low px-4 pb-4 pt-5">
+              <div
+                className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-primary via-secondary to-tertiary-container"
+                aria-hidden
+              />
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <span className="flex h-10 w-10 items-center justify-center rounded-full bg-tertiary-fixed text-on-tertiary-fixed shadow-[0_4px_12px_rgba(201,169,0,0.25)]">
+                    <MaterialIcon name="auto_awesome" filled className="text-xl" />
+                  </span>
+                  <h2 className="font-display text-headline-md text-primary">{config.title}</h2>
+                </div>
+                <button
+                  type="button"
+                  onClick={closeChat}
+                  aria-label="Cerrar"
+                  className="rounded-full p-1 text-on-surface-variant transition-colors hover:bg-surface-container-high hover:text-primary"
+                >
+                  <MaterialIcon name="close" />
+                </button>
               </div>
-              <button type="button" onClick={closeChat} aria-label="Cerrar">
-                <MaterialIcon name="close" />
-              </button>
             </div>
 
             <div className="flex-1 space-y-3 overflow-y-auto p-4">
               {messages.map((msg, i) => (
                 <div
                   key={i}
-                  className={`rounded-xl px-4 py-3 font-body text-body-md ${
+                  className={cn(
+                    "rounded-xl px-4 py-3 font-body text-body-md",
                     msg.role === "user"
                       ? "ml-8 bg-primary text-on-primary"
-                      : "mr-8 bg-surface-container text-on-surface"
-                  }`}
+                      : "mr-8 border border-secondary-fixed-dim/50 bg-secondary-container/50 text-on-secondary-container"
+                  )}
                 >
                   {msg.content}
                 </div>
@@ -220,7 +243,7 @@ export function HuellaAssistant() {
                       type="button"
                       disabled={loading}
                       onClick={() => sendMessage(suggestion)}
-                      className="rounded-full border border-outline-variant bg-surface px-3 py-1.5 text-left font-body text-label-sm text-on-surface-variant transition-colors hover:border-tertiary-container hover:bg-tertiary-fixed/20 disabled:opacity-50"
+                      className="rounded-full border border-outline-variant bg-surface px-3 py-1.5 text-left font-body text-label-sm text-on-surface-variant transition-colors hover:border-secondary hover:bg-secondary-fixed/25 disabled:opacity-50"
                     >
                       {suggestion}
                     </button>
@@ -234,12 +257,12 @@ export function HuellaAssistant() {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 placeholder="Escribe tu pregunta..."
-                className="flex-1 rounded-full border border-outline-variant bg-surface px-4 py-3 font-body text-body-md outline-none focus:border-tertiary-container"
+                className="flex-1 rounded-full border border-outline-variant bg-surface px-4 py-3 font-body text-body-md outline-none focus:border-secondary focus:ring-2 focus:ring-secondary/20"
               />
               <button
                 type="submit"
                 disabled={loading}
-                className="flex h-12 w-12 items-center justify-center rounded-full bg-primary text-on-primary disabled:opacity-50"
+                className="flex h-12 w-12 items-center justify-center rounded-full bg-secondary text-on-secondary shadow-[0_4px_14px_rgba(27,109,36,0.25)] transition-colors hover:bg-secondary/90 disabled:opacity-50"
               >
                 <MaterialIcon name="send" />
               </button>
