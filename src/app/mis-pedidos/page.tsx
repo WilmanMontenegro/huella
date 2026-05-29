@@ -29,7 +29,7 @@ export default function MisPedidosPage() {
               href="/producto/finca-la-esperanza"
               className="mt-6 inline-flex rounded-full bg-primary px-6 py-3 font-body text-label-md text-on-primary"
             >
-              Ver demo Finca La Esperanza
+              Ver Finca La Esperanza
             </Link>
           </div>
         ) : (

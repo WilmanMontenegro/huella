@@ -50,7 +50,7 @@ export function ExportadorClient({
             No hay solicitudes de exportación pendientes. Completa un checkout con envío internacional.
           </p>
           <Link href="/producto/finca-la-esperanza" className="mt-4 inline-block font-body text-label-md text-secondary">
-            Ir al demo del lote
+            Ir al lote
           </Link>
         </div>
       ) : (

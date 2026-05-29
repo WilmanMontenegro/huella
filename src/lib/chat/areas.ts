@@ -153,7 +153,7 @@ export const CHAT_AREA_CONFIG: Record<ChatArea, ChatAreaConfig> = {
     suggestions: [
       "¿Qué puedo hacer en Huella?",
       "¿Cómo funciona la trazabilidad?",
-      "¿Dónde veo un producto demo?",
+      "¿Dónde veo un producto de ejemplo?",
     ],
   },
 };

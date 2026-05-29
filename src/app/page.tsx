@@ -2,7 +2,7 @@ import Link from "next/link";
 import { AuthNav } from "@/components/auth/AuthNav";
 import { HuellaLogo } from "@/components/brand/HuellaLogo";
 import { MaterialIcon } from "@/components/icons/MaterialIcon";
-import { DEMO_LOT_ID } from "@/lib/data/lots-repository";
+import { ScanProductButton } from "@/components/product/ScanProductButton";
 
 export default function HomePage() {
   return (
@@ -31,13 +31,7 @@ export default function HomePage() {
         </p>
 
         <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
-          <Link
-            href={`/producto/${DEMO_LOT_ID}`}
-            className="flex h-14 w-full max-w-xs items-center justify-center gap-2 rounded-full bg-primary font-body text-label-md text-on-primary shadow-lg transition-transform hover:bg-primary/90 active:scale-95 sm:w-auto sm:px-10"
-          >
-            <MaterialIcon name="eco" />
-            Ver trazabilidad demo
-          </Link>
+          <ScanProductButton />
           <Link
             href="/productor/dashboard"
             className="flex h-14 w-full max-w-xs items-center justify-center rounded-full border border-primary-container font-body text-label-md text-primary-container transition-colors hover:bg-primary-container hover:text-on-primary-container sm:w-auto sm:px-10"

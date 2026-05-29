@@ -288,7 +288,7 @@ export function LoginForm({ redirectTo = "/", authError = false }: LoginFormProp
       )}
 
       <p className="mt-8 text-center font-body text-label-sm text-outline">
-        También puedes explorar el demo sin cuenta.
+        También puedes explorar sin cuenta.
       </p>
     </div>
   );
