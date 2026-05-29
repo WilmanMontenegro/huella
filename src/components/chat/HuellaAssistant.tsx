@@ -20,7 +20,7 @@ export function HuellaAssistant() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
-  const [initializedArea, setInitializedArea] = useState<string | null>(null);
+  const greetingRequestRef = useRef(0);
   const messagesRef = useRef<Message[]>([]);
 
   const hasProductBottomBar = /^\/producto\/[^/]+$/.test(pathname);
@@ -37,9 +37,11 @@ export function HuellaAssistant() {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ lotId: effectiveLotId, area, intent: "greeting" }),
+          signal: AbortSignal.timeout(45_000),
         });
         const data = (await res.json()) as { reply?: string; source?: string; retry?: boolean };
         if (data.source === "gemini" && data.reply) return data.reply;
+        if (data.reply && !data.retry) return data.reply;
         if (data.retry && attempt < 2) {
           await new Promise((r) => setTimeout(r, 1500));
           continue;
@@ -52,38 +54,30 @@ export function HuellaAssistant() {
   }
 
   useEffect(() => {
-    if (!isOpen || initializedArea === area) return;
+    if (!isOpen) return;
 
-    let cancelled = false;
-    setInitializedArea(area);
+    const requestId = ++greetingRequestRef.current;
     setMessages([]);
     setLoading(true);
 
     (async () => {
-      const greeting = await fetchGreeting();
-      if (cancelled) return;
+      try {
+        const greeting = await fetchGreeting();
+        if (greetingRequestRef.current !== requestId) return;
 
-      if (greeting) {
-        setMessages([{ role: "assistant", content: greeting }]);
-      } else {
         setMessages([
           {
             role: "assistant",
-            content: "No pude conectar con el agente. Cierra y abre el chat, o revisa que GEMINI_API_KEY esté en el servidor.",
+            content: greeting ?? config.greeting,
           },
         ]);
+      } finally {
+        if (greetingRequestRef.current === requestId) {
+          setLoading(false);
+        }
       }
-      setLoading(false);
     })();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [isOpen, area, initializedArea, effectiveLotId]);
-
-  useEffect(() => {
-    if (!isOpen) setInitializedArea(null);
-  }, [isOpen]);
+  }, [isOpen, area, effectiveLotId, config.greeting]);
 
   async function sendMessage(text: string) {
     if (!text.trim() || loading) return;
@@ -108,6 +102,7 @@ export function HuellaAssistant() {
             area,
             history,
           }),
+          signal: AbortSignal.timeout(45_000),
         });
         const data = (await res.json()) as { reply?: string; retry?: boolean; source?: string };
 
