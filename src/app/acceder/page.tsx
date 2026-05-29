@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { TopAppBar } from "@/components/layout/TopAppBar";
 import { AuthForm } from "@/components/auth/AuthForm";
-import { parseHuellaRole, readRoleFromUserMetadata, resolveRedirectAfterAuth } from "@/lib/auth/roles";
+import { parseHuellaRole, readRoleFromUserMetadata, resolveRedirectAfterAuth } from "@/lib/auth";
 import { createClientIfConfigured } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
 

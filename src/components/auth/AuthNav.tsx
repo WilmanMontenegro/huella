@@ -3,8 +3,11 @@
 import Link from "next/link";
 import { MaterialIcon } from "@/components/icons/MaterialIcon";
 import { createClientIfConfigured } from "@/lib/supabase/client";
-import { getPanelPathForRole } from "@/lib/auth/panel-path";
-import { readRoleFromUserMetadata } from "@/lib/auth/roles";
+import {
+  displayNameFromAuthUser,
+  getPanelPathOrCompleteProfile,
+  readRoleFromUserMetadata,
+} from "@/lib/auth";
 import { useSupabaseUser } from "@/hooks/useSupabaseUser";
 
 export function AuthNav() {
@@ -37,13 +40,9 @@ export function AuthNav() {
   }
 
   const role = readRoleFromUserMetadata(user.user_metadata as Record<string, unknown>);
-  const panelHref = role ? getPanelPathForRole(role) : "/acceder?completar=1";
+  const panelHref = getPanelPathOrCompleteProfile(role);
 
-  const label =
-    user.user_metadata?.full_name ??
-    user.user_metadata?.name ??
-    user.email?.split("@")[0] ??
-    "Mi cuenta";
+  const label = displayNameFromAuthUser(user);
 
   return (
     <div className="flex items-center gap-2 sm:gap-3">

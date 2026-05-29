@@ -5,12 +5,12 @@ import { useState } from "react";
 import { MaterialIcon } from "@/components/icons/MaterialIcon";
 import { HuellaLogo } from "@/components/brand/HuellaLogo";
 import { RolePicker } from "@/components/auth/RolePicker";
-import { getPanelPathForRole } from "@/lib/auth/panel-path";
 import {
+  buildAuthCallbackUrl,
+  getPanelPathForRole,
   type HuellaRole,
   readRoleFromUserMetadata,
-} from "@/lib/auth/roles";
-import { buildAuthCallbackUrl } from "@/lib/auth/app-origin";
+} from "@/lib/auth";
 import { signInWithPassword, signUpWithPassword } from "@/lib/auth/smart-auth";
 import { createClientIfConfigured } from "@/lib/supabase/client";
 

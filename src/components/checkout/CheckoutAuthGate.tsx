@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { MaterialIcon } from "@/components/icons/MaterialIcon";
+import { buildAccederUrl } from "@/lib/auth";
 import { createClientIfConfigured } from "@/lib/supabase/client";
 
 interface CheckoutAuthGateProps {
@@ -37,7 +38,7 @@ export function CheckoutAuthGate({ lotId, children }: CheckoutAuthGateProps) {
         setReady(true);
         return;
       }
-      router.replace(`/acceder?rol=turista&next=${encodeURIComponent(checkoutPath)}`);
+      router.replace(buildAccederUrl({ role: "turista", next: checkoutPath }));
     });
 
     return () => {

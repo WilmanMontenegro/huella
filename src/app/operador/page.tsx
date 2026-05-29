@@ -3,12 +3,16 @@ import Link from "next/link";
 import { MaterialIcon } from "@/components/icons/MaterialIcon";
 import { HuellaLogo } from "@/components/brand/HuellaLogo";
 import { DEFAULT_OPERADOR_AGENCIA_SLUG } from "@/lib/constants/operador";
-import { readRoleFromUserMetadata } from "@/lib/auth/roles";
+import {
+  buildAccederUrlForRole,
+  getOperadorDashboardPath,
+  readRoleFromUserMetadata,
+} from "@/lib/auth";
 import { createClientIfConfigured } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
 
-const dashboardNext = `/operador/dashboard?agencia=${DEFAULT_OPERADOR_AGENCIA_SLUG}`;
-const accederOperador = `/acceder?rol=operador&next=${encodeURIComponent(dashboardNext)}`;
+const operadorDashboard = getOperadorDashboardPath();
+const accederOperador = buildAccederUrlForRole("operador");
 
 /** Vitrina del operador; el login único es /acceder (evita doble pantalla). */
 export default async function OperadorLandingPage() {
@@ -21,7 +25,7 @@ export default async function OperadorLandingPage() {
 
       if (user) {
         const role = readRoleFromUserMetadata(user.user_metadata as Record<string, unknown>);
-        if (role === "operador") redirect(dashboardNext);
+        if (role === "operador") redirect(operadorDashboard);
         redirect(accederOperador);
       } else {
         redirect(accederOperador);

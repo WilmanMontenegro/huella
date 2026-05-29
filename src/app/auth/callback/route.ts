@@ -7,7 +7,7 @@ import {
   parseHuellaRole,
   readRoleFromUserMetadata,
   resolveRedirectAfterAuth,
-} from "@/lib/auth/roles";
+} from "@/lib/auth";
 
 async function applyRoleIfNeeded(
   supabase: ReturnType<typeof createServerClient>,

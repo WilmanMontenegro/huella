@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { MaterialIcon } from "@/components/icons/MaterialIcon";
+import { buildAccederUrlForRole, getOperadorDashboardPath } from "@/lib/auth";
 import { createClientIfConfigured } from "@/lib/supabase/client";
 
 interface OperadorAuthGateProps {
@@ -28,8 +29,8 @@ export function OperadorAuthGate({ children }: OperadorAuthGateProps) {
         setReady(true);
         return;
       }
-      const next = `/operador/dashboard${agencia ? `?agencia=${encodeURIComponent(agencia)}` : ""}`;
-      router.replace(`/acceder?rol=operador&next=${encodeURIComponent(next)}`);
+      const next = getOperadorDashboardPath(agencia ?? undefined);
+      router.replace(buildAccederUrlForRole("operador", next));
     });
   }, [router, agencia]);
 
@@ -46,11 +47,11 @@ export function OperadorAuthGate({ children }: OperadorAuthGateProps) {
 }
 
 export function OperadorLoginPrompt({ agenciaSlug }: { agenciaSlug?: string }) {
-  const next = `/operador/dashboard${agenciaSlug ? `?agencia=${agenciaSlug}` : ""}`;
+  const href = buildAccederUrlForRole("operador", getOperadorDashboardPath(agenciaSlug));
 
   return (
     <Link
-      href={`/acceder?rol=operador&next=${encodeURIComponent(next)}`}
+      href={href}
       className="inline-flex h-12 items-center justify-center gap-2 rounded-full bg-primary px-6 font-body text-label-md text-on-primary"
     >
       <MaterialIcon name="login" />

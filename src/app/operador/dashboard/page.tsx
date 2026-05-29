@@ -6,6 +6,7 @@ import { TopAppBar } from "@/components/layout/TopAppBar";
 import { OperadorShareKit } from "@/components/operador/OperadorShareKit";
 import { createClientIfConfigured } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
+import { buildAccederUrl, buildAccederUrlForRole, getOperadorDashboardPath } from "@/lib/auth";
 import {
   getAgenciaExperiences,
   getOperadorStats,
@@ -20,7 +21,7 @@ interface PageProps {
 
 export default async function OperadorDashboardPage({ searchParams }: PageProps) {
   const agenciaParam = searchParams.agencia;
-  const loginNext = `/operador/dashboard${agenciaParam ? `?agencia=${encodeURIComponent(agenciaParam)}` : ""}`;
+  const loginNext = getOperadorDashboardPath(agenciaParam);
 
   if (!isSupabaseConfigured()) {
     return (
@@ -35,21 +36,19 @@ export default async function OperadorDashboardPage({ searchParams }: PageProps)
   }
 
   const supabase = await createClientIfConfigured();
-  if (!supabase) redirect(`/acceder?next=${encodeURIComponent(loginNext)}`);
+  if (!supabase) redirect(buildAccederUrl({ next: loginNext }));
 
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user) redirect(`/acceder?rol=operador&next=${encodeURIComponent(loginNext)}`);
+  if (!user) redirect(buildAccederUrlForRole("operador", loginNext));
 
   const agencia =
     (await resolveOperadorAgencia(user.id, agenciaParam)) ??
     (await resolveOperadorAgencia(user.id, "huella-tours"));
   if (!agencia) {
-    redirect(
-      `/acceder?rol=operador&next=${encodeURIComponent(loginNext)}&error=auth`
-    );
+    redirect(buildAccederUrl({ role: "operador", next: loginNext, authError: true }));
   }
 
   return (

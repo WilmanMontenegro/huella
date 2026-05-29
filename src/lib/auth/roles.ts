@@ -8,6 +8,10 @@ export interface RoleOption {
   title: string;
   description: string;
   icon: string;
+  /** Texto del botón en landing (solo invitados). */
+  landingCta?: string;
+  /** Clases Tailwind del botón en landing. */
+  landingButtonClassName?: string;
 }
 
 export const ROLE_OPTIONS: RoleOption[] = [
@@ -22,20 +26,32 @@ export const ROLE_OPTIONS: RoleOption[] = [
     title: "Productor agrícola",
     description: "Registras lotes, trazabilidad y QR en tu finca.",
     icon: "agriculture",
+    landingCta: "Soy productor agrícola",
+    landingButtonClassName:
+      "flex h-14 w-full items-center justify-center gap-2 rounded-full border border-outline-variant bg-surface-container-low font-body text-label-md text-on-surface transition-colors hover:bg-surface-container-high",
   },
   {
     id: "operador",
     title: "Operador turístico",
     description: "Compartes productos con turistas y ves referidos.",
     icon: "tour",
+    landingCta: "Soy operador turístico",
+    landingButtonClassName:
+      "flex h-14 w-full items-center justify-center gap-2 rounded-full border border-primary-container bg-surface font-body text-label-md text-primary-container transition-colors hover:bg-primary-container hover:text-on-primary-container",
   },
   {
     id: "exportador",
     title: "Exportador / logística",
     description: "Revisas y apruebas pedidos de exportación.",
     icon: "local_shipping",
+    landingCta: "Soy exportador",
+    landingButtonClassName:
+      "flex h-14 w-full items-center justify-center gap-2 rounded-full border border-secondary/40 bg-surface font-body text-label-md text-secondary transition-colors hover:bg-secondary/10",
   },
 ];
+
+/** Perfiles mostrados como botones en la landing (sin sesión). */
+export const LANDING_GUEST_ROLES = ROLE_OPTIONS.filter((r) => r.landingCta);
 
 export function parseHuellaRole(value: unknown): HuellaRole | null {
   if (value === "turista" || value === "productor" || value === "operador" || value === "exportador") {
@@ -74,23 +90,6 @@ export function getPanelCtaLabel(role: HuellaRole): string {
     default:
       return "Ver mis pedidos";
   }
-}
-
-/** Tras login: respeta `next` explícito; si no, usa el rol guardado en la cuenta. */
-export function resolveRedirectAfterAuth(
-  next: string | undefined,
-  roleFromUser: HuellaRole | null
-): string {
-  if (
-    next?.startsWith("/") &&
-    next !== "/login" &&
-    next !== "/registro" &&
-    next !== "/acceder"
-  ) {
-    return next;
-  }
-  if (roleFromUser) return getHomePathForRole(roleFromUser);
-  return "/";
 }
 
 export function readRoleFromUserMetadata(metadata: Record<string, unknown> | undefined): HuellaRole | null {
