@@ -46,6 +46,9 @@ client_secret*.json
 # vercel
 .vercel
 
+# Pitch local del equipo (vive en ../pitch/, no en public/)
+/public/pitch/
+
 # hardhat
 /blockchain/cache
 
