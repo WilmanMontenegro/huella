@@ -17,7 +17,8 @@ function getProductUrl(slug: string): string {
 }
 
 async function main() {
-  const outDir = path.join(process.cwd(), "public", "qr");
+  /** Fuera de public/: asset de demo para imprimir/compartir, no servido por Next.js */
+  const outDir = path.join(process.cwd(), "qr");
   await mkdir(outDir, { recursive: true });
 
   const url = getProductUrl(DEMO_LOT_SLUG);

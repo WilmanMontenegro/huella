@@ -13,7 +13,6 @@
     "blockchain:compile": "hardhat compile",
     "blockchain:register-demo": "hardhat compile && tsx scripts/blockchain/register-demo-lot.ts",
     "qr:generate": "tsx scripts/generate-demo-qr.ts",
-    "prebuild": "tsx scripts/generate-demo-qr.ts",
     "db:login": "supabase login",
     "db:link": "supabase link",
     "db:push": "supabase db push",
