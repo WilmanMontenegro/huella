@@ -22,3 +22,11 @@ body {
 ::selection {
   @apply bg-secondary-container text-on-secondary-container;
 }
+
+/* Leaflet panes must not cover fixed UI (chat FAB, checkout bar) */
+.leaflet-container,
+.leaflet-pane,
+.leaflet-top,
+.leaflet-bottom {
+  z-index: 1 !important;
+}

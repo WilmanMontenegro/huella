@@ -45,10 +45,12 @@ export function FarmMap({ lat, lng, label, className = "h-64 w-full" }: FarmMapP
   }, [lat, lng, label]);
 
   return (
-    <div
-      ref={containerRef}
-      className={`overflow-hidden rounded-card border border-[#E5E0D5] ${className}`}
-      aria-label={`Mapa de ${label}`}
-    />
+    <div className="relative z-0 isolate">
+      <div
+        ref={containerRef}
+        className={`overflow-hidden rounded-card border border-[#E5E0D5] ${className}`}
+        aria-label={`Mapa de ${label}`}
+      />
+    </div>
   );
 }

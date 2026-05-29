@@ -150,8 +150,10 @@ export function HuellaAssistant() {
         type="button"
         onClick={openChat}
         className={cn(
-          "group fixed right-4 z-40 flex h-14 w-14 items-center justify-center rounded-full border border-tertiary-fixed-dim bg-tertiary-fixed text-on-tertiary-fixed shadow-fab-yellow transition-all hover:scale-105 hover:bg-tertiary-fixed-dim active:scale-95 md:right-6 md:h-16 md:w-16",
-          hasProductBottomBar ? "bottom-24 md:bottom-28" : "bottom-6 md:bottom-8"
+          "group fixed z-[1001] flex h-14 w-14 items-center justify-center rounded-full border border-tertiary-fixed-dim bg-tertiary-fixed text-on-tertiary-fixed shadow-fab-yellow transition-all hover:scale-105 hover:bg-tertiary-fixed-dim active:scale-95 md:h-16 md:w-16",
+          hasProductBottomBar
+            ? "bottom-24 left-4 md:bottom-28 md:left-6"
+            : "bottom-6 right-4 md:bottom-8 md:right-6"
         )}
         aria-label="Abrir asistente Huella"
       >
@@ -159,7 +161,7 @@ export function HuellaAssistant() {
       </button>
 
       {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/40 p-4 md:items-center">
+        <div className="fixed inset-0 z-[1100] flex items-end justify-center bg-black/40 p-4 md:items-center">
           <div className="flex max-h-[85vh] w-full max-w-lg flex-col overflow-hidden rounded-card bg-surface-container-lowest organic-shadow">
             <div className="flex items-center justify-between border-b border-outline-variant/30 p-4">
               <div className="flex items-center gap-2">

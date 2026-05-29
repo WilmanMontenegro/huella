@@ -9,7 +9,7 @@ interface ProductActionsProps {
 
 export function ProductActions({ lot }: ProductActionsProps) {
   return (
-    <div className="fixed bottom-0 left-0 z-40 w-full border-t border-outline-variant/20 bg-surface/80 p-4 shadow-[0_-8px_30px_rgba(75,54,33,0.05)] backdrop-blur-xl md:p-6">
+    <div className="fixed bottom-0 left-0 z-50 w-full border-t border-outline-variant/20 bg-surface/80 p-4 shadow-[0_-8px_30px_rgba(75,54,33,0.05)] backdrop-blur-xl md:p-6">
       <div className="mx-auto max-w-5xl">
         <Link
           href={`/checkout/${lot.id}`}
