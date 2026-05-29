@@ -3,7 +3,12 @@ export function hasRealBlockchainVerification(registrationTx?: string | null): b
   return Boolean(registrationTx && registrationTx.length > 10);
 }
 
+const PRODUCTION_APP_URL = "https://web-omega-lilac-31.vercel.app";
+
 export function getProductPublicUrl(slug: string): string {
-  const base = process.env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, "") ?? "http://localhost:3000";
+  let base = process.env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, "") ?? PRODUCTION_APP_URL;
+  if (base.includes("localhost") || base.includes("127.0.0.1")) {
+    base = PRODUCTION_APP_URL;
+  }
   return `${base}/producto/${slug}`;
 }

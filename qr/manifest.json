@@ -1,0 +1,21 @@
+{
+  "generatedAt": "2026-05-29T05:30:40.935Z",
+  "lots": [
+    {
+      "slug": "finca-la-esperanza",
+      "file": "finca-la-esperanza.png",
+      "label": "Finca La Esperanza · Café Castillo",
+      "farmName": "Finca La Esperanza",
+      "product": "Café",
+      "url": "https://web-omega-lilac-31.vercel.app/producto/finca-la-esperanza"
+    },
+    {
+      "slug": "gros-michel-norte-3",
+      "file": "gros-michel-norte-3.png",
+      "label": "Finca La Esperanza · Banano Gros Michel (Lote Norte #3)",
+      "farmName": "Finca La Esperanza",
+      "product": "Banano",
+      "url": "https://web-omega-lilac-31.vercel.app/producto/gros-michel-norte-3"
+    }
+  ]
+}

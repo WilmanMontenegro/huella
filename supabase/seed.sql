@@ -69,7 +69,7 @@ on conflict (slug) do update set
 -- Segundo lote dashboard (banano — inspección)
 insert into lotes (
   id, slug, productor_id, producto, variedad, cantidad_kg, fecha_cosecha,
-  estado_actual, foto_url, finca_nombre, elevacion, precio_usd, tags,
+  estado_actual, foto_url, finca_nombre, elevacion, precio_usd, tags, product_detail,
   dashboard_status, dashboard_status_label
 )
 values (
@@ -84,12 +84,42 @@ values (
   'https://lh3.googleusercontent.com/aida-public/AB6AXuDWLxCmoza_ZRxwZUFfH3OkHEDxqjmeLNhBuqdxLW22JFUjtJ7DVOr7EI9u0vDr053NXVgThSuP3Beziy0_hyjI7keF9ojJHVjD5TMWI3HI6rcGbzwU_ZbH1zcLLMwHvN0-7FEl8XTxn-ylGz6v0XM4GEpg2Q9JvbhhwOKHoos-wTnedWxbS3Uj5A0iINFwOIaWDku7X8uwGDNMH2HrXlgvxWsz4-8yWsf4vg2LtJemd7ZJ9RQaTCuFIVsfH-RPJv8LnHdiVALoo8qW',
   'Finca La Esperanza',
   'Lote Norte #3',
-  null,
-  array['Exportación'],
+  32,
+  array['Sierra Nevada', 'Exportación', 'Gros Michel'],
+  '{
+    "displayName": "Banano Gros Michel · Lote Norte #3",
+    "summary": "Mismo origen que el café de Finca La Esperanza: fruta de exportación cultivada en suelos volcánicos de la Sierra Nevada, con trazabilidad por lote desde la finca hasta el empaque.",
+    "tastingNotes": "Textura firme y aroma dulce característico del Gros Michel; lote en inspección final antes del empaque para mercado internacional.",
+    "specs": [
+      {"label": "Variedad", "value": "Gros Michel"},
+      {"label": "Lote", "value": "Norte #3"},
+      {"label": "Cantidad", "value": "1.200 kg"},
+      {"label": "Destino", "value": "Exportación"},
+      {"label": "Estado", "value": "Inspección de calidad"}
+    ]
+  }'::jsonb,
   'inspection',
   'Inspección'
 )
-on conflict (slug) do nothing;
+on conflict (slug) do update set
+  product_detail = excluded.product_detail,
+  precio_usd = excluded.precio_usd,
+  tags = excluded.tags,
+  estado_actual = excluded.estado_actual;
+
+-- Trazabilidad pública lote banano (vista turista, orden < 10)
+delete from trazabilidad where lote_id = '22222222-2222-2222-2222-222222222202' and orden < 10;
+
+insert into trazabilidad (lote_id, etapa, descripcion, fecha, status, orden) values
+  ('22222222-2222-2222-2222-222222222202', 'Cosecha', 'Racimos seleccionados a mano en Lote Norte #3, punto óptimo de madurez para exportación.', '20 may 2026', 'completed', 0),
+  ('22222222-2222-2222-2222-222222222202', 'Inspección de calidad', 'Control de calibre, ausencia de plagas y humedad según estándar del comprador internacional.', null, 'current', 1),
+  ('22222222-2222-2222-2222-222222222202', 'Empaque', 'Etiquetado con QR Huella y preparación para cadena de frío.', null, 'pending', 2),
+  ('22222222-2222-2222-2222-222222222202', 'Envío', 'Salida hacia puerto y documentación de trazabilidad para el importador.', null, 'pending', 3);
+
+delete from certificaciones where lote_id = '22222222-2222-2222-2222-222222222202';
+
+insert into certificaciones (lote_id, tipo, label) values
+  ('22222222-2222-2222-2222-222222222202', 'organic', 'Buenas prácticas agrícolas');
 
 -- Trazabilidad lote café
 delete from trazabilidad where lote_id = '22222222-2222-2222-2222-222222222201';

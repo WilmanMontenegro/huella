@@ -238,8 +238,70 @@ export const demoProducer: ProducerDashboard = {
   ],
 };
 
+const grosMichelLot: Lot = {
+  id: "gros-michel-norte-3",
+  producerId: producer.id,
+  product: "Banano",
+  variety: "Gros Michel",
+  quantityKg: 1200,
+  harvestDate: "2026-05-20",
+  currentStatus: "En inspección de calidad",
+  photoUrl:
+    "https://lh3.googleusercontent.com/aida-public/AB6AXuDWLxCmoza_ZRxwZUFfH3OkHEDxqjmeLNhBuqdxLW22JFUjtJ7DVOr7EI9u0vDr053NXVgThSuP3Beziy0_hyjI7keF9ojJHVjD5TMWI3HI6rcGbzwU_ZbH1zcLLMwHvN0-7FEl8XTxn-ylGz6v0XM4GEpg2Q9JvbhhwOKHoos-wTnedWxbS3Uj5A0iINFwOIaWDku7X8uwGDNMH2HrXlgvxWsz4-8yWsf4vg2LtJemd7ZJ9RQaTCuFIVsfH-RPJv8LnHdiVALoo8qW",
+  farmName: "Finca La Esperanza",
+  elevation: "Lote Norte #3",
+  tags: ["Sierra Nevada", "Exportación", "Gros Michel"],
+  productDetail: {
+    displayName: "Banano Gros Michel · Lote Norte #3",
+    summary:
+      "Mismo origen que el café de Finca La Esperanza: fruta de exportación en suelos volcánicos de la Sierra Nevada, con trazabilidad por lote desde la finca hasta el empaque.",
+    tastingNotes:
+      "Textura firme y aroma dulce característico del Gros Michel; lote en inspección final antes del empaque para mercado internacional.",
+    specs: [
+      { label: "Variedad", value: "Gros Michel" },
+      { label: "Lote", value: "Norte #3" },
+      { label: "Cantidad", value: "1.200 kg" },
+      { label: "Destino", value: "Exportación" },
+      { label: "Estado", value: "Inspección de calidad" },
+    ],
+  },
+  priceUsd: 32,
+  traceability: [
+    {
+      id: "b1",
+      title: "Cosecha",
+      description:
+        "Racimos seleccionados a mano en Lote Norte #3, punto óptimo de madurez para exportación.",
+      date: "20 may 2026",
+      status: "completed",
+    },
+    {
+      id: "b2",
+      title: "Inspección de calidad",
+      description:
+        "Control de calibre, ausencia de plagas y humedad según estándar del comprador internacional.",
+      status: "current",
+    },
+    {
+      id: "b3",
+      title: "Empaque",
+      description: "Etiquetado con QR Huella y preparación para cadena de frío.",
+      status: "pending",
+    },
+    {
+      id: "b4",
+      title: "Envío",
+      description: "Salida hacia puerto y documentación de trazabilidad para el importador.",
+      status: "pending",
+    },
+  ],
+  certifications: [{ id: "b-c1", type: "organic", label: "Buenas prácticas agrícolas" }],
+  experiences: demoLot.experiences,
+};
+
 const lotsById: Record<string, Lot> = {
   [DEMO_LOT_ID]: demoLot,
+  "gros-michel-norte-3": grosMichelLot,
 };
 
 export function getLotById(id: string): Lot | undefined {

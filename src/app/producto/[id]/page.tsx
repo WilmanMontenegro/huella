@@ -24,7 +24,14 @@ export default async function ProductoPage({ params }: PageProps) {
   if (!lot) notFound();
 
   const producer = await getProducerForLot(lot);
-  const subtitle = `Cultivado por ${producer.name} y su familia • ${lot.elevation ?? ""} de altitud`;
+  const productLine = [lot.product, lot.variety].filter(Boolean).join(" · ");
+  const subtitle = [
+    productLine,
+    `Cultivado por ${producer.name} y su familia`,
+    lot.elevation ? `${lot.elevation} de altitud` : null,
+  ]
+    .filter(Boolean)
+    .join(" • ");
   const experiences = await getExperiencesForLot(id);
   const hasBlockchain = hasRealBlockchainVerification(lot.blockchainHash);
 
