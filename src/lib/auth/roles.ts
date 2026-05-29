@@ -43,7 +43,7 @@ export const ROLE_OPTIONS: RoleOption[] = [
     description: "Revisas y apruebas pedidos de exportación.",
     icon: "local_shipping",
     landingCta: "Soy exportador",
-    landingIconClassName: "bg-tertiary-fixed text-on-tertiary-container",
+    landingIconClassName: "bg-primary/10 text-primary",
   },
 ];
 
