@@ -107,12 +107,7 @@ export default async function ProductoPage({ params, searchParams }: PageProps) 
         )}
       </main>
 
-      <ProductActions
-        lot={lot}
-        retailCta={copy.retailCta}
-        wholesaleCta={copy.wholesaleCta}
-        loteHint={copy.loteHint}
-      />
+      <ProductActions lot={lot} />
     </>
   );
 }
