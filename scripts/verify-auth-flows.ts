@@ -86,9 +86,10 @@ for (const role of ROLES) {
   assertIncludes(callback, `pending_rol=${role}`, `${role}: pending_rol en callback`);
 }
 
-console.log("\n=== Orden landing (4 perfiles) ===\n");
+console.log("\n=== Landing (sin turista: escáner + Entrar) ===\n");
 const landingIds = LANDING_GUEST_ROLES.map((r) => r.id);
-assertEq(landingIds.join(","), ROLES.join(","), "orden turista → exportador");
+assertEq(landingIds.join(","), "productor,operador,exportador", "solo perfiles de gestión");
+assertEq(landingIds.includes("turista"), false, "turista no duplica escáner");
 
 console.log("\n--- Resumen ---");
 console.log(`Pasaron: ${passed}`);

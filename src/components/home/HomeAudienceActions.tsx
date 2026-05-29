@@ -26,7 +26,7 @@ function GuestAudienceActions() {
       <p className="mb-5 text-center font-body text-label-sm text-outline">
         {presentation
           ? "Elige el perfil a mostrar en la demo"
-          : "Escanea un producto o entra con tu perfil"}
+          : "Escanea un producto. Si compras, usa Entrar arriba a la derecha."}
       </p>
 
       <ScanProductButton />
@@ -36,7 +36,7 @@ function GuestAudienceActions() {
           <div className="w-full border-t border-outline-variant/50" />
         </div>
         <p className="relative mx-auto w-fit bg-background px-3 font-body text-label-sm text-outline">
-          {presentation ? "Paneles de demo" : "Acceso con cuenta"}
+          {presentation ? "Paneles de demo" : "Gestión finca, tours o exportación"}
         </p>
       </div>
 
@@ -50,15 +50,6 @@ function GuestAudienceActions() {
           />
         ))}
       </div>
-
-      {!presentation && (
-        <p className="mt-5 text-center font-body text-label-sm text-outline">
-          ¿Solo explorar?{" "}
-          <Link href="/acceder" className="text-secondary hover:underline">
-            Iniciar sesión general
-          </Link>
-        </p>
-      )}
     </div>
   );
 }

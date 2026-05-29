@@ -20,8 +20,6 @@ export const ROLE_OPTIONS: RoleOption[] = [
     title: "Turista / comprador",
     description: "Escaneas QR, compras bolsas o sigues tus pedidos.",
     icon: "travel_explore",
-    landingCta: "Soy turista / comprador",
-    landingIconClassName: "bg-secondary-container text-on-secondary-container",
   },
   {
     id: "productor",
@@ -49,8 +47,8 @@ export const ROLE_OPTIONS: RoleOption[] = [
   },
 ];
 
-/** Orden en la landing: consumidor primero, luego perfiles de gestión. */
-const LANDING_ROLE_ORDER: HuellaRole[] = ["turista", "productor", "operador", "exportador"];
+/** Perfiles con login dedicado en landing (turista usa escáner + Entrar en header). */
+const LANDING_ROLE_ORDER: HuellaRole[] = ["productor", "operador", "exportador"];
 
 /** Perfiles mostrados en la landing (sin sesión). */
 export const LANDING_GUEST_ROLES = LANDING_ROLE_ORDER.map((id) =>
