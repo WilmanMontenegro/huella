@@ -46,7 +46,7 @@ client_secret*.json
 # vercel
 .vercel
 
-# Pitch fuente local (carpeta ../pitch/ fuera del repo; solo docs/presentacion-pitch.pdf se versiona)
+# Pitch fuente local (carpeta ../pitch/ fuera del repo; solo presentacion-pitch.pdf en raíz se versiona)
 /public/pitch/
 
 # QR imprimibles (se generan en ../pitch/qr/)

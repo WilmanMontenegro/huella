@@ -61,7 +61,7 @@ Abrir [http://localhost:3000](http://localhost:3000)
 
 **Demo trazabilidad:** `/producto/finca-la-esperanza`  
 **QR imprimible (pitch local):** `../pitch/qr/finca-la-esperanza.png` — generar con `pnpm qr:generate`, ver `../pitch/qr/README.md`  
-**Presentación (PDF en repo):** [`docs/presentacion-pitch.pdf`](docs/presentacion-pitch.pdf) — regenerar con `node ../pitch/scripts/export-pdf.mjs`
+**Presentación (PDF en repo):** [`presentacion-pitch.pdf`](presentacion-pitch.pdf) — regenerar con `node ../pitch/scripts/export-pdf.mjs`
 
 ## Rutas
 
