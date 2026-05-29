@@ -87,7 +87,7 @@ values (
   500,
   '2023-10-12',
   'En secado · Listo en 3 días',
-  'https://images.unsplash.com/photo-1559056199-641a0ac8b55c?w=1200&q=80&auto=format&fit=crop',
+  null,
   'Finca La Esperanza',
   '1.600 m',
   '0xc13cbb1566fe10eb1a846449a214f940f18515264e6d382e3157c9c62b7fdbb0',
@@ -106,8 +106,7 @@ values (
       "companyName": "La Esperanza Agrícola — empresa familiar",
       "municipality": "Minca, Magdalena",
       "region": "Sierra Nevada del Magdalena, Colombia",
-      "description": "Finca de altura con beneficio húmedo propio y secado al sol. Aquí se cultiva y procesa el café que acabas de escanear.",
-      "imageUrl": "https://images.unsplash.com/photo-1447933601403-0c6688de566e?w=1200&q=80&auto=format&fit=crop"
+      "description": "Finca de altura con beneficio húmedo propio y secado al sol. Aquí se cultiva y procesa el café que acabas de escanear."
     },
     "summary": "Es el mismo café que probaste en Santa Marta: acidez cítrica brillante, cuerpo medio y un final dulce a panela. Grano 100 % arábica, lavado y secado al sol en la finca.",
     "tastingNotes": "En taza: mandarina, panela y un toque de cacao amargo. Ideal en filtro Chemex o prensa francesa.",
@@ -144,7 +143,7 @@ values (
   1200,
   '2026-05-20',
   'En inspección de calidad',
-  'https://images.unsplash.com/photo-1605027990121-4753a3042ed6?w=1200&q=80&auto=format&fit=crop',
+  null,
   'Finca La Esperanza',
   'Lote Norte #3',
   32,
@@ -161,8 +160,7 @@ values (
       "companyName": "La Esperanza Agrícola — empresa familiar",
       "municipality": "Minca, Magdalena",
       "region": "Sierra Nevada del Magdalena, Colombia",
-      "description": "El banano de este QR proviene del Lote Norte #3, en la misma finca donde se cultiva el café Castillo de la familia de Don José.",
-      "imageUrl": "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=1200&q=80&auto=format&fit=crop"
+      "description": "El banano de este QR proviene del Lote Norte #3, en la misma finca donde se cultiva el café Castillo de la familia de Don José."
     },
     "summary": "Mismo origen que el café de Finca La Esperanza: fruta de exportación cultivada en suelos volcánicos de la Sierra Nevada, con trazabilidad por lote desde la finca hasta el empaque.",
     "tastingNotes": "Textura firme y aroma dulce característico del Gros Michel; lote en inspección final antes del empaque para mercado internacional.",

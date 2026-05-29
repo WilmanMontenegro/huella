@@ -1,34 +1,52 @@
 import type { Lot, ProductFarmInfo } from "@/types";
 
-/** Fotos demo (Unsplash) — producto empaquetado vs finca/cultivo. */
+/** Imágenes en /public/media/lots — producto (empaque) vs finca (paisaje/cultivo). */
+const MEDIA = "/media/lots";
+
 export const LOT_MEDIA = {
   producerPortrait:
     "https://lh3.googleusercontent.com/aida-public/AB6AXuAoLOfMP3gtZAJLhbH1DJBuOMlYweVX1K15F4NLNKQDVFZMKSMaCwwN6kQGraIa-xdrP8rTKTUoC8WfoWON_89jPw5ut-Kwr8PKjNP8cotpXM-cwsuUO3MJd1_HeQK-6bbdR0dgRZ-1282K67BzraM9l8ioivuLGXIQELq4swvEGF2NO8DVKXTVVn9-OusQLNpcKF57hsP76j4L80Yvp4jYpZOEuvqRV85gmpvcMPBFMXteq1R4WpNu21RGe83wuFfAAbjB3YBM6t6c",
-  coffeeProduct:
-    "https://images.unsplash.com/photo-1559056199-641a0ac8b55c?w=1200&q=80&auto=format&fit=crop",
-  coffeeFarm:
-    "https://images.unsplash.com/photo-1447933601403-0c6688de566e?w=1200&q=80&auto=format&fit=crop",
-  bananaProduct:
-    "https://images.unsplash.com/photo-1605027990121-4753a3042ed6?w=1200&q=80&auto=format&fit=crop",
-  bananaFarm:
-    "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=1200&q=80&auto=format&fit=crop",
+  coffeeProduct: `${MEDIA}/coffee-product.jpg`,
+  coffeeFarm: `${MEDIA}/coffee-farm.jpg`,
+  bananaProduct: `${MEDIA}/banana-product.jpg`,
+  bananaFarm: `${MEDIA}/banana-farm.jpg`,
+  cacaoProduct: `${MEDIA}/cacao-product.jpg`,
+  cacaoFarm: `${MEDIA}/cacao-farm.jpg`,
 } as const;
 
-function productKind(product: string): "coffee" | "banana" | "other" {
+/** Unsplash viejos en BD que devuelven 404 o mezclan producto/finca. */
+const LEGACY_BROKEN_URL_MARKERS = [
+  "photo-1559056199-641a0ac8b55c",
+  "photo-1605027990121",
+  "photo-1578662996442",
+  "photo-1447933601403",
+] as const;
+
+function productKind(product: string): "coffee" | "banana" | "cacao" | "other" {
   const p = product.toLowerCase();
   if (p.includes("banano")) return "banana";
-  if (p.includes("café") || p.includes("cafe") || p.includes("cacao")) return "coffee";
+  if (p.includes("cacao")) return "cacao";
+  if (p.includes("café") || p.includes("cafe")) return "coffee";
   return "other";
+}
+
+function isUsablePhotoUrl(url: string | undefined): boolean {
+  const trimmed = url?.trim();
+  if (!trimmed) return false;
+  if (trimmed === LOT_MEDIA.producerPortrait) return false;
+  if (LEGACY_BROKEN_URL_MARKERS.some((id) => trimmed.includes(id))) return false;
+  return true;
 }
 
 /** Hero del producto escaneado — bolsa/marca, no la finca ni el productor. */
 export function resolveLotProductPhotoUrl(lot: Pick<Lot, "photoUrl" | "product">): string {
-  const url = lot.photoUrl?.trim();
-  if (url && url !== LOT_MEDIA.producerPortrait) return url;
+  if (isUsablePhotoUrl(lot.photoUrl)) return lot.photoUrl!.trim();
 
   switch (productKind(lot.product)) {
     case "banana":
       return LOT_MEDIA.bananaProduct;
+    case "cacao":
+      return LOT_MEDIA.cacaoProduct;
     case "coffee":
       return LOT_MEDIA.coffeeProduct;
     default:
@@ -36,17 +54,19 @@ export function resolveLotProductPhotoUrl(lot: Pick<Lot, "photoUrl" | "product">
   }
 }
 
-/** Finca, beneficio o empresa — paisaje / cultivo. */
+/** Finca, beneficio o empresa — paisaje / cultivo (no empaque ni taza). */
 export function resolveFarmPhotoUrl(
   lot: Pick<Lot, "product" | "productDetail">,
   farm?: ProductFarmInfo
 ): string {
   const fromDetail = farm?.imageUrl?.trim() || lot.productDetail?.farm?.imageUrl?.trim();
-  if (fromDetail) return fromDetail;
+  if (isUsablePhotoUrl(fromDetail)) return fromDetail!;
 
   switch (productKind(lot.product)) {
     case "banana":
       return LOT_MEDIA.bananaFarm;
+    case "cacao":
+      return LOT_MEDIA.cacaoFarm;
     case "coffee":
       return LOT_MEDIA.coffeeFarm;
     default:
