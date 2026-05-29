@@ -60,8 +60,9 @@ pnpm dev
 Abrir [http://localhost:3000](http://localhost:3000)
 
 **Demo trazabilidad:** `/producto/finca-la-esperanza`  
-**QR imprimible (pitch local):** `../pitch/qr/finca-la-esperanza.png` — generar con `pnpm qr:generate`, ver `../pitch/qr/README.md`  
-**Presentación (PDF en repo):** [`presentacion-pitch.pdf`](presentacion-pitch.pdf) — regenerar con `node ../pitch/scripts/export-pdf.mjs`
+**QR imprimible (pitch):** `pitch/qr/finca-la-esperanza.png` — generar con `pnpm qr:generate`, ver `pitch/qr/README.md`  
+**Presentación (PDF en repo):** [`presentacion-pitch.pdf`](presentacion-pitch.pdf) — regenerar con `node pitch/scripts/export-pdf.mjs`  
+**Otro PC:** [docs/SETUP-PORTABLE.md](docs/SETUP-PORTABLE.md) · secretos: [setup/SECRETS-MANUAL.md](setup/SECRETS-MANUAL.md)
 
 ## Rutas
 

@@ -46,10 +46,13 @@ client_secret*.json
 # vercel
 .vercel
 
-# Pitch fuente local (carpeta ../pitch/ fuera del repo; solo presentacion-pitch.pdf en raíz se versiona)
+# Pitch legacy en public (fuente vive en /pitch/)
 /public/pitch/
 
-# QR imprimibles (se generan en ../pitch/qr/)
+# PDF local del pitch (regenerable: node pitch/scripts/export-pdf.mjs)
+/pitch/index.pdf
+
+# QR legacy en raíz web (los imprimibles están en pitch/qr/)
 /qr/
 
 # hardhat

@@ -1,0 +1,73 @@
+---
+alwaysApply: true
+---
+
+# Engram — Memoria Persistente (MagTrace · Cursor AI)
+
+Este proyecto usa **Cursor AI** (no Codex, no Claude Code, no Gemini CLI). Engram se conecta via MCP en `.cursor/mcp.json` y esta regla en `.cursor/rules/`.
+
+Tienes acceso a Engram, memoria persistente del proyecto MagTrace, via herramientas MCP (`mem_save`, `mem_search`, `mem_context`, `mem_session_summary`, etc.).
+
+Proyecto: **magtrace** (Hackathon Regional Magdalena · Colombia 5.0)
+
+## Cuándo guardar (obligatorio)
+
+Llama `mem_save` INMEDIATAMENTE después de:
+
+- Bug fix completado
+- Decisión de arquitectura o diseño
+- Descubrimiento no obvio sobre el codebase
+- Cambio de configuración o setup de entorno
+- Patrón establecido (naming, estructura, convención)
+- Preferencia o restricción del usuario aprendida
+
+Formato para `mem_save`:
+
+- **title**: Verbo + qué — corto, buscable (ej: "Elegido Next.js 14 para frontend MagTrace")
+- **type**: `bugfix` | `decision` | `architecture` | `discovery` | `pattern` | `config` | `preference`
+- **scope**: `project` (default) | `personal` | `global`
+- **topic_key** (opcional): clave estable como `architecture/auth-model`
+- **content**:
+  ```
+  **What**: Una oración — qué se hizo
+  **Why**: Qué lo motivó
+  **Where**: Archivos o paths afectados
+  **Learned**: Gotchas, edge cases (omitir si no hay)
+  ```
+
+## Cuándo buscar memoria
+
+Cuando el usuario pida recordar algo ("recuerda", "qué hicimos", "cómo resolvimos", etc.):
+
+1. Primero `mem_context` — historial reciente de sesión
+2. Si no encuentra, `mem_search` con keywords relevantes
+3. Si hay match, `mem_get_observation` para contenido completo
+
+También busca PROACTIVAMENTE al iniciar trabajo que pueda haberse hecho antes.
+
+## Cierre de sesión (obligatorio)
+
+Antes de terminar o decir "listo", llama `mem_session_summary` con:
+
+```
+## Goal
+## Instructions
+## Discoveries
+## Accomplished
+## Next Steps
+## Relevant Files
+```
+
+## Después de compactación
+
+Si hay reset de contexto:
+
+1. INMEDIATAMENTE `mem_session_summary` con el resumen compactado
+2. Luego `mem_context` para recuperar contexto previo
+3. Solo ENTONCES continuar
+
+## Recuperación post-reset
+
+Después de cualquier reset de contexto, llama `mem_context` para recuperar el estado de la sesión antes de continuar.
+
+Guarda memorias proactivamente después de trabajo significativo — no esperes a que te lo pidan.

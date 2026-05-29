@@ -1,0 +1,932 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Huella — Pitch</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@500;600&family=Manrope:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      /* Huella — misma paleta que web/src/lib/design/tokens.ts */
+      :root {
+        --background: #fdf9f4;
+        --surface-container-lowest: #ffffff;
+        --surface-container-low: #f7f3ee;
+        --surface-container: #f1ede8;
+        --surface-container-high: #ebe8e3;
+        --on-surface: #1c1c19;
+        --on-surface-variant: #504442;
+        --outline: #827472;
+        --outline-variant: #d3c3c0;
+        --primary: #271310;
+        --on-primary: #ffffff;
+        --primary-container: #3e2723;
+        --on-primary-container: #ae8d87;
+        --secondary: #1b6d24;
+        --on-secondary: #ffffff;
+        --secondary-container: #a0f399;
+        --on-secondary-container: #217128;
+        --tertiary: #705d00;
+        --tertiary-container: #c9a900;
+        --on-tertiary-container: #4c3f00;
+        --tertiary-fixed: #ffe16d;
+        --error: #ba1a1a;
+        --error-container: #ffdad6;
+        --shadow-organic: 0 12px 30px rgba(75, 54, 33, 0.08);
+        --shadow-slide: 0 20px 50px rgba(75, 54, 33, 0.12);
+
+        /* alias cortos */
+        --bg: var(--background);
+        --surface: var(--surface-container-low);
+        --muted: var(--on-surface-variant);
+        --pain: var(--error);
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      html,
+      body {
+        height: 100%;
+        overflow: hidden;
+      }
+
+      body {
+        font-family: Manrope, system-ui, sans-serif;
+        background: var(--surface-container);
+        color: var(--on-surface);
+      }
+
+      .deck {
+        height: 100vh;
+        width: 100vw;
+        padding: 0;
+      }
+
+      .slide {
+        display: none;
+        position: fixed;
+        inset: 0;
+        width: 100%;
+        max-width: none;
+        margin: 0;
+        min-height: 100vh;
+        height: 100vh;
+        aspect-ratio: auto;
+        background: var(--bg);
+        border-radius: 0;
+        overflow: hidden;
+        box-shadow: none;
+        border: none;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 2.5rem 3.5rem;
+        z-index: 1;
+      }
+
+      .slide.is-active {
+        display: flex;
+        z-index: 2;
+      }
+
+      .slide-num {
+        position: absolute;
+        top: 1.25rem;
+        right: 1.5rem;
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: var(--outline);
+        opacity: 0.7;
+      }
+
+      .eyebrow {
+        font-size: 0.95rem;
+        font-weight: 700;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: var(--outline);
+        margin-bottom: 0.5rem;
+      }
+
+      h2 {
+        font-family: "EB Garamond", Georgia, serif;
+        font-size: 3rem;
+        font-weight: 500;
+        line-height: 1.1;
+        text-align: center;
+        margin-bottom: 1.75rem;
+        color: var(--primary);
+      }
+
+      .tagline {
+        font-family: "EB Garamond", Georgia, serif;
+        font-size: 1.75rem;
+        font-weight: 500;
+        color: var(--on-surface-variant);
+        margin-top: 0.75rem;
+        text-align: center;
+      }
+
+      .hint {
+        font-size: 1.05rem;
+        font-weight: 600;
+        color: var(--muted);
+        text-align: center;
+        margin-top: 0.35rem;
+      }
+
+      .pitch-icon {
+        display: block;
+        flex-shrink: 0;
+        width: 1em;
+        height: 1em;
+      }
+
+      .i-lg {
+        font-size: 2.75rem;
+      }
+
+      .i-md {
+        font-size: 2.35rem;
+      }
+
+      .i-sm {
+        font-size: 1.35rem;
+      }
+
+      .i-brand {
+        color: var(--secondary);
+      }
+
+      .i-pain {
+        color: var(--pain);
+      }
+
+      .i-light {
+        color: var(--on-primary);
+      }
+
+      /* —— Portada —— */
+      .cover-logo {
+        margin: 0.5rem 0 1rem;
+      }
+
+      .cover-logo img {
+        height: 10.5rem;
+        width: auto;
+        max-width: min(22rem, 90vw);
+        object-fit: contain;
+        display: block;
+        margin: 0 auto;
+      }
+
+      .products {
+        display: flex;
+        gap: 2.25rem;
+        margin: 1.75rem 0 1.25rem;
+        justify-content: center;
+      }
+
+      .product {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.75rem;
+      }
+
+      .product .bubble {
+        width: 5.75rem;
+        height: 5.75rem;
+        border-radius: 50%;
+        background: var(--surface-container-lowest);
+        border: 1px solid var(--outline-variant);
+        box-shadow: var(--shadow-organic);
+        overflow: hidden;
+      }
+
+      .product .bubble img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+
+      .product .bubble .pitch-icon {
+        font-size: 2.85rem;
+      }
+
+      /* —— Slides con foto lateral —— */
+      .slide--cover,
+      .slide--split {
+        flex-direction: row;
+        align-items: stretch;
+        justify-content: stretch;
+        padding: 0;
+        gap: 0;
+      }
+
+      .slide--cover .slide-panel,
+      .slide--split .slide-panel {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 2.25rem 2.5rem;
+        min-width: 0;
+      }
+
+      .slide-media {
+        flex: 0 0 40%;
+        min-height: 100%;
+        position: relative;
+        background: var(--surface-container-high);
+      }
+
+      .slide-media img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+
+      .slide-media::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          90deg,
+          var(--bg) 0%,
+          transparent 18%
+        );
+        pointer-events: none;
+      }
+
+      .slide--cover .slide-media::after {
+        background: linear-gradient(90deg, var(--bg) 0%, transparent 22%);
+      }
+
+      .product span {
+        font-size: 1.15rem;
+        font-weight: 700;
+        color: var(--primary);
+        letter-spacing: 0.02em;
+      }
+
+      .url-small {
+        font-size: 1rem;
+        color: var(--outline);
+        margin-top: 1rem;
+      }
+
+      /* —— Grid de tarjetas con icono —— */
+      .icon-grid {
+        display: grid;
+        gap: 1.5rem;
+        width: 100%;
+        max-width: 52rem;
+      }
+
+      .icon-grid--4 {
+        grid-template-columns: repeat(4, 1fr);
+      }
+
+      .icon-grid--2x2 {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .icon-card {
+        background: var(--surface-container-low);
+        border: 1px solid var(--outline-variant);
+        border-radius: 1.25rem;
+        padding: 1.5rem 1rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 0.85rem;
+      }
+
+      .icon-card--pain {
+        border-color: var(--error-container);
+        background: var(--error-container);
+      }
+
+      .icon-wrap {
+        width: 4.5rem;
+        height: 4.5rem;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--surface-container-lowest);
+        color: var(--secondary);
+        border: 1px solid var(--outline-variant);
+      }
+
+      .icon-card--pain .icon-wrap {
+        color: var(--error);
+        background: var(--surface-container-lowest);
+        border-color: var(--error-container);
+      }
+
+      .icon-wrap .pitch-icon {
+        font-size: 2.5rem;
+      }
+
+      .icon-card label {
+        font-size: 1.35rem;
+        font-weight: 700;
+        line-height: 1.25;
+        color: var(--primary);
+      }
+
+      /* —— Flujo solución —— */
+      .flow {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+        max-width: 56rem;
+      }
+
+      .flow-node {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+        min-width: 6.5rem;
+      }
+
+      .flow-node .bubble {
+        width: 4.75rem;
+        height: 4.75rem;
+        border-radius: 1rem;
+        background: var(--secondary);
+        color: var(--on-secondary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .flow-node .bubble--qr {
+        width: 6rem;
+        height: 6rem;
+        border-radius: 1.25rem;
+        background: var(--primary);
+      }
+
+      .flow-node .bubble .pitch-icon {
+        font-size: 2.5rem;
+      }
+
+      .flow-node .bubble--qr .pitch-icon {
+        font-size: 3rem;
+      }
+
+      .flow-node span {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: var(--muted);
+      }
+
+      .flow-arrow .pitch-icon {
+        font-size: 2.25rem;
+        color: var(--tertiary-container);
+      }
+
+      .roles {
+        display: flex;
+        gap: 1.25rem;
+        margin-top: 2rem;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+
+      .role-pill {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: var(--surface-container-lowest);
+        border: 1px solid var(--outline-variant);
+        border-radius: 999px;
+        padding: 0.55rem 1.1rem;
+        font-size: 1rem;
+        font-weight: 700;
+        color: var(--primary);
+      }
+
+      .role-pill .pitch-icon {
+        font-size: 1.35rem;
+        color: var(--secondary);
+      }
+
+      /* —— Demo —— */
+      .demo-layout {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 3.5rem;
+        width: 100%;
+        max-width: 58rem;
+      }
+
+      .demo-flow {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        flex: 1;
+      }
+
+      .demo-step {
+        display: flex;
+        align-items: center;
+        gap: 1.25rem;
+        background: var(--surface-container-low);
+        border-radius: 1rem;
+        padding: 1rem 1.35rem;
+        border: 1px solid var(--outline-variant);
+      }
+
+      .demo-step .num {
+        width: 2.5rem;
+        height: 2.5rem;
+        border-radius: 50%;
+        background: var(--primary);
+        color: var(--on-primary);
+        font-size: 1.2rem;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+      }
+
+      .demo-step .pitch-icon.step-icon {
+        font-size: 2.75rem;
+        color: var(--secondary);
+      }
+
+      .demo-step label {
+        font-size: 1.5rem;
+        font-weight: 700;
+      }
+
+      .demo-qr {
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+      }
+
+      .demo-qr img {
+        width: 11rem;
+        height: 11rem;
+        border-radius: 12px;
+        border: 4px solid var(--surface-container-lowest);
+        box-shadow: var(--shadow-organic);
+      }
+
+      .demo-qr .live {
+        font-size: 1rem;
+        font-weight: 700;
+        color: var(--on-secondary-container);
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+      }
+
+      /* —— Tech —— */
+      .tech-row {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1.5rem;
+        width: 100%;
+        max-width: 54rem;
+      }
+
+      .tech-item {
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.75rem;
+      }
+
+      .tech-item .ring {
+        width: 6rem;
+        height: 6rem;
+        border-radius: 50%;
+        background: var(--surface-container-lowest);
+        border: 2px solid var(--secondary-container);
+        box-shadow: var(--shadow-organic);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--secondary);
+      }
+
+      .tech-item .ring .pitch-icon {
+        font-size: 2.85rem;
+      }
+
+      .tech-item strong {
+        font-size: 1.35rem;
+        color: var(--primary);
+      }
+
+      .tech-item em {
+        font-size: 0.95rem;
+        font-style: normal;
+        color: var(--muted);
+        font-weight: 600;
+        max-width: 9rem;
+        line-height: 1.3;
+      }
+
+      .trust-icons {
+        display: flex;
+        gap: 2.5rem;
+        margin-top: 2.25rem;
+        justify-content: center;
+      }
+
+      .trust-icons .trust-ring {
+        width: 3.25rem;
+        height: 3.25rem;
+        border-radius: 50%;
+        background: var(--secondary-container);
+        border: 1px solid var(--outline-variant);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--secondary);
+      }
+
+      .trust-icons .trust-ring .pitch-icon {
+        font-size: 1.75rem;
+        color: var(--on-secondary-container);
+      }
+
+      /* —— Cierre —— */
+      .impact-split {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 3rem;
+        max-width: 50rem;
+        width: 100%;
+      }
+
+      .impact-block {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1.25rem;
+      }
+
+      .impact-block .big-icon {
+        font-size: 4.5rem;
+        color: var(--secondary);
+      }
+
+      .impact-block h3 {
+        font-family: "EB Garamond", serif;
+        font-size: 2rem;
+        color: var(--secondary);
+      }
+
+      .impact-list {
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+        width: 100%;
+      }
+
+      .impact-list li {
+        display: flex;
+        align-items: center;
+        gap: 0.65rem;
+        font-size: 1.35rem;
+        font-weight: 700;
+      }
+
+      .impact-list .dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: var(--tertiary-container);
+        flex-shrink: 0;
+      }
+
+      .closing {
+        font-family: "EB Garamond", serif;
+        font-size: 2.5rem;
+        margin-top: 2rem;
+        text-align: center;
+        color: var(--primary);
+      }
+
+      @media print {
+        html,
+        body {
+          height: auto;
+          overflow: visible;
+        }
+
+        .slide {
+          display: flex !important;
+          position: relative;
+          inset: auto;
+          max-width: none;
+          margin: 0;
+          border-radius: 0;
+          box-shadow: none;
+          min-height: 100vh;
+          height: auto;
+          page-break-after: always;
+        }
+      }
+
+      @page {
+        size: landscape;
+        margin: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="deck">
+      <!-- 1 -->
+      <section class="slide slide--cover">
+        <span class="slide-num">1 / 6</span>
+        <div class="slide-panel">
+          <p class="eyebrow">Magdalena · Colombia 5.0</p>
+          <div class="cover-logo">
+            <img src="brand/logo-vertical.png" alt="Huella" width="280" height="380" />
+          </div>
+          <p class="tagline">Origen que se escanea</p>
+          <div class="products">
+            <div class="product">
+              <div class="bubble">
+                <img src="images/coffee-product.jpg" alt="Café" width="92" height="92" />
+              </div>
+              <span>Café</span>
+            </div>
+            <div class="product">
+              <div class="bubble">
+                <img src="images/banano.jpg" alt="Banano" width="92" height="92" />
+              </div>
+              <span>Banano</span>
+            </div>
+            <div class="product">
+              <div class="bubble">
+                <img src="images/cacao.jpg" alt="Cacao" width="92" height="92" />
+              </div>
+              <span>Cacao</span>
+            </div>
+          </div>
+          <p class="url-small">web-omega-lilac-31.vercel.app</p>
+        </div>
+        <div class="slide-media" aria-hidden="true">
+          <img src="images/coffee-farm.jpg" alt="Finca en el Magdalena" />
+        </div>
+      </section>
+
+      <!-- 2 -->
+      <section class="slide slide--split">
+        <span class="slide-num">2 / 6</span>
+        <div class="slide-panel">
+          <p class="eyebrow">Problema</p>
+          <h2>¿Dónde se pierde la confianza?</h2>
+          <div class="icon-grid icon-grid--2x2">
+          <div class="icon-card icon-card--pain">
+            <div class="icon-wrap">
+              <svg class="pitch-icon i-pain" fill="currentColor" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><path d="M216 56h-40v-8a24 24 0 0 0-24-24h-48a24 24 0 0 0-24 24v8H40a16 16 0 0 0-16 16v128a16 16 0 0 0 16 16h176a16 16 0 0 0 16-16V72a16 16 0 0 0-16-16M96 48a8 8 0 0 1 8-8h48a8 8 0 0 1 8 8v8H96Zm120 24v72H40V72Z"/></svg>
+            </div>
+            <label>Turista<br />sin certeza</label>
+          </div>
+          <div class="icon-card icon-card--pain">
+            <div class="icon-wrap">
+              <svg class="pitch-icon i-pain" fill="currentColor" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><path d="M205.41 159.07a60.9 60.9 0 0 1-31.83 8.86a71.7 71.7 0 0 1-27.36-5.66A55.55 55.55 0 0 0 136 194.51V224a8 8 0 0 1-8.53 8a8.18 8.18 0 0 1-7.47-8.25v-12.44l-38.62-38.62A52.5 52.5 0 0 1 63.44 176a45.8 45.8 0 0 1-23.92-6.67C17.73 156.09 6 125.62 8.27 87.79a8 8 0 0 1 7.52-7.52c37.83-2.23 68.3 9.46 81.5 31.25a46 46 0 0 1 6.45 28.48a4 4 0 0 1-6.89 2.43l-19.2-20.1a8 8 0 0 0-11.31 11.31l53.88 55.25c.06-.78.13-1.56.21-2.33a68.56 68.56 0 0 1 18.64-39.46l50.59-53.46a8 8 0 0 0-11.31-11.32l-49 51.82a4 4 0 0 1-6.78-1.74c-4.74-17.48-2.65-34.88 6.4-49.82c17.86-29.48 59.42-45.26 111.18-42.22a8 8 0 0 1 7.52 7.52c3 51.77-12.78 93.33-42.26 111.19"/></svg>
+            </div>
+            <label>Productor<br />desconectado</label>
+          </div>
+          <div class="icon-card icon-card--pain">
+            <div class="icon-wrap">
+              <svg class="pitch-icon i-pain" fill="currentColor" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><path d="M128 24a104 104 0 1 0 104 104A104.11 104.11 0 0 0 128 24m88 104a87.6 87.6 0 0 1-6.4 32.94l-44.7-27.49a15.9 15.9 0 0 0-6.24-2.23l-22.82-3.08a16.11 16.11 0 0 0-16 7.86h-8.72l-3.8-7.86a15.91 15.91 0 0 0-11-8.67l-8-1.73L96.14 104h16.71a16.06 16.06 0 0 0 7.73-2l12.25-6.76a16.6 16.6 0 0 0 3-2.14l26.91-24.34A15.93 15.93 0 0 0 166 49.1l-.36-.65A88.11 88.11 0 0 1 216 128m-176 0a87.5 87.5 0 0 1 8.54-37.8l11.34 30.27a16 16 0 0 0 11.62 10l21.43 4.61l3.81 7.92a16.09 16.09 0 0 0 14.4 9h1.48l-7.23 16.23a16 16 0 0 0 2.86 17.37l.14.14l19.61 20.2l-1.94 10A88.11 88.11 0 0 1 40 128"/></svg>
+            </div>
+            <label>Exportador<br />sin visión</label>
+          </div>
+          <div class="icon-card icon-card--pain">
+            <div class="icon-wrap">
+              <svg class="pitch-icon i-pain" fill="currentColor" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><path d="m213.66 82.34l-56-56A8 8 0 0 0 152 24H56a16 16 0 0 0-16 16v176a16 16 0 0 0 16 16h144a16 16 0 0 0 16-16V88a8 8 0 0 0-2.34-5.66M160 176H96a8 8 0 0 1 0-16h64a8 8 0 0 1 0 16m0-32H96a8 8 0 0 1 0-16h64a8 8 0 0 1 0 16m-8-56V44l44 44Z"/></svg>
+            </div>
+            <label>Certificado<br />en papel</label>
+          </div>
+        </div>
+        </div>
+        <div class="slide-media" aria-hidden="true">
+          <img src="images/coffee-product.jpg" alt="Producto sin historia visible" />
+        </div>
+      </section>
+
+      <!-- 3 -->
+      <section class="slide">
+        <span class="slide-num">3 / 6</span>
+        <p class="eyebrow">Solución</p>
+        <h2>Un QR, toda la historia</h2>
+        <div class="flow">
+          <div class="flow-node">
+            <div class="bubble"><svg class="pitch-icon i-light" fill="currentColor" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><path d="M128 16a88.1 88.1 0 0 0-88 88c0 75.3 80 132.17 83.41 134.55a8 8 0 0 0 9.18 0C136 236.17 216 179.3 216 104a88.1 88.1 0 0 0-88-88m0 56a32 32 0 1 1-32 32a32 32 0 0 1 32-32"/></svg></div>
+            <span>Campo</span>
+          </div>
+          <span class="flow-arrow"><svg class="pitch-icon" fill="currentColor" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><path d="m224.49 136.49l-72 72a12 12 0 0 1-17-17L187 140H40a12 12 0 0 1 0-24h147l-51.49-51.52a12 12 0 0 1 17-17l72 72a12 12 0 0 1-.02 17.01"/></svg></span>
+          <div class="flow-node">
+            <div class="bubble bubble--qr"><svg class="pitch-icon i-light" fill="currentColor" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><path d="M120 56v48a16 16 0 0 1-16 16H56a16 16 0 0 1-16-16V56a16 16 0 0 1 16-16h48a16 16 0 0 1 16 16m-16 80H56a16 16 0 0 0-16 16v48a16 16 0 0 0 16 16h48a16 16 0 0 0 16-16v-48a16 16 0 0 0-16-16m96-96h-48a16 16 0 0 0-16 16v48a16 16 0 0 0 16 16h48a16 16 0 0 0 16-16V56a16 16 0 0 0-16-16m-56 144a8 8 0 0 0 8-8v-32a8 8 0 0 0-16 0v32a8 8 0 0 0 8 8m64-32h-24v-8a8 8 0 0 0-16 0v56h-24a8 8 0 0 0 0 16h32a8 8 0 0 0 8-8v-40h24a8 8 0 0 0 0-16m0 32a8 8 0 0 0-8 8v16a8 8 0 0 0 16 0v-16a8 8 0 0 0-8-8"/></svg></div>
+            <span>QR</span>
+          </div>
+          <span class="flow-arrow"><svg class="pitch-icon" fill="currentColor" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><path d="m224.49 136.49l-72 72a12 12 0 0 1-17-17L187 140H40a12 12 0 0 1 0-24h147l-51.49-51.52a12 12 0 0 1 17-17l72 72a12 12 0 0 1-.02 17.01"/></svg></span>
+          <div class="flow-node">
+            <div class="bubble"><svg class="pitch-icon i-light" fill="currentColor" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><path d="M176 16H80a24 24 0 0 0-24 24v176a24 24 0 0 0 24 24h96a24 24 0 0 0 24-24V40a24 24 0 0 0-24-24M80 32h96a8 8 0 0 1 8 8v8H72v-8a8 8 0 0 1 8-8m96 192H80a8 8 0 0 1-8-8v-8h112v8a8 8 0 0 1-8 8"/></svg></div>
+            <span>Turista</span>
+          </div>
+          <span class="flow-arrow"><svg class="pitch-icon" fill="currentColor" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><path d="m224.49 136.49l-72 72a12 12 0 0 1-17-17L187 140H40a12 12 0 0 1 0-24h147l-51.49-51.52a12 12 0 0 1 17-17l72 72a12 12 0 0 1-.02 17.01"/></svg></span>
+          <div class="flow-node">
+            <div class="bubble"><svg class="pitch-icon i-light" fill="currentColor" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><path d="m223.68 66.15l-88-48.15a15.88 15.88 0 0 0-15.36 0l-88 48.17a16 16 0 0 0-8.32 14v95.64a16 16 0 0 0 8.32 14l88 48.17a15.88 15.88 0 0 0 15.36 0l88-48.17a16 16 0 0 0 8.32-14V80.18a16 16 0 0 0-8.32-14.03M128 32l80.35 44l-29.78 16.29l-80.35-44Zm0 88L47.65 76l33.91-18.57l80.35 44Zm88 55.85l-80 43.79v-85.81l32-17.51V152a8 8 0 0 0 16 0v-44.44l32-17.51v85.76Z"/></svg></div>
+            <span>Exportación</span>
+          </div>
+        </div>
+        <div class="roles">
+          <span class="role-pill"><svg class="pitch-icon" fill="currentColor" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><path d="M216 40H40a16 16 0 0 0-16 16v144a16 16 0 0 0 16 16h176a16 16 0 0 0 16-16V56a16 16 0 0 0-16-16m-88 96a48.05 48.05 0 0 1-48-48a8 8 0 0 1 16 0a32 32 0 0 0 64 0a8 8 0 0 1 16 0a48.05 48.05 0 0 1-48 48"/></svg> Comprador</span>
+          <span class="role-pill"><svg class="pitch-icon" fill="currentColor" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><path d="M237.22 151.9v-.1a1.4 1.4 0 0 0-.07-.22a49 49 0 0 0-2.31-5.3L193.27 51.8a8 8 0 0 0-1.67-2.44a32 32 0 0 0-45.26 0A8 8 0 0 0 144 55v25h-32V55a8 8 0 0 0-2.34-5.66a32 32 0 0 0-45.26 0a8 8 0 0 0-1.67 2.44l-41.53 94.5a49 49 0 0 0-2.31 5.3a2 2 0 0 0-.07.21s0 .08 0 .11a48 48 0 0 0 90.32 32.51a47.5 47.5 0 0 0 2.9-16.59V96h32v71.83a47.5 47.5 0 0 0 2.9 16.59a48 48 0 0 0 90.32-32.51Zm-143.15 27a32 32 0 0 1-60.2-21.71l1.81-4.13A32 32 0 0 1 96 167.88v.12a32 32 0 0 1-1.93 10.94ZM203 198.07A32 32 0 0 1 160 168v-.11a32 32 0 0 1 60.32-14.78l1.81 4.13A32 32 0 0 1 203 198.07"/></svg> Operador</span>
+          <span class="role-pill"><svg class="pitch-icon" fill="currentColor" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><path d="M160 152a16 16 0 0 1-16 16h-8v-32h8a16 16 0 0 1 16 16m72-24A104 104 0 1 1 128 24a104.11 104.11 0 0 1 104 104m-56 24a32 32 0 0 0-32-32h-8V88h4a16 16 0 0 1 16 16a8 8 0 0 0 16 0a32 32 0 0 0-32-32h-4v-8a8 8 0 0 0-16 0v8h-4a32 32 0 0 0 0 64h4v32h-8a16 16 0 0 1-16-16a8 8 0 0 0-16 0a32 32 0 0 0 32 32h8v8a8 8 0 0 0 16 0v-8h8a32 32 0 0 0 32-32m-76-48a16 16 0 0 0 16 16h4V88h-4a16 16 0 0 0-16 16"/></svg> Exportador</span>
+          <span class="role-pill"><svg class="pitch-icon" fill="currentColor" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><path d="M80 172a12 12 0 1 1-12-12a12 12 0 0 1 12 12m40 0a52 52 0 1 1-52-52a52.06 52.06 0 0 1 52 52m-24 0a28 28 0 1 0-28 28a28 28 0 0 0 28-28m152 16a36 36 0 0 1-71.77 4H144a8 8 0 0 1-8-8v-12a68.07 68.07 0 0 0-68-68H40a8 8 0 0 1 0-16h8V56h-8a8 8 0 0 1 0-16h120a8 8 0 0 1 0 16h-8v41.88l24 6.5V72a8 8 0 0 1 16 0v36.71l36.39 9.86l.21.06A15.89 15.89 0 0 1 240 134v31.46a35.8 35.8 0 0 1 8 22.54m-20 0a16 16 0 1 0-16 16a16 16 0 0 0 16-16"/></svg> Productor</span>
+        </div>
+      </section>
+
+      <!-- 4 -->
+      <section class="slide">
+        <span class="slide-num">4 / 6</span>
+        <p class="eyebrow">Demo</p>
+        <h2>En vivo</h2>
+        <div class="demo-layout">
+          <div class="demo-flow">
+            <div class="demo-step">
+              <span class="num">1</span>
+              <svg class="pitch-icon step-icon i-brand" fill="currentColor" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><path d="M120 56v48a16 16 0 0 1-16 16H56a16 16 0 0 1-16-16V56a16 16 0 0 1 16-16h48a16 16 0 0 1 16 16m-16 80H56a16 16 0 0 0-16 16v48a16 16 0 0 0 16 16h48a16 16 0 0 0 16-16v-48a16 16 0 0 0-16-16m96-96h-48a16 16 0 0 0-16 16v48a16 16 0 0 0 16 16h48a16 16 0 0 0 16-16V56a16 16 0 0 0-16-16m-56 144a8 8 0 0 0 8-8v-32a8 8 0 0 0-16 0v32a8 8 0 0 0 8 8m64-32h-24v-8a8 8 0 0 0-16 0v56h-24a8 8 0 0 0 0 16h32a8 8 0 0 0 8-8v-40h24a8 8 0 0 0 0-16m0 32a8 8 0 0 0-8 8v16a8 8 0 0 0 16 0v-16a8 8 0 0 0-8-8"/></svg>
+              <label>Escanear</label>
+            </div>
+            <div class="demo-step">
+              <span class="num">2</span>
+              <svg class="pitch-icon step-icon i-brand" fill="currentColor" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><path d="M228 200a28 28 0 0 1-54.83 8H72a48 48 0 0 1 0-96h96a24 24 0 0 0 0-48H72a8 8 0 0 1 0-16h96a40 40 0 0 1 0 80H72a32 32 0 0 0 0 64h101.17a28 28 0 0 1 54.83 8"/></svg>
+              <label>Ruta del lote</label>
+            </div>
+            <div class="demo-step">
+              <span class="num">3</span>
+              <svg class="pitch-icon step-icon i-brand" fill="currentColor" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><path d="M128 24a104 104 0 0 0-91.82 152.88l-11.35 34.05a16 16 0 0 0 20.24 20.24l34.05-11.35A104 104 0 1 0 128 24M84 140a12 12 0 1 1 12-12a12 12 0 0 1-12 12m44 0a12 12 0 1 1 12-12a12 12 0 0 1-12 12m44 0a12 12 0 1 1 12-12a12 12 0 0 1-12 12"/></svg>
+              <label>Asistente IA</label>
+            </div>
+            <div class="demo-step">
+              <span class="num">4</span>
+              <svg class="pitch-icon step-icon i-brand" fill="currentColor" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><path d="M230.14 58.87A8 8 0 0 0 224 56H62.68L56.6 22.57A8 8 0 0 0 48.73 16H24a8 8 0 0 0 0 16h18l25.56 140.29a24 24 0 0 0 5.33 11.27a28 28 0 1 0 44.4 8.44h45.42a27.75 27.75 0 0 0-2.71 12a28 28 0 1 0 28-28H91.17a8 8 0 0 1-7.87-6.57L80.13 152h116a24 24 0 0 0 23.61-19.71l12.16-66.86a8 8 0 0 0-1.76-6.56M104 204a12 12 0 1 1-12-12a12 12 0 0 1 12 12m96 0a12 12 0 1 1-12-12a12 12 0 0 1 12 12"/></svg>
+              <label>Comprar</label>
+            </div>
+          </div>
+          <div class="demo-qr">
+            <p class="live">● Producción</p>
+            <img src="qr/finca-la-esperanza.png" alt="QR demo" />
+            <p class="hint">finca-la-esperanza</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 5 -->
+      <section class="slide">
+        <span class="slide-num">5 / 6</span>
+        <p class="eyebrow">Herramientas</p>
+        <h2>¿Con qué lo hicimos?</h2>
+        <div class="tech-row">
+          <div class="tech-item">
+            <div class="ring">
+              <svg class="pitch-icon i-brand" fill="currentColor" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><path d="M160.06 40a88.1 88.1 0 0 0-78.77 48.67A87.5 87.5 0 0 0 72 127.73a8.18 8.18 0 0 1-7.43 8.27a8 8 0 0 1-8.57-8a103.7 103.7 0 0 1 5.34-32.92a4 4 0 0 0-4.75-5.18A64.09 64.09 0 0 0 8 152c0 35.19 29.75 64 65 64h87a88.09 88.09 0 0 0 87.93-91.48C246.11 77.54 207.07 40 160.06 40"/></svg>
+            </div>
+            <strong>Vercel</strong>
+            <em>App en línea, rápida y estable</em>
+          </div>
+          <div class="tech-item">
+            <div class="ring">
+              <svg class="pitch-icon i-brand" fill="currentColor" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><path d="M128 24c-53.83 0-96 24.6-96 56v96c0 31.4 42.17 56 96 56s96-24.6 96-56V80c0-31.4-42.17-56-96-56m80 104c0 9.62-7.88 19.43-21.61 26.92C170.93 163.35 150.19 168 128 168s-42.93-4.65-58.39-13.08C55.88 147.43 48 137.62 48 128v-16.64c17.06 15 46.23 24.64 80 24.64s62.94-9.68 80-24.64Zm-21.61 74.92C170.93 211.35 150.19 216 128 216s-42.93-4.65-58.39-13.08C55.88 195.43 48 185.62 48 176v-16.64c17.06 15 46.23 24.64 80 24.64s62.94-9.68 80-24.64V176c0 9.62-7.88 19.43-21.61 26.92"/></svg>
+            </div>
+            <strong>Supabase</strong>
+            <em>Datos y usuarios en un solo lugar</em>
+          </div>
+          <div class="tech-item">
+            <div class="ring">
+              <svg class="pitch-icon i-brand" fill="currentColor" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><path d="M208 144a15.78 15.78 0 0 1-10.42 14.94L146 178l-19 51.62a15.92 15.92 0 0 1-29.88 0L78 178l-51.62-19a15.92 15.92 0 0 1 0-29.88L78 110l19-51.62a15.92 15.92 0 0 1 29.88 0L146 110l51.62 19A15.78 15.78 0 0 1 208 144m-56-96h16v16a8 8 0 0 0 16 0V48h16a8 8 0 0 0 0-16h-16V16a8 8 0 0 0-16 0v16h-16a8 8 0 0 0 0 16m88 32h-8v-8a8 8 0 0 0-16 0v8h-8a8 8 0 0 0 0 16h8v8a8 8 0 0 0 16 0v-8h8a8 8 0 0 0 0-16"/></svg>
+            </div>
+            <strong>Gemini</strong>
+            <em>IA del lote, no genérica</em>
+          </div>
+          <div class="tech-item">
+            <div class="ring">
+              <svg class="pitch-icon i-brand" fill="currentColor" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><path d="M225.86 102.82c-3.77-3.94-7.67-8-9.14-11.57c-1.36-3.27-1.44-8.69-1.52-13.94c-.15-9.76-.31-20.82-8-28.51s-18.75-7.85-28.51-8c-5.25-.08-10.67-.16-13.94-1.52c-3.56-1.47-7.63-5.37-11.57-9.14C146.28 23.51 138.44 16 128 16s-18.27 7.51-25.18 14.14c-3.94 3.77-8 7.67-11.57 9.14c-3.25 1.36-8.69 1.44-13.94 1.52c-9.76.15-20.82.31-28.51 8s-7.8 18.75-8 28.51c-.08 5.25-.16 10.67-1.52 13.94c-1.47 3.56-5.37 7.63-9.14 11.57C23.51 109.72 16 117.56 16 128s7.51 18.27 14.14 25.18c3.77 3.94 7.67 8 9.14 11.57c1.36 3.27 1.44 8.69 1.52 13.94c.15 9.76.31 20.82 8 28.51s18.75 7.85 28.51 8c5.25.08 10.67.16 13.94 1.52c3.56 1.47 7.63 5.37 11.57 9.14c6.9 6.63 14.74 14.14 25.18 14.14s18.27-7.51 25.18-14.14c3.94-3.77 8-7.67 11.57-9.14c3.27-1.36 8.69-1.44 13.94-1.52c9.76-.15 20.82-.31 28.51-8s7.85-18.75 8-28.51c.08-5.25.16-10.67 1.52-13.94c1.47-3.56 5.37-7.63 9.14-11.57c6.63-6.9 14.14-14.74 14.14-25.18s-7.51-18.27-14.14-25.18m-52.2 6.84l-56 56a8 8 0 0 1-11.32 0l-24-24a8 8 0 0 1 11.32-11.32L112 148.69l50.34-50.35a8 8 0 0 1 11.32 11.32"/></svg>
+            </div>
+            <strong>Sello digital</strong>
+            <em>Prueba pública del registro</em>
+          </div>
+        </div>
+        <div class="trust-icons" aria-hidden="true">
+          <div class="trust-ring" title="Trazabilidad">
+            <svg class="pitch-icon i-brand" fill="currentColor" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><path d="M200 32h-36.26a47.92 47.92 0 0 0-71.48 0H56a16 16 0 0 0-16 16v168a16 16 0 0 0 16 16h144a16 16 0 0 0 16-16V48a16 16 0 0 0-16-16m-72 0a32 32 0 0 1 32 32H96a32 32 0 0 1 32-32m32 128H96a8 8 0 0 1 0-16h64a8 8 0 0 1 0 16m0-32H96a8 8 0 0 1 0-16h64a8 8 0 0 1 0 16"/></svg>
+          </div>
+          <div class="trust-ring" title="Sello digital">
+            <svg class="pitch-icon i-brand" fill="currentColor" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><path d="M208 32H48a16 16 0 0 0-16 16v160a16 16 0 0 0 16 16h160a16 16 0 0 0 16-16V48a16 16 0 0 0-16-16m-63.44 141.66l-21.45 21.45a44 44 0 0 1-62.22-62.22l21.45-21.46a8 8 0 0 1 11.32 11.31L72.2 144.2a28 28 0 0 0 39.6 39.6l21.45-21.46a8 8 0 0 1 11.31 11.32m-34.9-16a8 8 0 0 1-11.32-11.32l48-48a8 8 0 0 1 11.32 11.32Zm85.45-34.55l-21.45 21.45a8 8 0 0 1-11.32-11.31l21.46-21.45a28 28 0 0 0-39.6-39.6l-21.46 21.46a8 8 0 0 1-11.31-11.32l21.46-21.45a44 44 0 0 1 62.22 62.22"/></svg>
+          </div>
+          <div class="trust-ring" title="Transparencia">
+            <svg class="pitch-icon i-brand" fill="currentColor" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><path d="M247.31 124.76c-.35-.79-8.82-19.58-27.65-38.41C194.57 61.26 162.88 48 128 48S61.43 61.26 36.34 86.35C17.51 105.18 9 124 8.69 124.76a8 8 0 0 0 0 6.5c.35.79 8.82 19.57 27.65 38.4C61.43 194.74 93.12 208 128 208s66.57-13.26 91.66-38.34c18.83-18.83 27.3-37.61 27.65-38.4a8 8 0 0 0 0-6.5M128 168a40 40 0 1 1 40-40a40 40 0 0 1-40 40"/></svg>
+          </div>
+        </div>
+      </section>
+
+      <!-- 6 -->
+      <section class="slide slide--split">
+        <span class="slide-num">6 / 6</span>
+        <div class="slide-panel">
+          <p class="eyebrow">Cierre</p>
+          <h2>Impacto · Piloto</h2>
+          <div class="impact-split">
+          <div class="impact-block">
+            <svg class="pitch-icon big-icon" fill="currentColor" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><path d="M240 102c0 70-103.79 126.66-108.21 129a8 8 0 0 1-7.58 0C119.79 228.66 16 172 16 102a62.07 62.07 0 0 1 62-62c20.65 0 38.73 8.88 50 23.89C139.27 48.88 157.35 40 178 40a62.07 62.07 0 0 1 62 62"/></svg>
+            <ul class="impact-list">
+              <li><span class="dot"></span> Confianza</li>
+              <li><span class="dot"></span> Ventas medibles</li>
+              <li><span class="dot"></span> Exportación</li>
+            </ul>
+          </div>
+          <div class="impact-block">
+            <svg class="pitch-icon big-icon" fill="currentColor" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><path d="M128 24a104 104 0 1 0 104 104A104.11 104.11 0 0 0 128 24m45.66 85.66l-56 56a8 8 0 0 1-11.32 0l-24-24a8 8 0 0 1 11.32-11.32L112 148.69l50.34-50.35a8 8 0 0 1 11.32 11.32"/></svg>
+            <ul class="impact-list">
+              <li><span class="dot"></span> MVP listo</li>
+              <li><span class="dot"></span> Fincas aliadas</li>
+            </ul>
+          </div>
+        </div>
+          <p class="closing">¿Preguntas?</p>
+        </div>
+        <div class="slide-media" aria-hidden="true">
+          <img src="images/coffee-farm.jpg" alt="Territorio y finca" />
+        </div>
+      </section>
+    </main>
+    <script>
+      (function () {
+        var slides = Array.prototype.slice.call(document.querySelectorAll(".deck .slide"));
+        var index = 0;
+
+        function show(i) {
+          if (i < 0 || i >= slides.length) return;
+          slides[index].classList.remove("is-active");
+          index = i;
+          slides[index].classList.add("is-active");
+        }
+
+        function next() {
+          show(Math.min(index + 1, slides.length - 1));
+        }
+
+        function prev() {
+          show(Math.max(index - 1, 0));
+        }
+
+        slides[0].classList.add("is-active");
+        document.body.tabIndex = -1;
+        document.body.focus();
+
+        document.addEventListener("keydown", function (e) {
+          if (e.key === "ArrowRight" || e.key === "ArrowDown" || e.key === "PageDown" || e.key === " ") {
+            e.preventDefault();
+            next();
+          } else if (e.key === "ArrowLeft" || e.key === "ArrowUp" || e.key === "PageUp") {
+            e.preventDefault();
+            prev();
+          } else if (e.key === "Home") {
+            e.preventDefault();
+            show(0);
+          } else if (e.key === "End") {
+            e.preventDefault();
+            show(slides.length - 1);
+          }
+        });
+      })();
+    </script>
+  </body>
+</html>

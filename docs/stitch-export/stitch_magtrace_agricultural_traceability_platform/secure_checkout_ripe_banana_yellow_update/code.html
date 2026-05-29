@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Checkout - MagTrace</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@500;600&amp;family=Plus+Jakarta+Sans:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        "colors": {
+                "on-secondary-container": "#217128",
+                "outline-variant": "#d3c3c0",
+                "on-tertiary-fixed": "#221b00",
+                "on-primary-container": "#ae8d87",
+                "on-primary-fixed-variant": "#5b403c",
+                "on-secondary-fixed": "#002204",
+                "secondary-fixed-dim": "#88d982",
+                "on-error-container": "#93000a",
+                "error": "#ba1a1a",
+                "secondary": "#1b6d24",
+                "outline": "#827472",
+                "tertiary": "#705d00",
+                "surface-dim": "#ddd9d5",
+                "on-secondary": "#ffffff",
+                "tertiary-fixed": "#ffe16d",
+                "secondary-container": "#a0f399",
+                "background": "#fdf9f4",
+                "on-primary": "#ffffff",
+                "surface-container": "#f1ede8",
+                "surface-container-lowest": "#ffffff",
+                "secondary-fixed": "#a3f69c",
+                "on-surface-variant": "#504442",
+                "surface-container-high": "#ebe8e3",
+                "surface": "#fdf9f4",
+                "inverse-surface": "#31302d",
+                "tertiary-fixed-dim": "#e9c400",
+                "primary-fixed-dim": "#e3beb8",
+                "on-secondary-fixed-variant": "#005312",
+                "tertiary-container": "#c9a900",
+                "surface-variant": "#e6e2dd",
+                "on-background": "#1c1c19",
+                "on-surface": "#1c1c19",
+                "primary": "#271310",
+                "on-tertiary-container": "#4c3f00",
+                "primary-fixed": "#ffdad4",
+                "surface-bright": "#fdf9f4",
+                "on-primary-fixed": "#2b1613",
+                "inverse-primary": "#e3beb8",
+                "surface-container-low": "#f7f3ee",
+                "on-tertiary": "#ffffff",
+                "on-error": "#ffffff",
+                "inverse-on-surface": "#f4f0eb",
+                "on-tertiary-fixed-variant": "#544600",
+                "error-container": "#ffdad6",
+                "primary-container": "#3e2723",
+                "surface-tint": "#745853",
+                "surface-container-highest": "#e6e2dd"
+        },
+        "borderRadius": {
+                "DEFAULT": "0.125rem",
+                "lg": "0.25rem",
+                "xl": "0.5rem",
+                "full": "0.75rem"
+        },
+        "spacing": {
+                "max-width": "1280px",
+                "margin-desktop": "64px",
+                "margin-mobile": "20px",
+                "gutter": "24px",
+                "unit": "8px",
+                "container-padding-mobile": "24px",
+                "container-padding-desktop": "48px"
+        },
+        "fontFamily": {
+                "body-lg": [
+                        "Manrope"
+                ],
+                "label-md": [
+                        "Manrope"
+                ],
+                "display-lg": [
+                        "EB Garamond"
+                ],
+                "body-md": [
+                        "Manrope"
+                ],
+                "headline-md": [
+                        "EB Garamond"
+                ],
+                "headline-lg-mobile": [
+                        "EB Garamond"
+                ],
+                "headline-lg": [
+                        "EB Garamond"
+                ],
+                "label-sm": [
+                        "Manrope"
+                ]
+        },
+        "fontSize": {
+                "body-lg": [
+                        "18px",
+                        {
+                                "lineHeight": "28px",
+                                "fontWeight": "400"
+                        }
+                ],
+                "label-md": [
+                        "14px",
+                        {
+                                "lineHeight": "20px",
+                                "letterSpacing": "0.05em",
+                                "fontWeight": "600"
+                        }
+                ],
+                "display-lg": [
+                        "48px",
+                        {
+                                "lineHeight": "56px",
+                                "letterSpacing": "-0.02em",
+                                "fontWeight": "500"
+                        }
+                ],
+                "body-md": [
+                        "16px",
+                        {
+                                "lineHeight": "24px",
+                                "fontWeight": "400"
+                        }
+                ],
+                "headline-md": [
+                        "24px",
+                        {
+                                "lineHeight": "32px",
+                                "fontWeight": "500"
+                        }
+                ],
+                "headline-lg-mobile": [
+                        "28px",
+                        {
+                                "lineHeight": "36px",
+                                "fontWeight": "500"
+                        }
+                ],
+                "headline-lg": [
+                        "32px",
+                        {
+                                "lineHeight": "40px",
+                                "fontWeight": "500"
+                        }
+                ],
+                "label-sm": [
+                        "12px",
+                        {
+                                "lineHeight": "16px",
+                                "fontWeight": "600"
+                        }
+                ]
+        }
+},
+    },
+  }
+</script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+        .icon-fill {
+            font-variation-settings: 'FILL' 1, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+        /* Hide scrollbar for clean minimal look */
+        ::-webkit-scrollbar {
+            width: 0px;
+            background: transparent;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="bg-background text-on-background font-body-md antialiased min-h-screen flex flex-col">
+<!-- Transactional Header (Nav Suppressed) -->
+<header class="sticky top-0 z-50 bg-background/80 backdrop-blur-xl border-b border-surface-variant/30">
+<div class="max-w-3xl mx-auto px-container-padding-mobile md:px-container-padding-desktop h-16 flex items-center justify-between">
+<button aria-label="Go back" class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-variant/50 transition-colors active:scale-95 text-on-surface">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<h1 class="font-headline-md text-headline-md text-primary tracking-tight">Checkout</h1>
+<div class="w-10"></div> <!-- Spacer for center alignment -->
+</div>
+</header>
+<main class="flex-grow max-w-3xl mx-auto w-full px-container-padding-mobile md:px-container-padding-desktop py-8 space-y-10 pb-32">
+<!-- Product Summary -->
+<section>
+<h2 class="font-label-md text-label-md text-outline uppercase tracking-wider mb-4">Order Summary</h2>
+<div class="bg-tertiary-fixed/20 rounded-xl shadow-[0_4px_30px_rgba(75,54,33,0.05)] border border-tertiary-fixed/40 p-4 flex flex-col sm:flex-row gap-6">
+<!-- Image -->
+<div class="w-full sm:w-32 h-32 rounded-lg overflow-hidden shrink-0 bg-surface-container-high">
+<div class="w-full h-full bg-cover bg-center" data-alt="Close up macro photography of freshly roasted premium coffee beans resting on a rustic woven burlap surface. Soft, warm natural sunlight streams across the beans, highlighting their glossy oils and rich deep brown textures. The background is softly blurred, emphasizing the organic agricultural origin. The overall aesthetic is rich, warm minimalism suited for a high-end specialty brand." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAKuZ5COPjcdx3siIGuK8kxWvm_IYjDi1uhWQuYF-SL2ip5N6M3udeTH1dEFmyS71FWbZWNHiphUWXVQnvQ7J0tv0C-ssTYwuvDQDtiyyemE9Lbu7TgBC03OHRDbpholeCR2WkdAcsOUwoTqFhJEsWcpyT2MKUQVMUjitymse7bIEKm5ZX831u0cbik40oNYB6dYI9feW_bkQRK3gmm48nweK5FFBZhRs462evZfga_xGiFA5cqIBXNPJ_8C8y0auuFtsodeVsoyiP-');">
+</div>
+</div>
+<!-- Details -->
+<div class="flex-grow flex flex-col justify-between">
+<div>
+<div class="flex items-start justify-between gap-4">
+<h3 class="font-headline-md text-headline-md text-on-surface">Finca El Paraiso <br/><span class="text-body-lg text-outline">Geisha Natural</span></h3>
+<span class="font-headline-md text-headline-md text-primary">$45.00</span>
+</div>
+<div class="flex gap-2 mt-2">
+<span class="px-2 py-1 bg-tertiary-fixed text-on-tertiary-container font-label-sm text-label-sm rounded-full border border-transparent">250g Whole Bean</span>
+<span class="px-2 py-1 bg-tertiary-fixed text-on-tertiary-container font-label-sm text-label-sm rounded-full border border-transparent">Huila, COL</span>
+</div>
+</div>
+<!-- Quantity Selector -->
+<div class="mt-4 flex items-center justify-between">
+<span class="font-label-md text-label-md text-outline">Quantity</span>
+<div class="flex items-center gap-4 bg-surface-container-lowest rounded-full px-2 py-1 border border-surface-variant">
+<button class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-tertiary-fixed/50 text-on-surface transition-colors active:scale-95" id="qty-minus">
+<span class="material-symbols-outlined text-[20px]">remove</span>
+</button>
+<span class="font-label-md text-label-md w-4 text-center" id="qty-value">1</span>
+<button class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-tertiary-fixed/50 text-on-surface transition-colors active:scale-95" id="qty-plus">
+<span class="material-symbols-outlined text-[20px]">add</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Fulfillment Options -->
+<section>
+<h2 class="font-label-md text-label-md text-outline uppercase tracking-wider mb-4">Fulfillment Method</h2>
+<div class="space-y-4">
+<!-- Option 1 -->
+<label class="group relative flex items-start gap-4 p-5 rounded-xl border border-surface-variant bg-surface cursor-pointer hover:bg-surface-container-low transition-colors duration-200">
+<input checked="" class="peer sr-only" name="fulfillment" type="radio" value="local"/>
+<div class="w-6 h-6 rounded-full border-2 border-outline peer-checked:border-tertiary-container peer-checked:bg-tertiary-container flex items-center justify-center shrink-0 mt-0.5 transition-all">
+<div class="w-2 h-2 rounded-full bg-surface scale-0 peer-checked:scale-100 transition-transform"></div>
+</div>
+<div class="flex-grow">
+<div class="flex items-center gap-2 mb-1">
+<span class="material-symbols-outlined text-outline peer-checked:group-[]:text-tertiary-container">storefront</span>
+<span class="font-label-md text-label-md text-on-surface">Local Pickup</span>
+</div>
+<p class="font-body-md text-body-md text-outline">Santa Marta Roastery. Ready in 2 hours.</p>
+</div>
+<span class="font-label-md text-label-md text-on-surface shrink-0">Free</span>
+<!-- Active State Ring -->
+<div class="absolute inset-0 rounded-xl border-2 border-transparent peer-checked:border-tertiary-container/30 pointer-events-none transition-colors"></div>
+</label>
+<!-- Option 2 -->
+<label class="group relative flex items-start gap-4 p-5 rounded-xl border border-surface-variant bg-surface cursor-pointer hover:bg-surface-container-low transition-colors duration-200">
+<input class="peer sr-only" name="fulfillment" type="radio" value="export"/>
+<div class="w-6 h-6 rounded-full border-2 border-outline peer-checked:border-tertiary-container peer-checked:bg-tertiary-container flex items-center justify-center shrink-0 mt-0.5 transition-all">
+<div class="w-2 h-2 rounded-full bg-surface scale-0 peer-checked:scale-100 transition-transform"></div>
+</div>
+<div class="flex-grow">
+<div class="flex items-center gap-2 mb-1">
+<span class="material-symbols-outlined text-outline peer-checked:group-[]:text-tertiary-container">flight_takeoff</span>
+<span class="font-label-md text-label-md text-on-surface">International Export</span>
+</div>
+<p class="font-body-md text-body-md text-outline">Global shipping via DHL. 5-7 business days.</p>
+</div>
+<span class="font-label-md text-label-md text-on-surface shrink-0">$15.00</span>
+<!-- Active State Ring -->
+<div class="absolute inset-0 rounded-xl border-2 border-transparent peer-checked:border-tertiary-container/30 pointer-events-none transition-colors"></div>
+</label>
+</div>
+</section>
+<!-- Price Breakdown -->
+<section class="border-t border-surface-variant/50 pt-8">
+<div class="space-y-3">
+<div class="flex justify-between items-center text-on-surface-variant">
+<span class="font-body-md text-body-md">Subtotal</span>
+<span class="font-body-md text-body-md" id="subtotal-display">$45.00</span>
+</div>
+<div class="flex justify-between items-center text-on-surface-variant">
+<span class="font-body-md text-body-md">Shipping</span>
+<span class="font-body-md text-body-md" id="shipping-display">$0.00</span>
+</div>
+<div class="flex justify-between items-end pt-4">
+<span class="font-label-md text-label-md text-outline">Total</span>
+<span class="font-display-lg text-display-lg text-primary" id="total-display">$45.00</span>
+</div>
+</div>
+</section>
+</main>
+<!-- Fixed Bottom CTA -->
+<div class="fixed bottom-0 left-0 w-full bg-background/90 backdrop-blur-xl border-t border-surface-variant/30 p-container-padding-mobile pb-safe flex justify-center z-40">
+<div class="max-w-3xl w-full">
+<button class="w-full h-14 bg-primary-container text-on-primary-container rounded-full flex items-center justify-center gap-3 font-label-md text-label-md shadow-lg active:scale-[0.98] transition-transform duration-200 hover:opacity-90">
+<span class="material-symbols-outlined icon-fill text-[20px]">lock</span>
+                Confirm Purchase
+            </button>
+</div>
+</div>
+<script>
+        // Minimal interaction logic for prototype feel
+        const qtyMinus = document.getElementById('qty-minus');
+        const qtyPlus = document.getElementById('qty-plus');
+        const qtyValue = document.getElementById('qty-value');
+        const radios = document.querySelectorAll('input[name="fulfillment"]');
+        const subtotalDisplay = document.getElementById('subtotal-display');
+        const shippingDisplay = document.getElementById('shipping-display');
+        const totalDisplay = document.getElementById('total-display');
+
+        const basePrice = 45.00;
+        let currentQty = 1;
+        let shippingCost = 0.00;
+
+        function updateTotals() {
+            const subtotal = basePrice * currentQty;
+            const total = subtotal + shippingCost;
+            
+            subtotalDisplay.textContent = `$${subtotal.toFixed(2)}`;
+            shippingDisplay.textContent = shippingCost === 0 ? '$0.00' : `$${shippingCost.toFixed(2)}`;
+            totalDisplay.textContent = `$${total.toFixed(2)}`;
+        }
+
+        qtyMinus.addEventListener('click', () => {
+            if (currentQty > 1) {
+                currentQty--;
+                qtyValue.textContent = currentQty;
+                updateTotals();
+            }
+        });
+
+        qtyPlus.addEventListener('click', () => {
+            currentQty++;
+            qtyValue.textContent = currentQty;
+            updateTotals();
+        });
+
+        radios.forEach(radio => {
+            radio.addEventListener('change', (e) => {
+                if(e.target.value === 'export') {
+                    shippingCost = 15.00;
+                } else {
+                    shippingCost = 0.00;
+                }
+                updateTotals();
+            });
+        });
+    </script>
+</body></html>
