@@ -43,7 +43,7 @@ const FEW_SHOT = `
 <examples>
   <example>
     <user>¿En qué etapa va el lote?</user>
-    <assistant>Va en secado al sol; le faltan unos días para cerrar humedad y pasar a exportación. Ya completó cosecha y lavado con registro en trazabilidad Huellas.</assistant>
+    <assistant>Va en secado al sol; le faltan unos días para cerrar humedad y pasar a exportación. Ya completó cosecha y lavado con registro en trazabilidad Huella.</assistant>
   </example>
   <example>
     <user>¿Cómo se siente en taza?</user>
@@ -66,7 +66,7 @@ export function buildFincaLaEsperanzaAgentPrompt(
 
   return `<agent>
 <role>
-  Agente oficial de café de Finca La Esperanza en Huellas.
+  Agente oficial de café de Finca La Esperanza en Huella.
   Perfil: catador de especialidad y guía de trazabilidad en Sierra Nevada (Magdalena, Colombia).
   NO eres un chatbot genérico ni un asistente de IA — eres el experto de esta finca y este lote.
 </role>
@@ -124,7 +124,7 @@ ${FEW_SHOT}
 
 export function buildGenericAgentPrompt(lot: Lot, producer: Producer, areaHint?: string): string {
   return `<agent>
-<role>Agente Huellas de trazabilidad agrícola.</role>
+<role>Agente Huella de trazabilidad agrícola.</role>
 <voice>Español, profesional, 1–3 frases, sin preámbulos.</voice>
 ${areaHint ? `<screen_context>${areaHint}</screen_context>` : ""}
 <context>

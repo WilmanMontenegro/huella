@@ -1,15 +1,13 @@
 import Link from "next/link";
 import { AuthNav } from "@/components/auth/AuthNav";
-import { HuellasLogo } from "@/components/brand/HuellasLogo";
+import { HuellaLogo } from "@/components/brand/HuellaLogo";
 import { MaterialIcon } from "@/components/icons/MaterialIcon";
-import { LotQrCode } from "@/components/product/LotQrCode";
 import { DEMO_LOT_ID } from "@/lib/data/lots-repository";
 
 export default function HomePage() {
   return (
     <div className="flex min-h-screen flex-col">
-      <header className="mx-auto flex h-16 w-full max-w-content items-center justify-between px-container-padding-mobile md:px-margin-desktop">
-        <HuellasLogo priority />
+      <header className="mx-auto flex w-full max-w-content items-center justify-end px-container-padding-mobile py-4 md:px-margin-desktop">
         <div className="flex items-center gap-4">
           <AuthNav />
           <Link href="/productor/dashboard" className="font-body text-label-md text-secondary hover:text-primary">
@@ -18,27 +16,27 @@ export default function HomePage() {
         </div>
       </header>
 
-      <main className="mx-auto flex max-w-prose flex-1 flex-col justify-center px-container-padding-mobile py-16 text-center md:px-margin-desktop">
+      <main className="mx-auto flex max-w-prose flex-1 flex-col justify-center px-container-padding-mobile pb-16 pt-4 text-center md:px-margin-desktop">
+        <div className="mb-8 flex justify-center sm:mb-10">
+          <HuellaLogo variant="vertical" size="hero" href={undefined} priority />
+        </div>
+
         <p className="mb-4 font-body text-label-md uppercase tracking-widest text-outline">Magdalena · Colombia 5.0</p>
         <h1 className="mb-6 font-display text-headline-lg-mobile text-primary md:text-display-lg">
           Del campo al turista, con historia verificable
         </h1>
         <p className="mb-10 font-body text-body-lg text-on-surface-variant">
           Un turista prueba el mejor café de su vida en Santa Marta. Quiere llevárselo a su país — pero no sabe de
-          dónde viene. Huellas conecta cada lote con su agricultor, su trazabilidad y su compra.
+          dónde viene. Huella conecta cada lote con su agricultor, su trazabilidad y su compra.
         </p>
-
-        <div className="mb-10 flex justify-center">
-          <LotQrCode lotSlug={DEMO_LOT_ID} size={120} label="Demo · Finca La Esperanza" showUrl={false} />
-        </div>
 
         <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
           <Link
             href={`/producto/${DEMO_LOT_ID}`}
             className="flex h-14 w-full max-w-xs items-center justify-center gap-2 rounded-full bg-primary font-body text-label-md text-on-primary shadow-lg transition-transform hover:bg-primary/90 active:scale-95 sm:w-auto sm:px-10"
           >
-            <MaterialIcon name="qr_code_scanner" />
-            Escanea un producto
+            <MaterialIcon name="eco" />
+            Ver trazabilidad demo
           </Link>
           <Link
             href="/productor/dashboard"

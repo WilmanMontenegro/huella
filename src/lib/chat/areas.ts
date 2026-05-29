@@ -21,11 +21,11 @@ export interface ChatAreaConfig {
 
 export const CHAT_AREA_CONFIG: Record<ChatArea, ChatAreaConfig> = {
   landing: {
-    title: "Asistente Huellas",
+    title: "Asistente Huella",
     greeting:
-      "Hola, soy tu guía en Huellas. Te ayudo a entender cómo funciona la trazabilidad y qué puedes hacer aquí.",
+      "Hola, soy tu guía en Huella. Te ayudo a entender cómo funciona la trazabilidad y qué puedes hacer aquí.",
     suggestions: [
-      "¿Qué es Huellas?",
+      "¿Qué es Huella?",
       "¿Cómo escaneo un producto?",
       "¿Puedo comprar y llevar café a mi país?",
       "¿Qué gana el productor?",
@@ -129,7 +129,7 @@ export const CHAT_AREA_CONFIG: Record<ChatArea, ChatAreaConfig> = {
   },
   "producer-dashboard": {
     title: "Asistente productor",
-    greeting: "Te ayudo a gestionar lotes, trazabilidad y ventas en Huellas.",
+    greeting: "Te ayudo a gestionar lotes, trazabilidad y ventas en Huella.",
     suggestions: [
       "¿Cómo registro un nuevo lote?",
       "¿Cómo comparto el QR con turistas?",
@@ -148,10 +148,10 @@ export const CHAT_AREA_CONFIG: Record<ChatArea, ChatAreaConfig> = {
     ],
   },
   general: {
-    title: "Asistente Huellas",
+    title: "Asistente Huella",
     greeting: "Hola, ¿en qué te puedo ayudar hoy?",
     suggestions: [
-      "¿Qué puedo hacer en Huellas?",
+      "¿Qué puedo hacer en Huella?",
       "¿Cómo funciona la trazabilidad?",
       "¿Dónde veo un producto demo?",
     ],

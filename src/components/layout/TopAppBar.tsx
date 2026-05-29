@@ -11,7 +11,7 @@ interface TopAppBarProps {
 }
 
 export function TopAppBar({
-  title = "Huellas",
+  title = "Huella",
   backHref,
   rightAction,
   variant = "default",

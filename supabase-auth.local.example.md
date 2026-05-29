@@ -1,4 +1,4 @@
-# Huellas — Auth OAuth (plantilla)
+# Huella — Auth OAuth (plantilla)
 
 Copia este archivo a `supabase-auth.local.md` y completa con los valores de tu proyecto Supabase.
 

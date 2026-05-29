@@ -39,7 +39,7 @@ export function ExportadorClient({
           Solicitudes de exportación
         </h2>
         <p className="mt-2 font-body text-body-md text-on-surface-variant">
-          Aprueba pedidos internacionales vinculados a lotes trazables Huellas.
+          Aprueba pedidos internacionales vinculados a lotes trazables Huella.
         </p>
       </header>
 

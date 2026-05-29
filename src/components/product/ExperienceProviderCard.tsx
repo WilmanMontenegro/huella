@@ -15,13 +15,13 @@ function buildWhatsAppUrl(phone: string, message: string): string {
 
 const MOCK_WHATSAPP: Record<string, string> = {
   "Experiencias Don José": "573001234567",
-  "Huellas Tours": "573009876543",
+  "Huella Tours": "573009876543",
   "Magdalena Roots Travel": "573001112233",
 };
 
 export function ExperienceProviderCard({ provider, experienceTitle }: ExperienceProviderCardProps) {
   const phone = provider.whatsapp ?? MOCK_WHATSAPP[provider.agencyName];
-  const waMessage = `Hola ${provider.agencyName}, vi en Huellas la experiencia "${experienceTitle ?? "tour en la finca"}" y me gustaría reservar.`;
+  const waMessage = `Hola ${provider.agencyName}, vi en Huella la experiencia "${experienceTitle ?? "tour en la finca"}" y me gustaría reservar.`;
   const waUrl = phone ? buildWhatsAppUrl(phone, waMessage) : null;
 
   return (

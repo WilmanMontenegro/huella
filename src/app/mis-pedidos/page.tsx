@@ -17,7 +17,7 @@ export default function MisPedidosPage() {
     <>
       <TopAppBar title="Mis pedidos" backHref="/" />
       <main className="mx-auto max-w-content px-margin-mobile pb-24 pt-24 md:px-margin-desktop">
-        <h2 className="mb-6 font-display text-headline-md text-primary">Tus compras Huellas</h2>
+        <h2 className="mb-6 font-display text-headline-md text-primary">Tus compras Huella</h2>
 
         {pedidos.length === 0 ? (
           <div className="rounded-xl border border-outline-variant bg-surface-container-lowest p-8 text-center">

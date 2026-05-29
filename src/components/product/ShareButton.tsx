@@ -11,7 +11,7 @@ interface ShareButtonProps {
 export function ShareButton({ lotSlug, title }: ShareButtonProps) {
   async function handleShare() {
     const url = getProductPublicUrl(lotSlug);
-    const payload = { title, text: `Trazabilidad Huellas — ${title}`, url };
+    const payload = { title, text: `Trazabilidad Huella — ${title}`, url };
 
     if (navigator.share) {
       try {

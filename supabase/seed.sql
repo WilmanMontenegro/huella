@@ -1,4 +1,4 @@
--- Huellas · Seed MVP Finca La Esperanza
+-- Huella · Seed MVP Finca La Esperanza
 -- Ejecutar DESPUÉS de schema.sql
 
 -- IDs fijos para coherencia entre entornos
@@ -132,7 +132,7 @@ insert into certificaciones (lote_id, tipo, label) values
 -- Agencias
 insert into agencias (id, slug, nombre, whatsapp) values
   ('33333333-3333-3333-3333-333333333301', 'experiencias-don-jose', 'Experiencias Don José', '573001234567'),
-  ('33333333-3333-3333-3333-333333333302', 'huellas-tours', 'Huellas Tours', '573009876543'),
+  ('33333333-3333-3333-3333-333333333302', 'huella-tours', 'Huella Tours', '573009876543'),
   ('33333333-3333-3333-3333-333333333303', 'sierra-coffee', 'Sierra Coffee Agency', null),
   ('33333333-3333-3333-3333-333333333304', 'magdalena-roots', 'Magdalena Roots Travel', null),
   ('33333333-3333-3333-3333-333333333305', 'andes-experience', 'Andes Experience Co.', null)
@@ -170,7 +170,7 @@ delete from experiencia_proveedores where experiencia_id = '44444444-4444-4444-4
 
 insert into experiencia_proveedores (experiencia_id, agencia_id, agency_name, descripcion, duracion, precio, punto_encuentro, capacidad, idiomas) values
   ('44444444-4444-4444-4444-444444444401', '33333333-3333-3333-3333-333333333301', 'Experiencias Don José', 'Tour directo con la familia productora en Finca La Esperanza.', '3 horas', 85, 'Entrada principal "Finca La Esperanza"', '12 personas', array['Español']),
-  ('44444444-4444-4444-4444-444444444401', '33333333-3333-3333-3333-333333333302', 'Huellas Tours', 'Incluye guía bilingüe y kit de cata para llevar.', '3.5 horas', 95, 'Centro de Minca · punto Huellas', '10 personas', array['Español', 'Inglés']),
+  ('44444444-4444-4444-4444-444444444401', '33333333-3333-3333-3333-333333333302', 'Huella Tours', 'Incluye guía bilingüe y kit de cata para llevar.', '3.5 horas', 95, 'Centro de Minca · punto Huella', '10 personas', array['Español', 'Inglés']),
   ('44444444-4444-4444-4444-444444444401', '33333333-3333-3333-3333-333333333303', 'Sierra Coffee Agency', 'Grupo pequeño con enfoque fotográfico y cata comparativa.', '4 horas', 78, 'Plaza de Minca', '6 personas', array['Español']);
 
 delete from experiencia_proveedores where experiencia_id = '44444444-4444-4444-4444-444444444402';

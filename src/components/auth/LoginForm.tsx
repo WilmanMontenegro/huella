@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { MaterialIcon } from "@/components/icons/MaterialIcon";
-import { HuellasLogo } from "@/components/brand/HuellasLogo";
+import { HuellaLogo } from "@/components/brand/HuellaLogo";
 import { createClientIfConfigured } from "@/lib/supabase/client";
 
 interface LoginFormProps {
@@ -140,11 +140,11 @@ export function LoginForm({ redirectTo = "/", authError = false }: LoginFormProp
   return (
     <div className="mx-auto w-full max-w-md rounded-xl border border-outline-variant bg-surface-container-lowest p-8 shadow-organic-lg">
       <div className="mb-6 flex justify-center">
-        <HuellasLogo variant="vertical" href={undefined} priority />
+        <HuellaLogo variant="vertical" href={undefined} priority />
       </div>
-      <h1 className="mb-2 text-center font-display text-headline-md text-primary">Entrar a Huellas</h1>
+      <h1 className="mb-2 text-center font-display text-headline-md text-primary">Entrar a Huella</h1>
       <p className="mb-8 text-center font-body text-body-md text-on-surface-variant">
-        Un clic con Google para comprar, reservar tours y ver tus pedidos.
+        Inicia sesión solo para comprar. Ver trazabilidad y tours no requiere cuenta.
       </p>
 
       {message && (

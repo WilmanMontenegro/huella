@@ -98,7 +98,7 @@ export function Timeline({ steps, title = "El camino de tu café", verification 
                   rel="noopener noreferrer"
                   className="font-body text-label-sm text-outline hover:text-primary"
                 >
-                  Detalle técnico · contrato Huellas (blockchain)
+                  Detalle técnico · contrato Huella (blockchain)
                 </a>
               )}
             </div>

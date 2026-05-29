@@ -13,7 +13,7 @@ interface Message {
   content: string;
 }
 
-export function HuellasAssistant() {
+export function HuellaAssistant() {
   const pathname = usePathname();
   const { area, lotId, isOpen, openChat, closeChat } = useChat();
   const config = CHAT_AREA_CONFIG[area];
@@ -153,7 +153,7 @@ export function HuellasAssistant() {
           "group fixed right-4 z-40 flex h-14 w-14 items-center justify-center rounded-full border border-tertiary-fixed-dim bg-tertiary-fixed text-on-tertiary-fixed shadow-fab-yellow transition-all hover:scale-105 hover:bg-tertiary-fixed-dim active:scale-95 md:right-6 md:h-16 md:w-16",
           hasProductBottomBar ? "bottom-24 md:bottom-28" : "bottom-6 md:bottom-8"
         )}
-        aria-label="Abrir asistente Huellas"
+        aria-label="Abrir asistente Huella"
       >
         <MaterialIcon name="auto_awesome" className="text-2xl transition-transform group-hover:rotate-12 md:text-3xl" />
       </button>

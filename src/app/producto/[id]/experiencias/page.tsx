@@ -21,7 +21,7 @@ export default async function ExperienciasPage({ params }: PageProps) {
       <TopAppBar title="Experiencias" backHref={`/producto/${id}`} />
       <main className="mx-auto max-w-3xl px-container-padding-mobile pb-16 pt-20 md:px-0">
         <div className="mb-8 text-center">
-          <p className="font-body text-label-sm uppercase tracking-wider text-secondary">Huellas</p>
+          <p className="font-body text-label-sm uppercase tracking-wider text-secondary">Huella</p>
           <h2 className="mt-2 font-display text-headline-lg-mobile text-primary md:text-headline-lg">
             Tours en {lot.farmName}
           </h2>

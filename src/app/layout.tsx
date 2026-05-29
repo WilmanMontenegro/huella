@@ -18,7 +18,7 @@ const manrope = Manrope({
 });
 
 export const metadata: Metadata = {
-  title: "Huellas — Trazabilidad agro-turística del Magdalena",
+  title: "Huella — Trazabilidad agro-turística del Magdalena",
   description:
     "Conecta productor, turista y exportador con trazabilidad verificable, QR y agente IA del producto.",
 };

@@ -21,7 +21,7 @@ export interface ChatTurn {
 }
 
 const AREA_HINTS: Partial<Record<ChatArea, string>> = {
-  landing: "Pantalla: landing Huellas.",
+  landing: "Pantalla: landing Huella.",
   "product-hero": "Pantalla: acaba de escanear el QR del lote.",
   "product-detail": "Pantalla: ficha del producto y specs.",
   "product-producer": "Pantalla: historia del productor.",

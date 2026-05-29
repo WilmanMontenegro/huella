@@ -1,13 +1,13 @@
 "use client";
 
 import { ChatProvider } from "@/components/chat/ChatProvider";
-import { HuellasAssistant } from "@/components/chat/HuellasAssistant";
+import { HuellaAssistant } from "@/components/chat/HuellaAssistant";
 
 export function ChatRoot({ children }: { children: React.ReactNode }) {
   return (
     <ChatProvider>
       {children}
-      <HuellasAssistant />
+      <HuellaAssistant />
     </ChatProvider>
   );
 }
