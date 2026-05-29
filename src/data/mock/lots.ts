@@ -1,3 +1,4 @@
+import { LOT_MEDIA } from "@/lib/media/lot-images";
 import type { Lot, Producer, ProducerDashboard } from "@/types";
 import {
   getLotRegistrationTx,
@@ -39,8 +40,7 @@ const baseTraceability = [
 const producer: Producer = {
   id: "prod-1",
   name: "Don José",
-  photoUrl:
-    "https://lh3.googleusercontent.com/aida-public/AB6AXuAoLOfMP3gtZAJLhbH1DJBuOMlYweVX1K15F4NLNKQDVFZMKSMaCwwN6kQGraIa-xdrP8rTKTUoC8WfoWON_89jPw5ut-Kwr8PKjNP8cotpXM-cwsuUO3MJd1_HeQK-6bbdR0dgRZ-1282K67BzraM9l8ioivuLGXIQELq4swvEGF2NO8DVKXTVVn9-OusQLNpcKF57hsP76j4L80Yvp4jYpZOEuvqRV85gmpvcMPBFMXteq1R4WpNu21RGe83wuFfAAbjB3YBM6t6c",
+  photoUrl: LOT_MEDIA.producerPortrait,
   story:
     "Durante tres generaciones, la familia de Don José ha cuidado la rica tierra volcánica de la Sierra Nevada. Cada grano se recolecta a mano en su punto óptimo de madurez, se seca al sol en camas africanas elevadas y se selecciona con meticulosidad.",
   municipality: "Sierra Nevada, Magdalena",
@@ -57,7 +57,7 @@ export const demoLot: Lot = {
   quantityKg: 500,
   harvestDate: "2023-10-12",
   currentStatus: "En secado · Listo en 3 días",
-  photoUrl: producer.photoUrl,
+  photoUrl: LOT_MEDIA.coffeeProduct,
   farmName: "Finca La Esperanza",
   elevation: "1.600 m",
   tags: ["Sierra Nevada", "Variedad Castillo"],
@@ -76,6 +76,7 @@ export const demoLot: Lot = {
       region: "Sierra Nevada del Magdalena, Colombia",
       description:
         "Finca de altura con beneficio húmedo propio y secado al sol. Aquí se cultiva y procesa el café que acabas de escanear.",
+      imageUrl: LOT_MEDIA.coffeeFarm,
     },
     summary:
       "Es el mismo café que probaste en Santa Marta: acidez cítrica brillante, cuerpo medio y un final dulce a panela. Grano 100 % arábica, lavado y secado al sol en la finca.",
@@ -260,8 +261,7 @@ const grosMichelLot: Lot = {
   quantityKg: 1200,
   harvestDate: "2026-05-20",
   currentStatus: "En inspección de calidad",
-  photoUrl:
-    "https://lh3.googleusercontent.com/aida-public/AB6AXuDWLxCmoza_ZRxwZUFfH3OkHEDxqjmeLNhBuqdxLW22JFUjtJ7DVOr7EI9u0vDr053NXVgThSuP3Beziy0_hyjI7keF9ojJHVjD5TMWI3HI6rcGbzwU_ZbH1zcLLMwHvN0-7FEl8XTxn-ylGz6v0XM4GEpg2Q9JvbhhwOKHoos-wTnedWxbS3Uj5A0iINFwOIaWDku7X8uwGDNMH2HrXlgvxWsz4-8yWsf4vg2LtJemd7ZJ9RQaTCuFIVsfH-RPJv8LnHdiVALoo8qW",
+  photoUrl: LOT_MEDIA.bananaProduct,
   farmName: "Finca La Esperanza",
   elevation: "Lote Norte #3",
   tags: ["Sierra Nevada", "Exportación", "Gros Michel"],
@@ -280,6 +280,7 @@ const grosMichelLot: Lot = {
       region: "Sierra Nevada del Magdalena, Colombia",
       description:
         "El banano de este QR proviene del Lote Norte #3, en la misma finca donde se cultiva el café Castillo de la familia de Don José.",
+      imageUrl: LOT_MEDIA.bananaFarm,
     },
     summary:
       "Mismo origen que el café de Finca La Esperanza: fruta de exportación en suelos volcánicos de la Sierra Nevada, con trazabilidad por lote desde la finca hasta el empaque.",

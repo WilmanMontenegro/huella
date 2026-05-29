@@ -76,6 +76,8 @@ export interface ProductFarmInfo {
   description?: string;
   municipality?: string;
   region?: string;
+  /** Foto de finca, beneficio o plantación (no del producto empaquetado). */
+  imageUrl?: string;
 }
 
 export interface ProductDetailInfo {

@@ -1,3 +1,4 @@
+import { resolveLotProductPhotoUrl } from "@/lib/media/lot-images";
 import type {
   Certification,
   CheckoutItem,
@@ -183,7 +184,10 @@ export function mapLot(
     quantityKg: Number(lote.cantidad_kg),
     harvestDate: lote.fecha_cosecha ?? "",
     currentStatus: lote.estado_actual ?? "",
-    photoUrl: lote.foto_url ?? "",
+    photoUrl: resolveLotProductPhotoUrl({
+      photoUrl: lote.foto_url ?? "",
+      product: lote.producto,
+    }),
     farmName: lote.finca_nombre ?? "",
     elevation: lote.elevacion ?? undefined,
     tags: lote.tags ?? [],
@@ -220,7 +224,10 @@ export function mapLotSummary(lote: DbLote, trazabilidad: DbTrazabilidad[]): Lot
     location,
     status: lote.dashboard_status ?? "drying",
     statusLabel: lote.dashboard_status_label ?? lote.estado_actual ?? "",
-    photoUrl: lote.foto_url ?? "",
+    photoUrl: resolveLotProductPhotoUrl({
+      photoUrl: lote.foto_url ?? "",
+      product: lote.producto,
+    }),
     steps: mapDashboardSteps(trazabilidad),
   };
 }
@@ -246,8 +253,6 @@ export function mapCheckoutItem(lot: Lot): CheckoutItem {
     priceUsd: lot.priceUsd ?? 45,
     weight: "250 g grano entero",
     origin: "Magdalena, COL",
-    imageUrl:
-      lot.photoUrl ||
-      "https://lh3.googleusercontent.com/aida-public/AB6AXuAKuZ5COPjcdx3siIGuK8kxWvm_IYjDi1uhWQuYF-SL2ip5N6M3udeTH1dEFmyS71FWbZWNHiphUWXVQnvQ7J0tv0C-ssTYwuvDQDtiyyemE9Lbu7TgBC03OHRDbpholeCR2WkdAcsOUwoTqFhJEsWcpyT2MKUQVMUjitymse7bIEKm5ZX831u0cbik40oNYB6dYI9feW_bkQRK3gmm48nweK5FFBZhRs462evZfga_xGiFA5cqIBXNPJ_8C8y0auuFtsodeVsoyiP-",
+    imageUrl: resolveLotProductPhotoUrl(lot),
   };
 }

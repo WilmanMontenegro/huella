@@ -87,7 +87,7 @@ values (
   500,
   '2023-10-12',
   'En secado · Listo en 3 días',
-  'https://lh3.googleusercontent.com/aida-public/AB6AXuAoLOfMP3gtZAJLhbH1DJBuOMlYweVX1K15F4NLNKQDVFZMKSMaCwwN6kQGraIa-xdrP8rTKTUoC8WfoWON_89jPw5ut-Kwr8PKjNP8cotpXM-cwsuUO3MJd1_HeQK-6bbdR0dgRZ-1282K67BzraM9l8ioivuLGXIQELq4swvEGF2NO8DVKXTVVn9-OusQLNpcKF57hsP76j4L80Yvp4jYpZOEuvqRV85gmpvcMPBFMXteq1R4WpNu21RGe83wuFfAAbjB3YBM6t6c',
+  'https://images.unsplash.com/photo-1559056199-641a0ac8b55c?w=1200&q=80&auto=format&fit=crop',
   'Finca La Esperanza',
   '1.600 m',
   '0xc13cbb1566fe10eb1a846449a214f940f18515264e6d382e3157c9c62b7fdbb0',
@@ -106,7 +106,8 @@ values (
       "companyName": "La Esperanza Agrícola — empresa familiar",
       "municipality": "Minca, Magdalena",
       "region": "Sierra Nevada del Magdalena, Colombia",
-      "description": "Finca de altura con beneficio húmedo propio y secado al sol. Aquí se cultiva y procesa el café que acabas de escanear."
+      "description": "Finca de altura con beneficio húmedo propio y secado al sol. Aquí se cultiva y procesa el café que acabas de escanear.",
+      "imageUrl": "https://images.unsplash.com/photo-1447933601403-0c6688de566e?w=1200&q=80&auto=format&fit=crop"
     },
     "summary": "Es el mismo café que probaste en Santa Marta: acidez cítrica brillante, cuerpo medio y un final dulce a panela. Grano 100 % arábica, lavado y secado al sol en la finca.",
     "tastingNotes": "En taza: mandarina, panela y un toque de cacao amargo. Ideal en filtro Chemex o prensa francesa.",
@@ -123,6 +124,7 @@ values (
 )
 on conflict (slug) do update set
   estado_actual = excluded.estado_actual,
+  foto_url = excluded.foto_url,
   blockchain_hash = excluded.blockchain_hash,
   contract_address = excluded.contract_address,
   product_detail = excluded.product_detail;
@@ -142,7 +144,7 @@ values (
   1200,
   '2026-05-20',
   'En inspección de calidad',
-  'https://lh3.googleusercontent.com/aida-public/AB6AXuDWLxCmoza_ZRxwZUFfH3OkHEDxqjmeLNhBuqdxLW22JFUjtJ7DVOr7EI9u0vDr053NXVgThSuP3Beziy0_hyjI7keF9ojJHVjD5TMWI3HI6rcGbzwU_ZbH1zcLLMwHvN0-7FEl8XTxn-ylGz6v0XM4GEpg2Q9JvbhhwOKHoos-wTnedWxbS3Uj5A0iINFwOIaWDku7X8uwGDNMH2HrXlgvxWsz4-8yWsf4vg2LtJemd7ZJ9RQaTCuFIVsfH-RPJv8LnHdiVALoo8qW',
+  'https://images.unsplash.com/photo-1605027990121-4753a3042ed6?w=1200&q=80&auto=format&fit=crop',
   'Finca La Esperanza',
   'Lote Norte #3',
   32,
@@ -159,7 +161,8 @@ values (
       "companyName": "La Esperanza Agrícola — empresa familiar",
       "municipality": "Minca, Magdalena",
       "region": "Sierra Nevada del Magdalena, Colombia",
-      "description": "El banano de este QR proviene del Lote Norte #3, en la misma finca donde se cultiva el café Castillo de la familia de Don José."
+      "description": "El banano de este QR proviene del Lote Norte #3, en la misma finca donde se cultiva el café Castillo de la familia de Don José.",
+      "imageUrl": "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=1200&q=80&auto=format&fit=crop"
     },
     "summary": "Mismo origen que el café de Finca La Esperanza: fruta de exportación cultivada en suelos volcánicos de la Sierra Nevada, con trazabilidad por lote desde la finca hasta el empaque.",
     "tastingNotes": "Textura firme y aroma dulce característico del Gros Michel; lote en inspección final antes del empaque para mercado internacional.",

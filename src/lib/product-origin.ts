@@ -1,3 +1,4 @@
+import { resolveFarmPhotoUrl } from "@/lib/media/lot-images";
 import type { Lot, Producer, ProductBrandInfo, ProductFarmInfo } from "@/types";
 
 export interface ProductOrigin {
@@ -16,7 +17,7 @@ export function resolveProductOrigin(lot: Lot, producer: Producer): ProductOrigi
     description: detail?.summary,
   };
 
-  const farm: ProductFarmInfo = detail?.farm ?? {
+  const farmBase: ProductFarmInfo = detail?.farm ?? {
     name: lot.farmName,
     companyName: `${lot.farmName} — ${producer.name} y familia`,
     municipality: producer.municipality,
@@ -24,6 +25,11 @@ export function resolveProductOrigin(lot: Lot, producer: Producer): ProductOrigi
     description: `Cultivo y proceso en ${lot.farmName}${
       lot.elevation ? ` (${lot.elevation})` : ""
     }. Trazabilidad registrada con Huella desde la finca hasta el comprador.`,
+  };
+
+  const farm: ProductFarmInfo = {
+    ...farmBase,
+    imageUrl: resolveFarmPhotoUrl(lot, farmBase),
   };
 
   return { productLine, brand, farm };

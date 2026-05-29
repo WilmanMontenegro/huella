@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { resolveLotProductPhotoUrl } from "@/lib/media/lot-images";
 import type { Lot } from "@/types";
 
 interface ProductHeroProps {
@@ -9,11 +10,12 @@ interface ProductHeroProps {
 
 export function ProductHero({ lot, title, subtitle }: ProductHeroProps) {
   const imageAlt = lot.productDetail?.displayName ?? title;
+  const productPhoto = resolveLotProductPhotoUrl(lot);
 
   return (
     <section className="relative h-[530px] w-full overflow-hidden rounded-b-card md:mx-4 md:mt-8 md:h-[618px] md:rounded-card organic-shadow">
       <Image
-        src={lot.photoUrl}
+        src={productPhoto}
         alt={imageAlt}
         fill
         className="object-cover"
