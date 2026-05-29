@@ -97,7 +97,7 @@ export function ScanProductButton() {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="flex h-14 w-full max-w-xs items-center justify-center gap-2 rounded-full bg-primary font-body text-label-md text-on-primary shadow-lg transition-transform hover:bg-primary/90 active:scale-95 sm:w-auto sm:px-10"
+        className="flex h-14 w-full items-center justify-center gap-2 rounded-full bg-primary font-body text-label-md text-on-primary shadow-lg transition-transform hover:bg-primary/90 active:scale-95"
       >
         <MaterialIcon name="qr_code_scanner" />
         Escanear producto

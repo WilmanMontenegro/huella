@@ -29,7 +29,7 @@ export function OperadorAuthGate({ children }: OperadorAuthGateProps) {
         return;
       }
       const next = `/operador/dashboard${agencia ? `?agencia=${encodeURIComponent(agencia)}` : ""}`;
-      router.replace(`/login?next=${encodeURIComponent(next)}`);
+      router.replace(`/acceder?rol=operador&next=${encodeURIComponent(next)}`);
     });
   }, [router, agencia]);
 
@@ -50,7 +50,7 @@ export function OperadorLoginPrompt({ agenciaSlug }: { agenciaSlug?: string }) {
 
   return (
     <Link
-      href={`/login?next=${encodeURIComponent(next)}`}
+      href={`/acceder?rol=operador&next=${encodeURIComponent(next)}`}
       className="inline-flex h-12 items-center justify-center gap-2 rounded-full bg-primary px-6 font-body text-label-md text-on-primary"
     >
       <MaterialIcon name="login" />

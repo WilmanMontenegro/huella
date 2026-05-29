@@ -33,6 +33,22 @@ create policy "Referidos lectura" on referidos_eventos for select using (true);
 drop policy if exists "Agencias update MVP" on agencias;
 create policy "Agencias update MVP" on agencias for update using (true);
 
+-- Grants anon (idempotente; ver migrations/20260529140000_grants_public_api.sql)
+grant usage on schema public to anon, authenticated;
+grant select on table public.productores to anon, authenticated;
+grant select on table public.lotes to anon, authenticated;
+grant select on table public.trazabilidad to anon, authenticated;
+grant select on table public.certificaciones to anon, authenticated;
+grant select on table public.agencias to anon, authenticated;
+grant select on table public.experiencias to anon, authenticated;
+grant select on table public.experiencia_proveedores to anon, authenticated;
+grant select, insert, update on table public.pedidos to anon, authenticated;
+grant insert on table public.lotes to anon, authenticated;
+grant insert on table public.trazabilidad to anon, authenticated;
+grant update on table public.agencias to anon, authenticated;
+grant select, insert on table public.operador_usuarios to anon, authenticated;
+grant select, insert on table public.referidos_eventos to anon, authenticated;
+
 -- IDs fijos para coherencia entre entornos
 -- Productor: Don José
 insert into productores (id, nombre, nombre_corto, foto_url, historia, municipio, lat, lng, años_experiencia, ventas_mes_usd)

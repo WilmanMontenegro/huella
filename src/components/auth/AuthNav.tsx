@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { createClientIfConfigured } from "@/lib/supabase/client";
+import { getHomePathForRole, readRoleFromUserMetadata } from "@/lib/auth/roles";
 import { useSupabaseUser } from "@/hooks/useSupabaseUser";
 
 export function AuthNav() {
@@ -24,22 +25,28 @@ export function AuthNav() {
 
   if (!user) {
     return (
-      <Link href="/login" className="font-body text-label-md text-outline hover:text-primary">
+      <Link
+        href="/acceder"
+        className="inline-flex h-10 items-center justify-center rounded-full border border-outline-variant bg-surface px-4 font-body text-label-md text-on-surface shadow-sm transition-colors hover:bg-surface-container-high sm:px-5"
+      >
         Entrar / Registrarse
       </Link>
     );
   }
 
+  const role = readRoleFromUserMetadata(user.user_metadata as Record<string, unknown>);
+  const panelHref = role ? getHomePathForRole(role) : "/mis-pedidos";
+
   const label =
     user.user_metadata?.full_name ??
     user.user_metadata?.name ??
     user.email?.split("@")[0] ??
-    "Cuenta";
+    "Mi cuenta";
 
   return (
     <div className="flex items-center gap-3">
       <Link
-        href="/mis-pedidos"
+        href={panelHref}
         className="max-w-[8rem] truncate font-body text-label-md text-primary hover:underline"
         title={user.email ?? label}
       >

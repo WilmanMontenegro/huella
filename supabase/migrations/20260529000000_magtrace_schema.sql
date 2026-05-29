@@ -155,3 +155,16 @@ create policy "Insert lotes MVP" on lotes for insert with check (true);
 
 drop policy if exists "Insert trazabilidad MVP" on trazabilidad;
 create policy "Insert trazabilidad MVP" on trazabilidad for insert with check (true);
+
+-- API anon/authenticated (PostgREST)
+grant usage on schema public to anon, authenticated;
+grant select on table public.productores to anon, authenticated;
+grant select on table public.lotes to anon, authenticated;
+grant select on table public.trazabilidad to anon, authenticated;
+grant select on table public.certificaciones to anon, authenticated;
+grant select on table public.agencias to anon, authenticated;
+grant select on table public.experiencias to anon, authenticated;
+grant select on table public.experiencia_proveedores to anon, authenticated;
+grant select, insert, update on table public.pedidos to anon, authenticated;
+grant insert on table public.lotes to anon, authenticated;
+grant insert on table public.trazabilidad to anon, authenticated;

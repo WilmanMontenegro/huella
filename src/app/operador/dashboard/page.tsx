@@ -35,13 +35,13 @@ export default async function OperadorDashboardPage({ searchParams }: PageProps)
   }
 
   const supabase = await createClientIfConfigured();
-  if (!supabase) redirect(`/login?next=${encodeURIComponent(loginNext)}`);
+  if (!supabase) redirect(`/acceder?next=${encodeURIComponent(loginNext)}`);
 
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user) redirect(`/login?next=${encodeURIComponent(loginNext)}`);
+  if (!user) redirect(`/acceder?rol=operador&next=${encodeURIComponent(loginNext)}`);
 
   const agencia = await resolveOperadorAgencia(user.id, agenciaParam);
   if (!agencia) redirect("/operador");

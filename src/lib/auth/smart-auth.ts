@@ -1,4 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { HUELLA_ROLE_KEY, type HuellaRole } from "@/lib/auth/roles";
 
 export function isInvalidCredentialsError(message: string): boolean {
   const m = message.toLowerCase();
@@ -14,12 +15,78 @@ export function isAlreadyRegisteredError(message: string): boolean {
   return m.includes("already registered") || m.includes("already been registered");
 }
 
-/** Intenta entrar; si no hay cuenta, la registra con la misma contraseña. */
+function roleMetadata(role: HuellaRole) {
+  return { [HUELLA_ROLE_KEY]: role };
+}
+
+/** Solo inicio de sesión (no crea cuenta nueva). */
+export async function signInWithPassword(supabase: SupabaseClient, email: string, password: string) {
+  const { error } = await supabase.auth.signInWithPassword({ email, password });
+
+  if (error) {
+    if (error.message.toLowerCase().includes("email not confirmed")) {
+      return {
+        ok: false as const,
+        message: "Confirma tu correo antes de entrar (revisa la bandeja de entrada o spam).",
+      };
+    }
+    if (isInvalidCredentialsError(error.message)) {
+      return {
+        ok: false as const,
+        message: "Correo o contraseña incorrectos. Si no tienes cuenta, regístrate primero.",
+      };
+    }
+    return { ok: false as const, message: error.message };
+  }
+
+  return { ok: true as const };
+}
+
+/** Registro con rol en metadata. */
+export async function signUpWithPassword(
+  supabase: SupabaseClient,
+  email: string,
+  password: string,
+  role: HuellaRole,
+  emailRedirectTo: string
+) {
+  const signUp = await supabase.auth.signUp({
+    email,
+    password,
+    options: {
+      emailRedirectTo,
+      data: roleMetadata(role),
+    },
+  });
+
+  if (signUp.error) {
+    if (isAlreadyRegisteredError(signUp.error.message)) {
+      return {
+        ok: false as const,
+        message: "Este correo ya está registrado. Inicia sesión con tu contraseña.",
+      };
+    }
+    return { ok: false as const, message: signUp.error.message };
+  }
+
+  if (signUp.data.session) {
+    return { ok: true as const, kind: "sign-up" as const };
+  }
+
+  return {
+    ok: true as const,
+    kind: "sign-up-pending" as const,
+    message: "Creamos tu cuenta. Revisa tu correo para confirmar y luego inicia sesión.",
+  };
+}
+
+/** Entra si existe cuenta; si no, registra con el rol indicado. */
 export async function signInOrSignUpWithPassword(
   supabase: SupabaseClient,
   email: string,
   password: string,
-  emailRedirectTo: string
+  emailRedirectTo: string,
+  role: HuellaRole = "turista"
 ) {
   const signIn = await supabase.auth.signInWithPassword({ email, password });
 
@@ -40,7 +107,7 @@ export async function signInOrSignUpWithPassword(
   const signUp = await supabase.auth.signUp({
     email,
     password,
-    options: { emailRedirectTo },
+    options: { emailRedirectTo, data: roleMetadata(role) },
   });
 
   if (signUp.error) {
@@ -65,17 +132,18 @@ export async function signInOrSignUpWithPassword(
   };
 }
 
-/** Enlace mágico: entra si existe cuenta; si no, Supabase crea el usuario. */
-export async function sendSmartMagicLink(
+export async function sendMagicLink(
   supabase: SupabaseClient,
   email: string,
-  emailRedirectTo: string
+  emailRedirectTo: string,
+  options?: { createUser?: boolean; role?: HuellaRole }
 ) {
   const { error } = await supabase.auth.signInWithOtp({
     email,
     options: {
       emailRedirectTo,
-      shouldCreateUser: true,
+      shouldCreateUser: options?.createUser ?? true,
+      data: options?.role ? roleMetadata(options.role) : undefined,
     },
   });
 
@@ -85,7 +153,17 @@ export async function sendSmartMagicLink(
 
   return {
     ok: true as const,
-    message:
-      "Revisa tu correo: abre el enlace para entrar. Si es tu primera vez en Huella, tu cuenta se crea al usarlo.",
+    message: options?.createUser
+      ? "Revisa tu correo: el enlace activa tu cuenta y te lleva a tu panel."
+      : "Revisa tu correo: abre el enlace para entrar.",
   };
+}
+
+/** @deprecated Usar sendMagicLink */
+export async function sendSmartMagicLink(
+  supabase: SupabaseClient,
+  email: string,
+  emailRedirectTo: string
+) {
+  return sendMagicLink(supabase, email, emailRedirectTo, { createUser: true });
 }

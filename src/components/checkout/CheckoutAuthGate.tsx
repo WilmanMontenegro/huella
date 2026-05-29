@@ -37,7 +37,7 @@ export function CheckoutAuthGate({ lotId, children }: CheckoutAuthGateProps) {
         setReady(true);
         return;
       }
-      router.replace(`/login?next=${encodeURIComponent(checkoutPath)}`);
+      router.replace(`/acceder?rol=turista&next=${encodeURIComponent(checkoutPath)}`);
     });
 
     return () => {
