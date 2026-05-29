@@ -15,7 +15,7 @@ interface Message {
 
 export function HuellaAssistant() {
   const pathname = usePathname();
-  const { area, lotId, isOpen, openChat, closeChat } = useChat();
+  const { area, lotId, isOpen, fabSuppressed, openChat, closeChat } = useChat();
   const config = CHAT_AREA_CONFIG[area];
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
@@ -23,8 +23,15 @@ export function HuellaAssistant() {
   const greetingRequestRef = useRef(0);
   const messagesRef = useRef<Message[]>([]);
 
-  const hasProductBottomBar = /^\/producto\/[^/]+$/.test(pathname);
   const effectiveLotId = lotId ?? DEMO_LOT_ID;
+
+  /** Siempre flotante a la derecha; solo sube el `bottom` cuando hay barra inferior fija. */
+  const fabBottomClass = (() => {
+    if (/^\/producto\/[^/]+$/.test(pathname)) return "bottom-24 md:bottom-28";
+    if (pathname === "/productor/dashboard") return "bottom-40 md:bottom-44";
+    if (/^\/checkout\//.test(pathname)) return "bottom-28 md:bottom-32";
+    return "bottom-8 pb-safe md:bottom-10";
+  })();
 
   useEffect(() => {
     messagesRef.current = messages;
@@ -141,22 +148,42 @@ export function HuellaAssistant() {
 
   return (
     <>
-      <button
-        type="button"
-        onClick={openChat}
-        className={cn(
-          "group fixed z-[1001] flex h-14 w-14 items-center justify-center rounded-full border border-tertiary-fixed-dim bg-tertiary-fixed text-on-tertiary-fixed shadow-fab-yellow transition-all hover:scale-105 hover:bg-tertiary-fixed-dim active:scale-95 md:h-16 md:w-16",
-          hasProductBottomBar
-            ? "bottom-24 left-4 md:bottom-28 md:left-6"
-            : "bottom-6 right-4 md:bottom-8 md:right-6"
-        )}
-        aria-label="Abrir asistente Huella"
-      >
-        <MaterialIcon name="auto_awesome" className="text-2xl transition-transform group-hover:rotate-12 md:text-3xl" />
-      </button>
+      {!isOpen && !fabSuppressed && (
+        <button
+          type="button"
+          onClick={openChat}
+          className={cn(
+            "group fixed z-40 flex items-center gap-2.5 overflow-hidden rounded-2xl",
+            "border border-outline-variant/25 bg-surface-container-lowest/95 text-primary backdrop-blur-md",
+            "shadow-organic-lg transition-all duration-300",
+            "hover:-translate-y-0.5 hover:border-outline-variant/50 hover:shadow-organic active:scale-[0.98]",
+            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-tertiary-container/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+            "h-12 w-12 justify-center p-0 sm:h-auto sm:w-auto sm:justify-start sm:py-3 sm:pl-3 sm:pr-5",
+            "right-margin-mobile md:right-margin-desktop",
+            fabBottomClass
+          )}
+          aria-label="Abrir asistente Huella"
+        >
+          <span
+            className={cn(
+              "flex shrink-0 items-center justify-center rounded-full bg-primary text-on-primary shadow-md",
+              "h-9 w-9 transition-transform group-hover:scale-105 sm:h-10 sm:w-10"
+            )}
+            aria-hidden
+          >
+            <MaterialIcon name="auto_awesome" filled className="text-[20px] sm:text-[22px]" />
+          </span>
+          <span className="hidden min-w-0 flex-col items-start pr-0.5 sm:flex">
+            <span className="font-body text-[10px] font-medium uppercase tracking-wider text-outline">
+              Asistente
+            </span>
+            <span className="font-display text-[15px] leading-tight text-primary">Huella</span>
+          </span>
+        </button>
+      )}
 
       {isOpen && (
-        <div className="fixed inset-0 z-[1100] flex items-end justify-center bg-black/40 p-4 md:items-center">
+        <div className="fixed inset-0 z-[1200] flex items-end justify-center bg-black/40 p-4 md:items-center">
           <div className="flex max-h-[85vh] w-full max-w-lg flex-col overflow-hidden rounded-card bg-surface-container-lowest organic-shadow">
             <div className="flex items-center justify-between border-b border-outline-variant/30 p-4">
               <div className="flex items-center gap-2">

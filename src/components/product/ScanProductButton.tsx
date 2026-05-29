@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useId, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Html5Qrcode } from "html5-qrcode";
+import { useChat } from "@/components/chat/ChatProvider";
 import { MaterialIcon } from "@/components/icons/MaterialIcon";
 
 function parseProductPath(text: string): string | null {
@@ -19,6 +20,7 @@ function parseProductPath(text: string): string | null {
 
 export function ScanProductButton() {
   const router = useRouter();
+  const { registerFabSuppress } = useChat();
   const [open, setOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const scannerRef = useRef<Html5Qrcode | null>(null);
@@ -38,6 +40,11 @@ export function ScanProductButton() {
     setOpen(false);
     setError(null);
   }, []);
+
+  useEffect(() => {
+    if (!open) return;
+    return registerFabSuppress("qr-scanner");
+  }, [open, registerFabSuppress]);
 
   useEffect(() => {
     if (!open) return;
@@ -97,7 +104,7 @@ export function ScanProductButton() {
       </button>
 
       {open && (
-        <div className="fixed inset-0 z-[1100] flex items-end justify-center bg-black/70 p-4 sm:items-center">
+        <div className="fixed inset-0 z-[1200] flex items-end justify-center bg-black/70 p-4 sm:items-center">
           <div className="flex w-full max-w-md flex-col overflow-hidden rounded-card bg-surface-container-lowest shadow-organic-lg">
             <div className="flex items-center justify-between border-b border-outline-variant/30 p-4">
               <h2 className="font-display text-headline-md text-primary">Escanea el QR</h2>
@@ -112,7 +119,7 @@ export function ScanProductButton() {
               </p>
               <div
                 id={regionId}
-                className="mx-auto overflow-hidden rounded-xl border border-outline-variant bg-black [&_video]:!rounded-xl"
+                className="relative z-0 mx-auto overflow-hidden rounded-xl border border-outline-variant bg-black [&_video]:relative [&_video]:z-0 [&_video]:!rounded-xl"
               />
               {error && (
                 <p className="mt-4 text-center font-body text-body-sm text-error" role="alert">
