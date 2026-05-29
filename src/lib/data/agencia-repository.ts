@@ -4,7 +4,7 @@ import {
 } from "@/lib/constants/operador";
 import { createClientIfConfigured } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
-import type { TourExperience, TourProvider } from "@/types";
+import type { TourProvider } from "@/types";
 
 export interface DbAgencia {
   id: string;

@@ -8,11 +8,7 @@ import {
   DEMO_LOT_ID,
 } from "@/data/mock/lots";
 import { DEFAULT_PRODUCTOR_ID } from "@/lib/constants/productor";
-import {
-  getProducerDashboardFromSupabase,
-  getProductorProfile,
-  type ProductorProfile,
-} from "@/lib/data/productor-repository";
+import { getProducerDashboardFromSupabase } from "@/lib/data/productor-repository";
 import {
   mapCheckoutItem,
   mapExperiences,

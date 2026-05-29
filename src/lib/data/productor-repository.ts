@@ -190,7 +190,23 @@ export async function getPedidosForProductor(
     .order("created_at", { ascending: false })
     .limit(limit);
 
-  return (data ?? []) as ProductorPedidoRow[];
+  return (data ?? []).map((row) => {
+    const lotesRaw = row.lotes as
+      | { slug: string; producto: string | null; finca_nombre: string | null }
+      | { slug: string; producto: string | null; finca_nombre: string | null }[]
+      | null;
+    const lotes =
+      lotesRaw == null ? null : Array.isArray(lotesRaw) ? (lotesRaw[0] ?? null) : lotesRaw;
+    return {
+      id: row.id,
+      cantidad: row.cantidad,
+      tipo_envio: row.tipo_envio,
+      estado: row.estado,
+      total_usd: row.total_usd,
+      created_at: row.created_at,
+      lotes,
+    };
+  });
 }
 
 export { mapProductor };

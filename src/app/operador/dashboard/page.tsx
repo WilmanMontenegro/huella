@@ -51,7 +51,7 @@ export default async function OperadorDashboardPage({ searchParams }: PageProps)
       agenciaSlug={agencia.slug}
       agenciaName={agencia.name}
       agenciaId={agencia.id}
-      userEmail={user.email}
+      userEmail={user.email ?? null}
       demoMode={false}
     />
   );
