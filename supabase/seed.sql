@@ -11,14 +11,16 @@ values (
   'https://lh3.googleusercontent.com/aida-public/AB6AXuAoLOfMP3gtZAJLhbH1DJBuOMlYweVX1K15F4NLNKQDVFZMKSMaCwwN6kQGraIa-xdrP8rTKTUoC8WfoWON_89jPw5ut-Kwr8PKjNP8cotpXM-cwsuUO3MJd1_HeQK-6bbdR0dgRZ-1282K67BzraM9l8ioivuLGXIQELq4swvEGF2NO8DVKXTVVn9-OusQLNpcKF57hsP76j4L80Yvp4jYpZOEuvqRV85gmpvcMPBFMXteq1R4WpNu21RGe83wuFfAAbjB3YBM6t6c',
   'Durante tres generaciones, la familia de Don José ha cuidado la rica tierra volcánica de la Sierra Nevada. Cada grano se recolecta a mano en su punto óptimo de madurez, se seca al sol en camas africanas elevadas y se selecciona con meticulosidad.',
   'Sierra Nevada, Magdalena',
-  11.2404,
-  -74.199,
+  11.152657409735482,
+  -74.09185030956294,
   35,
   14250
 )
 on conflict (id) do update set
   nombre = excluded.nombre,
   nombre_corto = excluded.nombre_corto,
+  lat = excluded.lat,
+  lng = excluded.lng,
   ventas_mes_usd = excluded.ventas_mes_usd;
 
 -- Lote principal (QR demo)

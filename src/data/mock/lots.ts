@@ -44,8 +44,8 @@ const producer: Producer = {
   story:
     "Durante tres generaciones, la familia de Don José ha cuidado la rica tierra volcánica de la Sierra Nevada. Cada grano se recolecta a mano en su punto óptimo de madurez, se seca al sol en camas africanas elevadas y se selecciona con meticulosidad.",
   municipality: "Sierra Nevada, Magdalena",
-  lat: 11.2404,
-  lng: -74.199,
+  lat: 11.152657409735482,
+  lng: -74.09185030956294,
   yearsOfExperience: 35,
 };
 
