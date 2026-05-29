@@ -153,33 +153,19 @@ export function HuellaAssistant() {
           type="button"
           onClick={openChat}
           className={cn(
-            "group fixed z-40 p-[2px] rounded-full sm:rounded-2xl",
-            "bg-gradient-to-br from-primary/80 via-tertiary-fixed-dim to-tertiary-container shadow-fab-yellow",
-            "transition-all duration-300 hover:scale-105 active:scale-95",
-            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-tertiary-container/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+            "group fixed z-40 flex h-12 w-12 items-center justify-center rounded-full p-0",
+            "bg-tertiary-fixed text-on-tertiary-fixed shadow-fab-yellow",
+            "transition-transform hover:scale-105 active:scale-95",
+            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-tertiary-container/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background",
             "right-margin-mobile md:right-margin-desktop",
             fabBottomClass
           )}
           aria-label="Abrir asistente Huella"
         >
-          <span
-            className={cn(
-              "flex items-center justify-center gap-2 rounded-full sm:rounded-xl",
-              "bg-tertiary-fixed text-on-tertiary-fixed sm:bg-surface-container-lowest",
-              "h-14 w-14 sm:h-auto sm:w-auto sm:justify-start sm:py-1.5 sm:pl-1.5 sm:pr-3"
-            )}
-          >
-            <MaterialIcon
-              name="auto_awesome"
-              className="shrink-0 text-[30px] transition-transform group-hover:rotate-12 sm:text-[32px]"
-            />
-            <span className="hidden min-w-0 flex-col items-start leading-none sm:flex">
-              <span className="font-body text-[10px] font-semibold uppercase tracking-wider text-secondary">
-                Asistente
-              </span>
-              <span className="font-display text-[15px] text-primary">Huella</span>
-            </span>
-          </span>
+          <MaterialIcon
+            name="auto_awesome"
+            className="text-[34px] leading-none transition-transform group-hover:rotate-12"
+          />
         </button>
       )}
 
