@@ -1,0 +1,32 @@
+{
+  "network": "polygon-amoy",
+  "chainId": 80002,
+  "contractAddress": "0x4D773045b5ffD0292107A46EdA37d76a33C668dc",
+  "lotId": "finca-la-esperanza",
+  "registrationTx": "0xc13cbb1566fe10eb1a846449a214f940f18515264e6d382e3157c9c62b7fdbb0",
+  "lotDataHash": "0x49f5f420039ccb984a70e17f71f293a692ddf6cfd83db3d32efc37ed91bef511",
+  "steps": [
+    {
+      "index": 0,
+      "stage": "Cosecha",
+      "tx": "0x394f6b2491b6a7360e2eea8fcb1dc97066826c9559fb2995ca8e6f0fbe954580"
+    },
+    {
+      "index": 1,
+      "stage": "Lavado y fermentación",
+      "tx": "0x3570518cc1846b31f19d7412444973b2c64b1417800b86fff27fd7f7e0371a59"
+    },
+    {
+      "index": 2,
+      "stage": "Secado al sol",
+      "tx": "0x4ef2d3fea8fd0ff972d1da8e56983629df59bdafb3e906479b80ccebf385654e"
+    },
+    {
+      "index": 3,
+      "stage": "Listo para exportación",
+      "tx": "0xa628b386a19b9a4b2ab3fa7c7102a17cc124ec5ff153d84c111359d33544b323"
+    }
+  ],
+  "registeredAt": "2026-05-29T01:49:03.660Z",
+  "explorerBase": "https://amoy.polygonscan.com"
+}

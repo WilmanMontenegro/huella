@@ -1,0 +1,180 @@
+-- Huellas · Seed MVP Finca La Esperanza
+-- Ejecutar DESPUÉS de schema.sql
+
+-- IDs fijos para coherencia entre entornos
+-- Productor: Don José
+insert into productores (id, nombre, nombre_corto, foto_url, historia, municipio, lat, lng, años_experiencia, ventas_mes_usd)
+values (
+  '11111111-1111-1111-1111-111111111101',
+  'Don José',
+  'José',
+  'https://lh3.googleusercontent.com/aida-public/AB6AXuAoLOfMP3gtZAJLhbH1DJBuOMlYweVX1K15F4NLNKQDVFZMKSMaCwwN6kQGraIa-xdrP8rTKTUoC8WfoWON_89jPw5ut-Kwr8PKjNP8cotpXM-cwsuUO3MJd1_HeQK-6bbdR0dgRZ-1282K67BzraM9l8ioivuLGXIQELq4swvEGF2NO8DVKXTVVn9-OusQLNpcKF57hsP76j4L80Yvp4jYpZOEuvqRV85gmpvcMPBFMXteq1R4WpNu21RGe83wuFfAAbjB3YBM6t6c',
+  'Durante tres generaciones, la familia de Don José ha cuidado la rica tierra volcánica de la Sierra Nevada. Cada grano se recolecta a mano en su punto óptimo de madurez, se seca al sol en camas africanas elevadas y se selecciona con meticulosidad.',
+  'Sierra Nevada, Magdalena',
+  11.2404,
+  -74.199,
+  35,
+  14250
+)
+on conflict (id) do update set
+  nombre = excluded.nombre,
+  nombre_corto = excluded.nombre_corto,
+  ventas_mes_usd = excluded.ventas_mes_usd;
+
+-- Lote principal (QR demo)
+insert into lotes (
+  id, slug, productor_id, producto, variedad, cantidad_kg, fecha_cosecha,
+  estado_actual, foto_url, finca_nombre, elevacion,
+  blockchain_hash, contract_address, precio_usd, tags, product_detail,
+  dashboard_status, dashboard_status_label
+)
+values (
+  '22222222-2222-2222-2222-222222222201',
+  'finca-la-esperanza',
+  '11111111-1111-1111-1111-111111111101',
+  'Café',
+  'Castillo',
+  500,
+  '2023-10-12',
+  'En secado · Listo en 3 días',
+  'https://lh3.googleusercontent.com/aida-public/AB6AXuAoLOfMP3gtZAJLhbH1DJBuOMlYweVX1K15F4NLNKQDVFZMKSMaCwwN6kQGraIa-xdrP8rTKTUoC8WfoWON_89jPw5ut-Kwr8PKjNP8cotpXM-cwsuUO3MJd1_HeQK-6bbdR0dgRZ-1282K67BzraM9l8ioivuLGXIQELq4swvEGF2NO8DVKXTVVn9-OusQLNpcKF57hsP76j4L80Yvp4jYpZOEuvqRV85gmpvcMPBFMXteq1R4WpNu21RGe83wuFfAAbjB3YBM6t6c',
+  'Finca La Esperanza',
+  '1.600 m',
+  '0xc13cbb1566fe10eb1a846449a214f940f18515264e6d382e3157c9c62b7fdbb0',
+  '0x4D773045b5ffD0292107A46EdA37d76a33C668dc',
+  45,
+  array['Sierra Nevada', 'Variedad Castillo'],
+  '{
+    "displayName": "Café Castillo · Tostión media",
+    "summary": "Es el mismo café que probaste en Santa Marta: acidez cítrica brillante, cuerpo medio y un final dulce a panela. Grano 100 % arábica, lavado y secado al sol en la finca.",
+    "tastingNotes": "En taza: mandarina, panela y un toque de cacao amargo. Ideal en filtro Chemex o prensa francesa.",
+    "specs": [
+      {"label": "Variedad", "value": "Castillo"},
+      {"label": "Proceso", "value": "Lavado"},
+      {"label": "Altitud", "value": "1.600 m"},
+      {"label": "Tostión", "value": "Media"},
+      {"label": "Disponible", "value": "500 kg"}
+    ]
+  }'::jsonb,
+  'drying',
+  'Secado'
+)
+on conflict (slug) do update set
+  estado_actual = excluded.estado_actual,
+  blockchain_hash = excluded.blockchain_hash,
+  contract_address = excluded.contract_address;
+
+-- Segundo lote dashboard (banano — inspección)
+insert into lotes (
+  id, slug, productor_id, producto, variedad, cantidad_kg, fecha_cosecha,
+  estado_actual, foto_url, finca_nombre, elevacion, precio_usd, tags,
+  dashboard_status, dashboard_status_label
+)
+values (
+  '22222222-2222-2222-2222-222222222202',
+  'gros-michel-norte-3',
+  '11111111-1111-1111-1111-111111111101',
+  'Banano',
+  'Gros Michel',
+  1200,
+  '2026-05-20',
+  'En inspección de calidad',
+  'https://lh3.googleusercontent.com/aida-public/AB6AXuDWLxCmoza_ZRxwZUFfH3OkHEDxqjmeLNhBuqdxLW22JFUjtJ7DVOr7EI9u0vDr053NXVgThSuP3Beziy0_hyjI7keF9ojJHVjD5TMWI3HI6rcGbzwU_ZbH1zcLLMwHvN0-7FEl8XTxn-ylGz6v0XM4GEpg2Q9JvbhhwOKHoos-wTnedWxbS3Uj5A0iINFwOIaWDku7X8uwGDNMH2HrXlgvxWsz4-8yWsf4vg2LtJemd7ZJ9RQaTCuFIVsfH-RPJv8LnHdiVALoo8qW',
+  'Finca La Esperanza',
+  'Lote Norte #3',
+  null,
+  array['Exportación'],
+  'inspection',
+  'Inspección'
+)
+on conflict (slug) do nothing;
+
+-- Trazabilidad lote café
+delete from trazabilidad where lote_id = '22222222-2222-2222-2222-222222222201';
+
+insert into trazabilidad (lote_id, etapa, descripcion, fecha, status, orden, blockchain_tx) values
+  ('22222222-2222-2222-2222-222222222201', 'Cosecha', 'Cerezas recolectadas a mano y seleccionadas por madurez óptima.', '12 oct 2023', 'completed', 0, '0x394f6b2491b6a7360e2eea8fcb1dc97066826c9559fb2995ca8e6f0fbe954580'),
+  ('22222222-2222-2222-2222-222222222201', 'Lavado y fermentación', 'Proceso húmedo tradicional para resaltar la acidez brillante.', '14 oct 2023', 'completed', 1, '0x3570518cc1846b31f19d7412444973b2c64b1417800b86fff27fd7f7e0371a59'),
+  ('22222222-2222-2222-2222-222222222201', 'Secado al sol', 'Reposo en camas elevadas hasta alcanzar la humedad ideal.', null, 'current', 2, '0x4ef2d3fea8fd0ff972d1da8e56983629df59bdafb3e906479b80ccebf385654e'),
+  ('22222222-2222-2222-2222-222222222201', 'Listo para exportación', 'Control de calidad final y preparación para el envío.', null, 'pending', 3, '0xa628b386a19b9a4b2ab3fa7c7102a17cc124ec5ff153d84c111359d33544b323');
+
+-- Trazabilidad dashboard (pasos cortos)
+delete from trazabilidad where lote_id = '22222222-2222-2222-2222-222222222202';
+
+insert into trazabilidad (lote_id, etapa, descripcion, status, orden) values
+  ('22222222-2222-2222-2222-222222222202', 'Cosecha', null, 'completed', 0),
+  ('22222222-2222-2222-2222-222222222202', 'Inspección', null, 'current', 1),
+  ('22222222-2222-2222-2222-222222222202', 'Empaque', null, 'pending', 2),
+  ('22222222-2222-2222-2222-222222222202', 'Envío', null, 'pending', 3);
+
+-- Pasos dashboard lote café (vista productor)
+insert into trazabilidad (lote_id, etapa, descripcion, status, orden)
+select '22222222-2222-2222-2222-222222222201', etapa, null, status, orden + 10
+from (values
+  ('Cosecha', 'completed', 0),
+  ('Lavado', 'completed', 1),
+  ('Secado', 'current', 2),
+  ('Reposo', 'pending', 3)
+) as d(etapa, status, orden)
+where not exists (
+  select 1 from trazabilidad t
+  where t.lote_id = '22222222-2222-2222-2222-222222222201' and t.orden = d.orden + 10
+);
+
+-- Certificaciones
+delete from certificaciones where lote_id = '22222222-2222-2222-2222-222222222201';
+
+insert into certificaciones (lote_id, tipo, label) values
+  ('22222222-2222-2222-2222-222222222201', 'organic', 'Certificado Orgánico'),
+  ('22222222-2222-2222-2222-222222222201', 'fairtrade', 'Comercio Justo'),
+  ('22222222-2222-2222-2222-222222222201', 'rainforest', 'Rainforest Alliance');
+
+-- Agencias
+insert into agencias (id, slug, nombre, whatsapp) values
+  ('33333333-3333-3333-3333-333333333301', 'experiencias-don-jose', 'Experiencias Don José', '573001234567'),
+  ('33333333-3333-3333-3333-333333333302', 'huellas-tours', 'Huellas Tours', '573009876543'),
+  ('33333333-3333-3333-3333-333333333303', 'sierra-coffee', 'Sierra Coffee Agency', null),
+  ('33333333-3333-3333-3333-333333333304', 'magdalena-roots', 'Magdalena Roots Travel', null),
+  ('33333333-3333-3333-3333-333333333305', 'andes-experience', 'Andes Experience Co.', null)
+on conflict (slug) do nothing;
+
+-- Experiencias
+insert into experiencias (id, lote_id, slug, titulo, resumen, descripcion, imagen_url, orden)
+values (
+  '44444444-4444-4444-4444-444444444401',
+  '22222222-2222-2222-2222-222222222201',
+  'tour-finca',
+  'Tour a la finca',
+  'Recorre cultivos, beneficio y secado con cata guiada.',
+  'Vive el origen del café que escaneaste: camina entre los árboles, conoce el proceso de beneficio y termina con una cata guiada en la finca.',
+  'https://lh3.googleusercontent.com/aida-public/AB6AXuB7f2AT1G5fRQUIgib4Ww_tLuuV6NQ_F8zd9aferxtQSzjxpCSMeHdF-Ssq9pLDYVU__5lMti4SMie6f9pL1plvzfUewd9XEKPiNJ7P-IMCgEmdYnHdMsauN5HSuITWQbWBP1NHBYd7MJIvDrCKL66Db9QrwkdqcUXSUexaXwHnXXZ95x8du2gG2S7FEi8U7Haj59AZ0_WFYoUTNh8IuZ_8TlANJZyBnPnCO30b_wRyIN3PNPk__N4UflxMpjomVue1wxQ0ipkHDVyM',
+  0
+)
+on conflict (lote_id, slug) do update set titulo = excluded.titulo;
+
+insert into experiencias (id, lote_id, slug, titulo, resumen, descripcion, imagen_url, orden)
+values (
+  '44444444-4444-4444-4444-444444444402',
+  '22222222-2222-2222-2222-222222222201',
+  'ruta-sierra',
+  'Ruta Sierra Nevada + Filtrado',
+  'Sendero ecológico, historia local y taller de métodos filtrados.',
+  'Experiencia extendida por la Sierra Nevada con parada en finca aliada y taller práctico de preparación en Chemex y V60.',
+  'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?q=80&w=1200&auto=format&fit=crop',
+  1
+)
+on conflict (lote_id, slug) do nothing;
+
+-- Proveedores experiencia 1
+delete from experiencia_proveedores where experiencia_id = '44444444-4444-4444-4444-444444444401';
+
+insert into experiencia_proveedores (experiencia_id, agencia_id, agency_name, descripcion, duracion, precio, punto_encuentro, capacidad, idiomas) values
+  ('44444444-4444-4444-4444-444444444401', '33333333-3333-3333-3333-333333333301', 'Experiencias Don José', 'Tour directo con la familia productora en Finca La Esperanza.', '3 horas', 85, 'Entrada principal "Finca La Esperanza"', '12 personas', array['Español']),
+  ('44444444-4444-4444-4444-444444444401', '33333333-3333-3333-3333-333333333302', 'Huellas Tours', 'Incluye guía bilingüe y kit de cata para llevar.', '3.5 horas', 95, 'Centro de Minca · punto Huellas', '10 personas', array['Español', 'Inglés']),
+  ('44444444-4444-4444-4444-444444444401', '33333333-3333-3333-3333-333333333303', 'Sierra Coffee Agency', 'Grupo pequeño con enfoque fotográfico y cata comparativa.', '4 horas', 78, 'Plaza de Minca', '6 personas', array['Español']);
+
+delete from experiencia_proveedores where experiencia_id = '44444444-4444-4444-4444-444444444402';
+
+insert into experiencia_proveedores (experiencia_id, agencia_id, agency_name, descripcion, duracion, precio, punto_encuentro, capacidad, idiomas) values
+  ('44444444-4444-4444-4444-444444444402', '33333333-3333-3333-3333-333333333304', 'Magdalena Roots Travel', 'Ruta completa con transporte desde Santa Marta.', '5 horas', 120, 'Parque principal de Minca', '8 personas', array['Español', 'Inglés']),
+  ('44444444-4444-4444-4444-444444444402', '33333333-3333-3333-3333-333333333305', 'Andes Experience Co.', 'Versión premium con almuerzo campesino incluido.', '6 horas', 145, 'Hotel pickup · zona rodadero', '6 personas', array['Español', 'Inglés', 'Francés']);

@@ -22,14 +22,24 @@
 
 # debug
 npm-debug.log*
+pnpm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# local env files
-.env*.local
+# lockfiles de otros gestores
+package-lock.json
+yarn.lock
+
+# --- Secretos (solo .env.example va al repo, vacío) ---
+.env
+.env.*
+!.env.example
 
 # vercel
 .vercel
+
+# hardhat
+/blockchain/cache
 
 # typescript
 *.tsbuildinfo

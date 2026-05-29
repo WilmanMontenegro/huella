@@ -1,0 +1,42 @@
+{
+  "_format": "hh3-sol-build-info-1",
+  "id": "solc-0_8_24-b80165945c4e511463192cd717c6a31b6a2ebbb1",
+  "solcVersion": "0.8.24",
+  "solcLongVersion": "0.8.24+commit.e11b9ed9",
+  "compilerType": "solc",
+  "userSourceNameMap": {
+    "contracts/MagTraceRegistry.sol": "project/contracts/MagTraceRegistry.sol"
+  },
+  "input": {
+    "language": "Solidity",
+    "settings": {
+      "evmVersion": "shanghai",
+      "outputSelection": {
+        "*": {
+          "": [
+            "ast"
+          ],
+          "*": [
+            "abi",
+            "evm.bytecode.linkReferences",
+            "evm.bytecode.object",
+            "evm.bytecode.opcodes",
+            "evm.bytecode.sourceMap",
+            "evm.deployedBytecode.immutableReferences",
+            "evm.deployedBytecode.linkReferences",
+            "evm.deployedBytecode.object",
+            "evm.deployedBytecode.opcodes",
+            "evm.deployedBytecode.sourceMap",
+            "evm.methodIdentifiers"
+          ]
+        }
+      },
+      "remappings": []
+    },
+    "sources": {
+      "project/contracts/MagTraceRegistry.sol": {
+        "content": "// SPDX-License-Identifier: MIT\npragma solidity ^0.8.24;\n\n/// @title MagTraceRegistry — trazabilidad de lotes agro-turísticos (Polygon Amoy)\ncontract MagTraceRegistry {\n    event LotRegistered(\n        string indexed lotId,\n        bytes32 dataHash,\n        string farmName,\n        string product,\n        uint256 timestamp\n    );\n\n    event TraceabilityStepRecorded(\n        string indexed lotId,\n        uint256 stepIndex,\n        string stage,\n        bytes32 stepHash,\n        uint256 timestamp\n    );\n\n    mapping(string => bytes32) public lotHashes;\n    mapping(string => uint256) public stepCounts;\n\n    function registerLot(\n        string calldata lotId,\n        bytes32 dataHash,\n        string calldata farmName,\n        string calldata product\n    ) external {\n        lotHashes[lotId] = dataHash;\n        emit LotRegistered(lotId, dataHash, farmName, product, block.timestamp);\n    }\n\n    function recordStep(\n        string calldata lotId,\n        uint256 stepIndex,\n        string calldata stage,\n        bytes32 stepHash\n    ) external {\n        stepCounts[lotId] = stepIndex + 1;\n        emit TraceabilityStepRecorded(lotId, stepIndex, stage, stepHash, block.timestamp);\n    }\n}\n"
+      }
+    }
+  }
+}
