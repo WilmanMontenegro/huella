@@ -19,6 +19,7 @@
     "db:migrate:remote": "supabase db query -f supabase/migrations/20260529130000_operador_referidos.sql --linked && supabase db query -f supabase/migrations/20260529140000_grants_public_api.sql --linked",
     "db:grants:remote": "supabase db query -f supabase/migrations/20260529140000_grants_public_api.sql --linked",
     "db:verify": "tsx scripts/verify-backend.ts",
+    "auth:verify": "tsx scripts/verify-auth-flows.ts",
     "db:seed:remote": "supabase db query -f supabase/seed.sql --linked",
     "db:setup:remote": "pnpm db:migrate:remote && pnpm db:seed:remote",
     "db:status": "supabase projects list",

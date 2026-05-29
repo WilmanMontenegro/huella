@@ -5,11 +5,14 @@ import { FarmerFab, LotCard } from "@/components/farmer/LotCard";
 import { ProducerRecentOrders } from "@/components/farmer/ProducerRecentOrders";
 import { getPedidosForProductor, getProducerDashboard } from "@/lib/data/lots-repository";
 import { MaterialIcon } from "@/components/icons/MaterialIcon";
+import { requirePanelRole } from "@/lib/auth/panel-access";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
 
 export const dynamic = "force-dynamic";
 
 export default async function ProductorDashboardPage() {
+  await requirePanelRole("productor", "/productor/dashboard");
+
   const [data, pedidosRecientes] = await Promise.all([
     getProducerDashboard(),
     getPedidosForProductor(),
