@@ -55,11 +55,7 @@ export function TopAppBar({
           {title}
         </h1>
 
-        {rightAction ?? (
-          <button type="button" className="text-primary transition-opacity hover:opacity-80">
-            <MaterialIcon name={isCheckout ? "more_horiz" : "notifications"} />
-          </button>
-        )}
+        {rightAction ?? <span className="inline-flex h-6 w-6 shrink-0" aria-hidden />}
       </div>
     </header>
   );
