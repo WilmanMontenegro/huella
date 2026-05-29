@@ -3,12 +3,17 @@
 import Link from "next/link";
 import { ScanProductButton } from "@/components/product/ScanProductButton";
 import { MaterialIcon } from "@/components/icons/MaterialIcon";
+import { DEFAULT_OPERADOR_AGENCIA_SLUG } from "@/lib/constants/operador";
 import { getHomePathForRole, type HuellaRole, readRoleFromUserMetadata } from "@/lib/auth/roles";
 import { useSupabaseUser } from "@/hooks/useSupabaseUser";
 
 function accederHref(rol: HuellaRole) {
   if (rol === "turista") return "/acceder";
-  return `/acceder?rol=${rol}`;
+  const next =
+    rol === "operador"
+      ? `/operador/dashboard?agencia=${DEFAULT_OPERADOR_AGENCIA_SLUG}`
+      : getHomePathForRole(rol);
+  return `/acceder?rol=${rol}&next=${encodeURIComponent(next)}`;
 }
 
 function panelHref(role: HuellaRole | null, target: HuellaRole) {

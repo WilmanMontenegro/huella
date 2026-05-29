@@ -32,8 +32,11 @@ export default async function AccederPage({ searchParams }: PageProps) {
 
         return (
           <>
-            <TopAppBar title="Tu perfil en Huella" backHref="/" />
-            <main className="mx-auto flex min-h-screen max-w-content items-center justify-center px-margin-mobile pb-24 pt-24 md:px-margin-desktop">
+            <TopAppBar
+              title={initialRole === "operador" ? "Operador turístico" : "Tu perfil en Huella"}
+              backHref="/"
+            />
+            <main className="mx-auto flex min-h-screen max-w-content flex-col items-center justify-center px-margin-mobile pb-24 pt-24 md:px-margin-desktop">
               <AuthForm
                 mode="unified"
                 redirectTo={redirectTo}
@@ -48,10 +51,17 @@ export default async function AccederPage({ searchParams }: PageProps) {
     }
   }
 
+  const operadorIntro = initialRole === "operador";
+
   return (
     <>
-      <TopAppBar title="Entrar / Registrarse" backHref="/" />
-      <main className="mx-auto flex min-h-screen max-w-content items-center justify-center px-margin-mobile pb-24 pt-24 md:px-margin-desktop">
+      <TopAppBar title={operadorIntro ? "Operador turístico" : "Entrar / Registrarse"} backHref="/" />
+      <main className="mx-auto flex min-h-screen max-w-content flex-col items-center justify-center px-margin-mobile pb-24 pt-24 md:px-margin-desktop">
+        {operadorIntro && (
+          <p className="mb-4 max-w-md text-center font-body text-body-sm text-on-surface-variant">
+            Un solo acceso con Google o correo. Después vas directo a tu panel de referidos y tours.
+          </p>
+        )}
         <AuthForm
           mode="unified"
           redirectTo={redirectTo}

@@ -43,8 +43,14 @@ export default async function OperadorDashboardPage({ searchParams }: PageProps)
 
   if (!user) redirect(`/acceder?rol=operador&next=${encodeURIComponent(loginNext)}`);
 
-  const agencia = await resolveOperadorAgencia(user.id, agenciaParam);
-  if (!agencia) redirect("/operador");
+  const agencia =
+    (await resolveOperadorAgencia(user.id, agenciaParam)) ??
+    (await resolveOperadorAgencia(user.id, "huella-tours"));
+  if (!agencia) {
+    redirect(
+      `/acceder?rol=operador&next=${encodeURIComponent(loginNext)}&error=auth`
+    );
+  }
 
   return (
     <OperadorDashboardContent
