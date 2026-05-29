@@ -24,6 +24,13 @@ export function CheckoutAuthGate({ lotId, children }: CheckoutAuthGateProps) {
 
     let cancelled = false;
 
+    const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (cancelled) return;
+      if (session?.user) {
+        setReady(true);
+      }
+    });
+
     supabase.auth.getUser().then(({ data: { user } }) => {
       if (cancelled) return;
       if (user) {
@@ -35,6 +42,7 @@ export function CheckoutAuthGate({ lotId, children }: CheckoutAuthGateProps) {
 
     return () => {
       cancelled = true;
+      authListener.subscription.unsubscribe();
     };
   }, [router, checkoutPath]);
 

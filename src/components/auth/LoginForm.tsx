@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { MaterialIcon } from "@/components/icons/MaterialIcon";
 import { HuellaLogo } from "@/components/brand/HuellaLogo";
+import { sendSmartMagicLink, signInOrSignUpWithPassword } from "@/lib/auth/smart-auth";
 import { createClientIfConfigured } from "@/lib/supabase/client";
 
 interface LoginFormProps {
@@ -11,7 +12,6 @@ interface LoginFormProps {
 }
 
 type EmailMode = "magic-link" | "password";
-type PasswordMode = "sign-in" | "sign-up";
 
 function GoogleIcon() {
   return (
@@ -36,14 +36,21 @@ function GoogleIcon() {
   );
 }
 
+function isSuccessMessage(message: string): boolean {
+  return (
+    message.includes("Revisa tu correo") ||
+    message.includes("Creamos tu cuenta") ||
+    message.includes("primera vez")
+  );
+}
+
 export function LoginForm({ redirectTo = "/", authError = false }: LoginFormProps) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [emailMode, setEmailMode] = useState<EmailMode>("magic-link");
-  const [passwordMode, setPasswordMode] = useState<PasswordMode>("sign-in");
   const [loading, setLoading] = useState<"google" | "email" | null>(null);
   const [message, setMessage] = useState<string | null>(
-    authError ? "No pudimos completar el inicio de sesión. Intenta de nuevo." : null
+    authError ? "No pudimos completar el acceso. Intenta de nuevo con Google o correo." : null
   );
   const [showEmailForm, setShowEmailForm] = useState(false);
 
@@ -56,7 +63,7 @@ export function LoginForm({ redirectTo = "/", authError = false }: LoginFormProp
     if (!supabase) {
       setMessage(
         process.env.NODE_ENV === "production"
-          ? "El inicio de sesión aún no está disponible. Si acabas de desplegar, espera un minuto y recarga."
+          ? "El acceso aún no está disponible. Si acabas de desplegar, espera un minuto y recarga."
           : "Añade NEXT_PUBLIC_SUPABASE_URL y NEXT_PUBLIC_SUPABASE_ANON_KEY en .env.local (ver .env.example)."
       );
       return null;
@@ -64,7 +71,11 @@ export function LoginForm({ redirectTo = "/", authError = false }: LoginFormProp
     return supabase;
   }
 
-  async function signInWithGoogle() {
+  function goAfterAuth() {
+    window.location.href = redirectTo;
+  }
+
+  async function continueWithGoogle() {
     const supabase = getSupabase();
     if (!supabase) return;
 
@@ -87,7 +98,7 @@ export function LoginForm({ redirectTo = "/", authError = false }: LoginFormProp
     }
   }
 
-  async function submitEmail(e: React.FormEvent) {
+  async function continueWithEmail(e: React.FormEvent) {
     e.preventDefault();
     const supabase = getSupabase();
     if (!supabase || !email.trim()) return;
@@ -95,50 +106,45 @@ export function LoginForm({ redirectTo = "/", authError = false }: LoginFormProp
     setLoading("email");
     setMessage(null);
 
+    const callbackUrl = buildCallbackUrl();
+    const normalizedEmail = email.trim();
+
     if (emailMode === "magic-link") {
-      const { error } = await supabase.auth.signInWithOtp({
-        email: email.trim(),
-        options: {
-          emailRedirectTo: buildCallbackUrl(),
-        },
-      });
-
+      const result = await sendSmartMagicLink(supabase, normalizedEmail, callbackUrl);
       setLoading(null);
-      if (error) {
-        setMessage(error.message);
+      if (!result.ok) {
+        setMessage(result.message);
         return;
       }
-      setMessage("Revisa tu correo: te enviamos un enlace para entrar sin contraseña.");
+      setMessage(result.message);
       return;
     }
 
-    if (passwordMode === "sign-in") {
-      const { error } = await supabase.auth.signInWithPassword({
-        email: email.trim(),
-        password,
-      });
+    if (!password) {
       setLoading(null);
-      if (error) {
-        setMessage(error.message);
-        return;
-      }
-      window.location.href = redirectTo;
+      setMessage("Escribe tu contraseña para continuar.");
       return;
     }
 
-    const { error } = await supabase.auth.signUp({
-      email: email.trim(),
+    const result = await signInOrSignUpWithPassword(
+      supabase,
+      normalizedEmail,
       password,
-      options: {
-        emailRedirectTo: buildCallbackUrl(),
-      },
-    });
+      callbackUrl
+    );
     setLoading(null);
-    if (error) {
-      setMessage(error.message);
+
+    if (!result.ok) {
+      setMessage(result.message);
       return;
     }
-    setMessage("Cuenta creada. Revisa tu correo para confirmar o entra con tu contraseña.");
+
+    if (result.kind === "sign-up-pending") {
+      setMessage(result.message);
+      return;
+    }
+
+    goAfterAuth();
   }
 
   return (
@@ -146,15 +152,15 @@ export function LoginForm({ redirectTo = "/", authError = false }: LoginFormProp
       <div className="mb-6 flex justify-center">
         <HuellaLogo variant="vertical" href={undefined} priority />
       </div>
-      <h1 className="mb-2 text-center font-display text-headline-md text-primary">Entrar a Huella</h1>
+      <h1 className="mb-2 text-center font-display text-headline-md text-primary">Continúa con Huella</h1>
       <p className="mb-8 text-center font-body text-body-md text-on-surface-variant">
-        Inicia sesión solo para comprar. Ver trazabilidad y tours no requiere cuenta.
+        Un solo paso: si ya tienes cuenta entras; si no, la creamos al vuelo. Solo hace falta para comprar.
       </p>
 
       {message && (
         <div
           className={`mb-6 rounded-lg px-4 py-3 font-body text-body-sm ${
-            message.includes("Revisa tu correo") || message.includes("Cuenta creada")
+            isSuccessMessage(message)
               ? "bg-tertiary-fixed text-on-tertiary-container"
               : "bg-error-container/20 text-error"
           }`}
@@ -166,7 +172,7 @@ export function LoginForm({ redirectTo = "/", authError = false }: LoginFormProp
 
       <button
         type="button"
-        onClick={signInWithGoogle}
+        onClick={continueWithGoogle}
         disabled={loading !== null}
         className="flex h-14 w-full items-center justify-center gap-3 rounded-full bg-primary font-body text-label-md text-on-primary shadow-lg transition-transform hover:bg-primary/90 active:scale-[0.98] disabled:opacity-60"
       >
@@ -177,6 +183,9 @@ export function LoginForm({ redirectTo = "/", authError = false }: LoginFormProp
         )}
         Continuar con Google
       </button>
+      <p className="mt-2 text-center font-body text-label-sm text-outline">
+        Primera vez o cuenta existente: Google detecta tu correo automáticamente.
+      </p>
 
       <div className="my-8 flex items-center gap-4">
         <div className="h-px flex-1 bg-outline-variant" />
@@ -194,7 +203,7 @@ export function LoginForm({ redirectTo = "/", authError = false }: LoginFormProp
           Continuar con correo
         </button>
       ) : (
-        <form onSubmit={submitEmail} className="space-y-4">
+        <form onSubmit={continueWithEmail} className="space-y-4">
           <div>
             <label htmlFor="login-email" className="mb-1.5 block font-body text-label-sm text-on-surface-variant">
               Correo electrónico
@@ -222,7 +231,7 @@ export function LoginForm({ redirectTo = "/", authError = false }: LoginFormProp
               <input
                 id="login-password"
                 type="password"
-                autoComplete={passwordMode === "sign-in" ? "current-password" : "new-password"}
+                autoComplete="current-password"
                 required
                 minLength={6}
                 value={password}
@@ -241,11 +250,7 @@ export function LoginForm({ redirectTo = "/", authError = false }: LoginFormProp
             {loading === "email" && (
               <MaterialIcon name="progress_activity" className="animate-spin text-lg" />
             )}
-            {emailMode === "magic-link"
-              ? "Enviar enlace al correo"
-              : passwordMode === "sign-in"
-                ? "Entrar con contraseña"
-                : "Crear cuenta"}
+            Continuar
           </button>
 
           <div className="flex flex-col gap-2 pt-1 text-center">
@@ -261,38 +266,34 @@ export function LoginForm({ redirectTo = "/", authError = false }: LoginFormProp
                 Prefiero usar contraseña
               </button>
             ) : (
-              <>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setEmailMode("magic-link");
-                    setPassword("");
-                    setMessage(null);
-                  }}
-                  className="font-body text-label-sm text-secondary hover:underline"
-                >
-                  Usar enlace por correo (sin contraseña)
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setPasswordMode(passwordMode === "sign-in" ? "sign-up" : "sign-in");
-                    setMessage(null);
-                  }}
-                  className="font-body text-label-sm text-outline hover:text-primary"
-                >
-                  {passwordMode === "sign-in"
-                    ? "¿No tienes cuenta? Regístrate"
-                    : "¿Ya tienes cuenta? Inicia sesión"}
-                </button>
-              </>
+              <button
+                type="button"
+                onClick={() => {
+                  setEmailMode("magic-link");
+                  setPassword("");
+                  setMessage(null);
+                }}
+                className="font-body text-label-sm text-secondary hover:underline"
+              >
+                Prefiero enlace por correo (sin contraseña)
+              </button>
+            )}
+            {emailMode === "magic-link" && (
+              <p className="font-body text-label-sm text-outline">
+                Te enviamos un enlace: sirve para entrar o crear cuenta con el mismo correo.
+              </p>
+            )}
+            {emailMode === "password" && (
+              <p className="font-body text-label-sm text-outline">
+                Si el correo es nuevo, registramos tu cuenta; si ya existe, iniciamos sesión.
+              </p>
             )}
           </div>
         </form>
       )}
 
       <p className="mt-8 text-center font-body text-label-sm text-outline">
-        También puedes explorar sin cuenta.
+        Explorar productos y trazabilidad no requiere cuenta.
       </p>
     </div>
   );

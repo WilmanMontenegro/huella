@@ -10,10 +10,7 @@ interface LotCardProps {
 
 export function LotCard({ lot }: LotCardProps) {
   return (
-    <Link
-      href={`/producto/${lot.id}`}
-      className="flex flex-col gap-5 rounded-xl border border-outline-variant bg-surface-container-lowest p-4 shadow-organic-lg transition-colors hover:border-secondary-fixed"
-    >
+    <article className="flex flex-col gap-5 rounded-xl border border-outline-variant bg-surface-container-lowest p-4 shadow-organic-lg transition-colors hover:border-secondary-fixed">
       <div className="flex items-start justify-between">
         <div className="flex items-center gap-4">
           <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-lg border border-outline-variant bg-surface-container-high">
@@ -42,8 +39,23 @@ export function LotCard({ lot }: LotCardProps) {
           ))}
         </div>
       </div>
-      <p className="text-center font-body text-label-sm text-secondary">Ver trazabilidad pública →</p>
-    </Link>
+      <div className="flex flex-col gap-2 sm:flex-row sm:justify-center">
+        <Link
+          href={`/productor/lote/${lot.id}`}
+          className="flex h-11 items-center justify-center gap-2 rounded-full bg-primary font-body text-label-md text-on-primary"
+        >
+          <MaterialIcon name="qr_code_2" className="text-[18px]" />
+          QR del lote
+        </Link>
+        <Link
+          href={`/producto/${lot.id}`}
+          className="flex h-11 items-center justify-center gap-2 rounded-full border border-secondary font-body text-label-md text-secondary"
+        >
+          <MaterialIcon name="visibility" className="text-[18px]" />
+          Vista turista
+        </Link>
+      </div>
+    </article>
   );
 }
 

@@ -13,10 +13,16 @@ export interface LotVerification {
 interface TimelineProps {
   steps: TraceabilityStep[];
   title?: string;
+  timelineSubtitle?: string;
   verification?: LotVerification;
 }
 
-export function Timeline({ steps, title = "El camino de tu café", verification }: TimelineProps) {
+export function Timeline({
+  steps,
+  title = "El camino de tu café",
+  timelineSubtitle = "Del árbol a tu taza — cada paso documentado",
+  verification,
+}: TimelineProps) {
   const hasRealLinks =
     Boolean(verification?.registrationTx && verification.registrationTx.length > 10) &&
     !verification?.isDemoMode;
@@ -24,9 +30,7 @@ export function Timeline({ steps, title = "El camino de tu café", verification 
   return (
     <section className="rounded-card border border-[#E5E0D5] bg-surface-container-lowest p-8 organic-shadow">
       <h3 className="mb-2 text-center font-display text-headline-md text-primary">{title}</h3>
-      <p className="mb-8 text-center font-body text-body-md text-on-surface-variant">
-        Del árbol a tu taza — cada paso documentado
-      </p>
+      <p className="mb-8 text-center font-body text-body-md text-on-surface-variant">{timelineSubtitle}</p>
 
       <div className="relative mx-auto max-w-md">
         <div className="absolute bottom-5 left-5 top-5 w-0.5 bg-outline-variant/30" />

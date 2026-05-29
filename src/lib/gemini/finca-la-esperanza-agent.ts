@@ -88,7 +88,13 @@ export function buildFincaLaEsperanzaAgentPrompt(
 
 ${areaHint ? `<screen_context>${areaHint}</screen_context>\n` : ""}
 <context>
-  <farm name="${lot.farmName}" region="${producer.municipality}" elevation="${lot.elevation ?? "1.600 m"}">
+  <brand name="${lot.productDetail?.brand?.name ?? lot.productDetail?.displayName ?? lot.product}">
+    ${lot.productDetail?.brand?.tagline ?? ""}
+    ${lot.productDetail?.brand?.description ?? ""}
+  </brand>
+
+  <farm name="${lot.productDetail?.farm?.name ?? lot.farmName}" company="${lot.productDetail?.farm?.companyName ?? ""}" region="${lot.productDetail?.farm?.region ?? producer.municipality}" elevation="${lot.elevation ?? "1.600 m"}">
+    ${lot.productDetail?.farm?.description ?? ""}
     <producer name="${producer.name}" years="${producer.yearsOfExperience}">${producer.story}</producer>
   </farm>
 

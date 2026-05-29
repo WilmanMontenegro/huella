@@ -49,9 +49,18 @@ export default function MisPedidosPage() {
                   </div>
                   <div className="text-right">
                     <p className="font-display text-headline-sm text-primary">${p.totalUsd.toFixed(2)}</p>
-                    <span className="mt-1 inline-block rounded-full bg-tertiary-fixed px-2 py-0.5 font-body text-label-sm text-on-tertiary-container">
-                      {p.estado}
+                    <span
+                      className={`mt-1 inline-block rounded-full px-2 py-0.5 font-body text-label-sm ${
+                        p.estado === "pagado"
+                          ? "bg-secondary/20 text-secondary"
+                          : "bg-tertiary-fixed text-on-tertiary-container"
+                      }`}
+                    >
+                      {p.estado === "pagado" ? "Pagado ✓" : p.estado}
                     </span>
+                    {p.metodoPago && (
+                      <p className="mt-1 font-body text-label-sm text-outline">{p.metodoPago}</p>
+                    )}
                   </div>
                 </div>
               </li>

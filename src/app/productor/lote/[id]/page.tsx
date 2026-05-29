@@ -5,6 +5,8 @@ import { getLotById } from "@/lib/data/lots-repository";
 import Link from "next/link";
 import { MaterialIcon } from "@/components/icons/MaterialIcon";
 
+export const dynamic = "force-dynamic";
+
 interface PageProps {
   params: { id: string };
 }

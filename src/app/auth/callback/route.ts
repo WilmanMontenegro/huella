@@ -29,9 +29,12 @@ export async function GET(request: Request) {
 
     const { error } = await supabase.auth.exchangeCodeForSession(code);
     if (!error) {
-      return NextResponse.redirect(`${origin}${next}`);
+      const dest = new URL(next, origin);
+      return NextResponse.redirect(dest);
     }
+    console.error("[auth/callback]", error.message);
   }
 
-  return NextResponse.redirect(`${origin}/login?error=auth`);
+  const failNext = encodeURIComponent(next);
+  return NextResponse.redirect(`${origin}/login?error=auth&next=${failNext}`);
 }

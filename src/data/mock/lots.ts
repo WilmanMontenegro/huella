@@ -63,6 +63,20 @@ export const demoLot: Lot = {
   tags: ["Sierra Nevada", "Variedad Castillo"],
   productDetail: {
     displayName: "Café Castillo · Tostión media",
+    brand: {
+      name: "Esperanza Specialty Coffee",
+      tagline: "Café de especialidad de la Sierra Nevada del Magdalena",
+      description:
+        "Marca comercial de exportación de la familia de Don José. Cada lote Castillo se identifica con trazabilidad Huella desde cosecha hasta empaque.",
+    },
+    farm: {
+      name: "Finca La Esperanza",
+      companyName: "La Esperanza Agrícola — empresa familiar",
+      municipality: "Minca, Magdalena",
+      region: "Sierra Nevada del Magdalena, Colombia",
+      description:
+        "Finca de altura con beneficio húmedo propio y secado al sol. Aquí se cultiva y procesa el café que acabas de escanear.",
+    },
     summary:
       "Es el mismo café que probaste en Santa Marta: acidez cítrica brillante, cuerpo medio y un final dulce a panela. Grano 100 % arábica, lavado y secado al sol en la finca.",
     tastingNotes:
@@ -253,6 +267,20 @@ const grosMichelLot: Lot = {
   tags: ["Sierra Nevada", "Exportación", "Gros Michel"],
   productDetail: {
     displayName: "Banano Gros Michel · Lote Norte #3",
+    brand: {
+      name: "Esperanza Export Banano",
+      tagline: "Fruta de exportación con origen verificable",
+      description:
+        "Línea de banano Gros Michel de Finca La Esperanza, etiquetada por lote para compradores internacionales y turistas.",
+    },
+    farm: {
+      name: "Finca La Esperanza",
+      companyName: "La Esperanza Agrícola — empresa familiar",
+      municipality: "Minca, Magdalena",
+      region: "Sierra Nevada del Magdalena, Colombia",
+      description:
+        "El banano de este QR proviene del Lote Norte #3, en la misma finca donde se cultiva el café Castillo de la familia de Don José.",
+    },
     summary:
       "Mismo origen que el café de Finca La Esperanza: fruta de exportación en suelos volcánicos de la Sierra Nevada, con trazabilidad por lote desde la finca hasta el empaque.",
     tastingNotes:

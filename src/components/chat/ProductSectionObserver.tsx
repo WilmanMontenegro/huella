@@ -7,6 +7,7 @@ import type { ChatArea } from "@/lib/chat/areas";
 const SECTION_AREAS: Record<string, ChatArea> = {
   "product-hero": "product-hero",
   "product-detail": "product-detail",
+  "product-origin": "product-origin",
   "product-producer": "product-producer",
   "product-certifications": "product-certifications",
   "product-timeline": "product-timeline",

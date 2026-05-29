@@ -199,11 +199,16 @@ export function mapLot(
 
 export function mapLotSummary(lote: DbLote, trazabilidad: DbTrazabilidad[]): LotSummary {
   const isBanana = lote.dashboard_status === "inspection";
-  const displayName = isBanana
-    ? `${lote.variedad ?? lote.producto} Exportación`
-    : lote.slug === "finca-la-esperanza"
-      ? "Café Castillo · Finca La Esperanza"
-      : `${lote.variedad ?? lote.producto} · ${lote.finca_nombre ?? lote.slug}`;
+  const detail = lote.product_detail as { displayName?: string; brand?: { name?: string } } | null;
+  const brandOrDetail = detail?.brand?.name ?? detail?.displayName;
+
+  const displayName = brandOrDetail
+    ? brandOrDetail
+    : isBanana
+      ? `${lote.variedad ?? lote.producto} Exportación`
+      : lote.slug === "finca-la-esperanza"
+        ? "Café Castillo · Finca La Esperanza"
+        : `${lote.variedad ?? lote.producto} · ${lote.finca_nombre ?? lote.slug}`;
 
   const location = isBanana
     ? (lote.elevacion ?? lote.finca_nombre ?? "")

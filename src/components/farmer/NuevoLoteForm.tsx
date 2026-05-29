@@ -1,13 +1,29 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { MaterialIcon } from "@/components/icons/MaterialIcon";
 import { TopAppBar } from "@/components/layout/TopAppBar";
+import type { ProductorProfile } from "@/lib/data/lots-repository";
 
 export function NuevoLoteForm() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [profile, setProfile] = useState<ProductorProfile | null>(null);
+  const [profileError, setProfileError] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetch("/api/productor/profile")
+      .then(async (res) => {
+        const data = await res.json();
+        if (!res.ok) {
+          setProfileError(data.error ?? "No se pudo cargar el productor");
+          return;
+        }
+        setProfile(data.profile);
+      })
+      .catch(() => setProfileError("Error de red al cargar el productor"));
+  }, []);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -25,6 +41,7 @@ export function NuevoLoteForm() {
         estadoActual: form.get("estadoActual"),
         fincaNombre: form.get("fincaNombre"),
         elevacion: form.get("elevacion"),
+        productorId: profile?.id,
       }),
     });
 
@@ -33,22 +50,39 @@ export function NuevoLoteForm() {
 
     if (data.lote?.slug) {
       router.push(`/productor/lote/${data.lote.slug}`);
+      router.refresh();
     } else {
-      alert("No se pudo registrar el lote.");
+      alert(data.error ?? "No se pudo registrar el lote en Supabase.");
     }
   }
+
+  const fincaDefault = profile?.fincaNombre ?? "Finca La Esperanza";
+  const productoDefault = profile?.defaultProducto ?? "Café";
+  const elevacionDefault = profile?.defaultElevacion ?? "1.600 m";
 
   return (
     <>
       <TopAppBar title="Nuevo lote" backHref="/productor/dashboard" />
       <main className="mx-auto max-w-lg px-margin-mobile pb-24 pt-24 md:px-margin-desktop">
-        <form onSubmit={handleSubmit} className="space-y-5">
-          <Field label="Producto" name="producto" defaultValue="Café" required />
+        {profile && (
+          <p className="mb-6 rounded-xl border border-secondary/30 bg-secondary/10 px-4 py-3 font-body text-body-sm text-on-surface-variant">
+            Registrando lote para <strong className="text-primary">{profile.fullName}</strong>
+            {profile.municipio ? ` · ${profile.municipio}` : ""}
+          </p>
+        )}
+        {profileError && (
+          <p className="mb-6 rounded-xl border border-error/40 bg-error/10 px-4 py-3 font-body text-body-sm text-error">
+            {profileError}
+          </p>
+        )}
+
+        <form onSubmit={handleSubmit} className="space-y-5" key={profile?.id ?? "loading"}>
+          <Field label="Producto" name="producto" defaultValue={productoDefault} required />
           <Field label="Variedad" name="variedad" placeholder="Castillo, Caturra…" />
           <Field label="Cantidad (kg)" name="cantidadKg" type="number" defaultValue="500" required />
           <Field label="Fecha de cosecha" name="fechaCosecha" type="date" />
-          <Field label="Finca" name="fincaNombre" defaultValue="Finca La Esperanza" required />
-          <Field label="Altitud / ubicación" name="elevacion" defaultValue="1.600 m" />
+          <Field label="Finca" name="fincaNombre" defaultValue={fincaDefault} required />
+          <Field label="Altitud / ubicación" name="elevacion" defaultValue={elevacionDefault} />
           <Field
             label="Estado actual"
             name="estadoActual"
@@ -62,7 +96,7 @@ export function NuevoLoteForm() {
             className="flex h-14 w-full items-center justify-center gap-2 rounded-full bg-tertiary-fixed font-body text-label-md text-on-tertiary-container shadow-fab-yellow disabled:opacity-60"
           >
             <MaterialIcon name="save" />
-            {loading ? "Registrando…" : "Registrar lote y generar QR"}
+            {loading ? "Registrando en Supabase…" : "Registrar lote y generar QR"}
           </button>
         </form>
       </main>

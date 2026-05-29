@@ -7,13 +7,17 @@ import {
   demoProducer,
   DEMO_LOT_ID,
 } from "@/data/mock/lots";
+import { DEFAULT_PRODUCTOR_ID } from "@/lib/constants/productor";
+import {
+  getProducerDashboardFromSupabase,
+  getProductorProfile,
+  type ProductorProfile,
+} from "@/lib/data/productor-repository";
 import {
   mapCheckoutItem,
   mapExperiences,
   mapLot,
-  mapLotSummary,
   mapProductor,
-  mapProducerDashboard,
   type DbCertificacion,
   type DbExperiencia,
   type DbExperienciaProveedor,
@@ -74,10 +78,10 @@ export async function getLotById(id: string): Promise<Lot | undefined> {
   if (!isSupabaseConfigured()) return mockGetLotById(id);
 
   const lote = await fetchLoteBySlug(id);
-  if (!lote) return mockGetLotById(id);
+  if (!lote) return undefined;
 
   const relations = await fetchLoteRelations(lote.id);
-  if (!relations) return mockGetLotById(id);
+  if (!relations) return undefined;
 
   return mapLot(lote, relations.trazabilidad, relations.certificaciones, relations.experiencias);
 }
@@ -94,7 +98,18 @@ export async function getProducerForLot(lot: Lot): Promise<Producer> {
     .eq("id", lot.producerId)
     .maybeSingle();
 
-  if (!data) return mockGetProducerForLot(lot);
+  if (!data) {
+    return {
+      id: lot.producerId,
+      name: "Productor",
+      photoUrl: "",
+      story: "",
+      municipality: lot.farmName,
+      lat: 0,
+      lng: 0,
+      yearsOfExperience: 0,
+    };
+  }
   return mapProductor(data as DbProductor);
 }
 
@@ -121,42 +136,32 @@ export async function getCheckoutItem(lotId: string) {
 }
 
 export async function getProducerDashboard(
-  productorId = "11111111-1111-1111-1111-111111111101"
-): Promise<ProducerDashboard> {
-  if (!isSupabaseConfigured()) return demoProducer;
+  productorId = DEFAULT_PRODUCTOR_ID
+): Promise<ProducerDashboard & { fromSupabase: boolean }> {
+  if (!isSupabaseConfigured()) {
+    return { ...demoProducer, fromSupabase: false };
+  }
 
-  const supabase = await createClientIfConfigured();
-  if (!supabase) return demoProducer;
+  const dashboard = await getProducerDashboardFromSupabase(productorId);
+  if (dashboard) {
+    return { ...dashboard, fromSupabase: true };
+  }
 
-  const { data: productor } = await supabase
-    .from("productores")
-    .select("*")
-    .eq("id", productorId)
-    .maybeSingle();
-
-  if (!productor) return demoProducer;
-
-  const { data: lotes } = await supabase
-    .from("lotes")
-    .select("*")
-    .eq("productor_id", productorId)
-    .order("created_at");
-
-  if (!lotes?.length) return demoProducer;
-
-  const summaries = await Promise.all(
-    (lotes as DbLote[]).map(async (lote) => {
-      const { data: traz } = await supabase
-        .from("trazabilidad")
-        .select("*")
-        .eq("lote_id", lote.id)
-        .order("orden");
-      return mapLotSummary(lote, (traz ?? []) as DbTrazabilidad[]);
-    })
-  );
-
-  return mapProducerDashboard(productor as DbProductor, summaries);
+  return {
+    name: "Productor",
+    monthlySalesUsd: 0,
+    activeLots: 0,
+    lots: [],
+    fromSupabase: false,
+  };
 }
+
+export {
+  getProductorProfile,
+  getPedidosForProductor,
+  type ProductorProfile,
+  type ProductorPedidoRow,
+} from "@/lib/data/productor-repository";
 
 export async function createPedido(input: {
   lotSlug: string;
@@ -165,9 +170,13 @@ export async function createPedido(input: {
   paisDestino?: string;
   totalUsd: number;
   compradorEmail?: string;
+  estado?: string;
+  agenciaReferenteId?: string;
 }) {
+  const estado = input.estado ?? "pendiente";
+
   if (!isSupabaseConfigured()) {
-    return { id: "demo-pedido", ...input, estado: "pendiente" };
+    return { id: `demo-${Date.now()}`, ...input, estado };
   }
 
   const supabase = await createClientIfConfigured();
@@ -185,7 +194,8 @@ export async function createPedido(input: {
       pais_destino: input.paisDestino,
       total_usd: input.totalUsd,
       comprador_email: input.compradorEmail,
-      estado: "pendiente",
+      estado,
+      agencia_referente_id: input.agenciaReferenteId ?? null,
     })
     .select("id, estado")
     .single();
@@ -271,7 +281,7 @@ export async function createLote(input: {
   elevacion?: string;
   productorId?: string;
 }) {
-  const productorId = input.productorId ?? "11111111-1111-1111-1111-111111111101";
+  const productorId = input.productorId ?? DEFAULT_PRODUCTOR_ID;
   const slug = `${input.fincaNombre.toLowerCase().replace(/\s+/g, "-")}-${Date.now().toString(36)}`;
 
   if (!isSupabaseConfigured()) {

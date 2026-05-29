@@ -3,15 +3,18 @@ import type { Lot } from "@/types";
 
 interface ProductHeroProps {
   lot: Lot;
+  title: string;
   subtitle: string;
 }
 
-export function ProductHero({ lot, subtitle }: ProductHeroProps) {
+export function ProductHero({ lot, title, subtitle }: ProductHeroProps) {
+  const imageAlt = lot.productDetail?.displayName ?? title;
+
   return (
     <section className="relative h-[530px] w-full overflow-hidden rounded-b-card md:mx-4 md:mt-8 md:h-[618px] md:rounded-card organic-shadow">
       <Image
         src={lot.photoUrl}
-        alt={lot.farmName}
+        alt={imageAlt}
         fill
         className="object-cover"
         priority
@@ -29,7 +32,10 @@ export function ProductHero({ lot, subtitle }: ProductHeroProps) {
             </span>
           ))}
         </div>
-        <h2 className="font-display text-display-lg text-on-tertiary">{lot.farmName}</h2>
+        <p className="mb-1 font-body text-label-md uppercase tracking-wider text-on-tertiary/80">
+          El producto que escaneaste
+        </p>
+        <h2 className="font-display text-display-lg text-on-tertiary">{title}</h2>
         <p className="max-w-2xl font-body text-body-lg text-on-tertiary/90">{subtitle}</p>
       </div>
     </section>

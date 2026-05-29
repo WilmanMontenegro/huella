@@ -6,14 +6,16 @@ export const QR_PUBLIC_LOTS = [
   {
     slug: "finca-la-esperanza",
     fileName: "finca-la-esperanza.png",
-    label: "Finca La Esperanza · Café Castillo",
+    label: "Esperanza Specialty Coffee · Finca La Esperanza",
+    brandName: "Esperanza Specialty Coffee",
     farmName: "Finca La Esperanza",
     product: "Café",
   },
   {
     slug: "gros-michel-norte-3",
     fileName: "gros-michel-norte-3.png",
-    label: "Finca La Esperanza · Banano Gros Michel (Lote Norte #3)",
+    label: "Esperanza Export Banano · Finca La Esperanza",
+    brandName: "Esperanza Export Banano",
     farmName: "Finca La Esperanza",
     product: "Banano",
   },

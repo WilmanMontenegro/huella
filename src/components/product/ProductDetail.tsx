@@ -13,13 +13,14 @@ function productIcon(product: string) {
 
 export function ProductDetail({ lot }: ProductDetailProps) {
   const detail = lot.productDetail;
+  const brand = detail?.brand;
 
   if (!detail) {
     return (
       <section className="rounded-card border border-[#E5E0D5] bg-surface-container-lowest p-6 md:p-8 organic-shadow">
         <div className="mb-4 flex items-center gap-2 text-tertiary-container">
           <MaterialIcon name={productIcon(lot.product)} className="text-xl" />
-          <span className="font-body text-label-sm uppercase tracking-wider">El producto que escaneaste</span>
+          <span className="font-body text-label-sm uppercase tracking-wider">Información del producto</span>
         </div>
         <h3 className="mb-2 font-display text-headline-md text-primary">
           {lot.product}
@@ -54,11 +55,20 @@ export function ProductDetail({ lot }: ProductDetailProps) {
     <section className="rounded-card border border-[#E5E0D5] bg-surface-container-lowest p-6 md:p-8 organic-shadow">
       <div className="mb-4 flex items-center gap-2 text-tertiary-container">
         <MaterialIcon name={productIcon(lot.product)} className="text-xl" />
-        <span className="font-body text-label-sm uppercase tracking-wider">El producto que escaneaste</span>
+        <span className="font-body text-label-sm uppercase tracking-wider">Información del producto</span>
       </div>
 
+      {brand && (
+        <p className="mb-1 font-body text-label-md text-secondary">{brand.name}</p>
+      )}
       <h3 className="mb-2 font-display text-headline-md text-primary">{detail.displayName}</h3>
+      {brand?.tagline && (
+        <p className="mb-3 font-body text-body-md text-on-surface-variant">{brand.tagline}</p>
+      )}
       <p className="mb-6 font-body text-body-lg leading-relaxed text-on-surface-variant">{detail.summary}</p>
+      {brand?.description && (
+        <p className="mb-6 font-body text-body-md leading-relaxed text-on-surface-variant">{brand.description}</p>
+      )}
 
       <div className="flex flex-wrap gap-2">
         {detail.specs.map((spec) => (

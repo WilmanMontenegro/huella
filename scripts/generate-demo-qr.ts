@@ -24,6 +24,7 @@ async function main() {
     slug: string;
     file: string;
     label: string;
+    brandName: string;
     farmName: string;
     product: string;
     url: string;
@@ -45,6 +46,7 @@ async function main() {
       slug: lot.slug,
       file: lot.fileName,
       label: lot.label,
+      brandName: lot.brandName,
       farmName: lot.farmName,
       product: lot.product,
       url,

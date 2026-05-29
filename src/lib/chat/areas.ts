@@ -1,6 +1,7 @@
 export type ChatArea =
   | "landing"
   | "product-hero"
+  | "product-origin"
   | "product-detail"
   | "product-producer"
   | "product-certifications"
@@ -40,6 +41,17 @@ export const CHAT_AREA_CONFIG: Record<ChatArea, ChatAreaConfig> = {
       "¿De dónde viene este café?",
       "¿Quién es Don José?",
       "¿Cuándo estará listo para exportación?",
+    ],
+  },
+  "product-origin": {
+    title: "Agente · Marca y finca",
+    greeting:
+      "Aquí ves la marca comercial del producto y la finca donde se cultiva. Pregúntame por la empresa, el origen o la marca.",
+    suggestions: [
+      "¿Cuál es la marca de este producto?",
+      "¿En qué finca se cultiva?",
+      "¿Quién es la empresa detrás?",
+      "¿Dónde queda la finca?",
     ],
   },
   "product-detail": {

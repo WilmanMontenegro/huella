@@ -25,7 +25,7 @@ export function AuthNav() {
   if (!user) {
     return (
       <Link href="/login" className="font-body text-label-md text-outline hover:text-primary">
-        Entrar
+        Entrar / Registrarse
       </Link>
     );
   }

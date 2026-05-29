@@ -1,25 +1,44 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import { MaterialIcon } from "@/components/icons/MaterialIcon";
+import { SimulatedPayment } from "@/components/checkout/SimulatedPayment";
+import type { CheckoutPurchaseConfig } from "@/lib/product-copy";
+import { readReferralSlug } from "@/lib/referral/client";
 import { savePedidoLocal } from "@/lib/pedidos-local";
+import {
+  generateSimulatedTransactionId,
+  paymentMethodLabel,
+  simulatePaymentDelay,
+  type SimulatedPaymentMethod,
+} from "@/lib/payment/simulate";
 import type { CheckoutItem } from "@/types";
 
 type Fulfillment = "local" | "export";
 
 interface CheckoutClientProps {
   item: CheckoutItem;
+  config: CheckoutPurchaseConfig;
 }
 
-export function CheckoutClient({ item }: CheckoutClientProps) {
+export function CheckoutClient({ item, config }: CheckoutClientProps) {
   const router = useRouter();
-  const [qty, setQty] = useState(1);
-  const [fulfillment, setFulfillment] = useState<Fulfillment>("local");
+  const [qty, setQty] = useState(config.minQty);
+  const [fulfillment, setFulfillment] = useState<Fulfillment>(config.defaultFulfillment);
   const [paisDestino, setPaisDestino] = useState("");
   const [loading, setLoading] = useState(false);
   const [done, setDone] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState<SimulatedPaymentMethod>("card");
+  const [cardName, setCardName] = useState("");
+  const [cardNumber, setCardNumber] = useState("4242424242424242");
+  const [receipt, setReceipt] = useState<{ txId: string; method: string } | null>(null);
+
+  useEffect(() => {
+    setQty(config.minQty);
+    setFulfillment(config.defaultFulfillment);
+  }, [config]);
 
   const shipping = fulfillment === "export" ? 15 : 0;
   const subtotal = item.priceUsd * qty;
@@ -34,9 +53,29 @@ export function CheckoutClient({ item }: CheckoutClientProps) {
     [subtotal, shipping, total]
   );
 
-  async function handleConfirm() {
+  function changeQty(delta: number) {
+    setQty((q) => Math.min(config.maxQty, Math.max(config.minQty, q + delta)));
+  }
+
+  async function handlePay() {
+    if (config.intent === "mayorista" && fulfillment === "export" && !paisDestino.trim()) {
+      alert("Indica el país de destino para el pedido de exportación.");
+      return;
+    }
+    if (paymentMethod === "card" && cardNumber.replace(/\s/g, "").length < 15) {
+      alert("Ingresa un número de tarjeta válido (demo: 4242…).");
+      return;
+    }
+
     setLoading(true);
+    const txId = generateSimulatedTransactionId();
+    const methodLabel = paymentMethodLabel(paymentMethod);
+
     try {
+      await simulatePaymentDelay(2200);
+
+      const agenciaReferenteSlug = readReferralSlug();
+
       const res = await fetch("/api/pedidos", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -44,26 +83,35 @@ export function CheckoutClient({ item }: CheckoutClientProps) {
           lotSlug: item.lotId,
           cantidad: qty,
           tipoEnvio: fulfillment,
-          paisDestino: fulfillment === "export" ? paisDestino || "Internacional" : "Colombia",
+          paisDestino: fulfillment === "export" ? paisDestino.trim() || "Internacional" : "Colombia",
           totalUsd: total,
+          estado: "pagado",
+          agenciaReferenteSlug: agenciaReferenteSlug ?? undefined,
         }),
       });
 
       const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+
       const pedidoId = data.pedido?.id ?? `demo-${Date.now()}`;
 
       savePedidoLocal({
         id: pedidoId,
         lotSlug: item.lotId,
         totalUsd: total,
-        estado: data.pedido?.estado ?? "pendiente",
+        estado: "pagado",
+        metodoPago: methodLabel,
+        transaccionId: txId,
+        cantidad: qty,
+        tipoEnvio: fulfillment,
         createdAt: new Date().toISOString(),
       });
 
+      setReceipt({ txId, method: methodLabel });
       setDone(true);
-      setTimeout(() => router.push("/mis-pedidos"), 1500);
+      setTimeout(() => router.push("/mis-pedidos"), 3500);
     } catch {
-      alert("No se pudo confirmar el pedido. Intenta de nuevo.");
+      alert("No se pudo procesar el pago simulado. Intenta de nuevo.");
     } finally {
       setLoading(false);
     }
@@ -73,10 +121,20 @@ export function CheckoutClient({ item }: CheckoutClientProps) {
     return (
       <main className="mx-auto flex max-w-md flex-col items-center px-container-padding-mobile py-24 text-center">
         <MaterialIcon name="check_circle" filled className="mb-4 text-5xl text-secondary" />
-        <h2 className="font-display text-headline-md text-primary">¡Pedido confirmado!</h2>
+        <h2 className="font-display text-headline-md text-primary">¡Pago exitoso!</h2>
         <p className="mt-2 font-body text-body-md text-on-surface-variant">
-          Redirigiendo a tus pedidos…
+          {config.intent === "mayorista"
+            ? "Pago registrado. El exportador revisará el envío internacional."
+            : "Tu compra quedó registrada. Te redirigimos a tus pedidos…"}
         </p>
+        {receipt && (
+          <div className="mt-6 w-full rounded-xl border border-outline-variant bg-surface-container-lowest p-4 text-left">
+            <p className="font-body text-label-sm text-outline">Transacción (simulada)</p>
+            <p className="mt-1 font-mono text-label-md text-primary">{receipt.txId}</p>
+            <p className="mt-2 font-body text-body-sm text-on-surface-variant">{receipt.method}</p>
+            <p className="mt-1 font-display text-headline-sm text-primary">{formatted.total}</p>
+          </div>
+        )}
       </main>
     );
   }
@@ -84,8 +142,17 @@ export function CheckoutClient({ item }: CheckoutClientProps) {
   return (
     <>
       <main className="mx-auto w-full max-w-3xl flex-grow space-y-10 px-container-padding-mobile py-8 pb-32 md:px-container-padding-desktop">
+        <header>
+          <h2 className="font-display text-headline-md text-primary">{config.title}</h2>
+          <p className="mt-1 font-body text-body-md text-on-surface-variant">{config.subtitle}</p>
+          <p className="mt-3 rounded-lg bg-surface-container-high px-3 py-2 font-body text-label-sm text-outline">
+            Origen trazable: <strong className="text-on-surface">{item.variety ?? item.product}</strong> de{" "}
+            {item.farmName} · {config.unitDescription}
+          </p>
+        </header>
+
         <section>
-          <h2 className="mb-4 font-body text-label-md uppercase tracking-wider text-outline">Resumen del pedido</h2>
+          <h2 className="mb-4 font-body text-label-md uppercase tracking-wider text-outline">Resumen</h2>
           <div className="flex flex-col gap-6 rounded-xl border border-tertiary-fixed/40 bg-tertiary-fixed/20 p-4 shadow-organic-nav sm:flex-row">
             <div className="relative h-32 w-full shrink-0 overflow-hidden rounded-lg bg-surface-container-high sm:w-32">
               <Image src={item.imageUrl} alt={item.product} fill className="object-cover" />
@@ -100,7 +167,8 @@ export function CheckoutClient({ item }: CheckoutClientProps) {
                   </h3>
                   <span className="font-display text-headline-md text-primary">${item.priceUsd.toFixed(2)}</span>
                 </div>
-                <div className="mt-2 flex gap-2">
+                <p className="mt-1 font-body text-label-sm text-outline">Precio referencia por {config.qtyLabel.slice(0, -1).toLowerCase()}</p>
+                <div className="mt-2 flex flex-wrap gap-2">
                   <span className="rounded-full border border-transparent bg-tertiary-fixed px-2 py-1 font-body text-label-sm text-on-tertiary-container">
                     {item.weight}
                   </span>
@@ -110,20 +178,22 @@ export function CheckoutClient({ item }: CheckoutClientProps) {
                 </div>
               </div>
               <div className="mt-4 flex items-center justify-between">
-                <span className="font-body text-label-md text-outline">Cantidad</span>
+                <span className="font-body text-label-md text-outline">{config.qtyLabel}</span>
                 <div className="flex items-center gap-4 rounded-full border border-surface-variant bg-surface-container-lowest px-2 py-1">
                   <button
                     type="button"
-                    onClick={() => setQty((q) => Math.max(1, q - 1))}
-                    className="flex h-8 w-8 items-center justify-center rounded-full transition-colors hover:bg-tertiary-fixed/50 active:scale-95"
+                    onClick={() => changeQty(-1)}
+                    disabled={qty <= config.minQty}
+                    className="flex h-8 w-8 items-center justify-center rounded-full transition-colors hover:bg-tertiary-fixed/50 active:scale-95 disabled:opacity-40"
                   >
                     <MaterialIcon name="remove" className="text-[20px]" />
                   </button>
-                  <span className="w-4 text-center font-body text-label-md">{qty}</span>
+                  <span className="min-w-[2ch] text-center font-body text-label-md">{qty}</span>
                   <button
                     type="button"
-                    onClick={() => setQty((q) => q + 1)}
-                    className="flex h-8 w-8 items-center justify-center rounded-full transition-colors hover:bg-tertiary-fixed/50 active:scale-95"
+                    onClick={() => changeQty(1)}
+                    disabled={qty >= config.maxQty}
+                    className="flex h-8 w-8 items-center justify-center rounded-full transition-colors hover:bg-tertiary-fixed/50 active:scale-95 disabled:opacity-40"
                   >
                     <MaterialIcon name="add" className="text-[20px]" />
                   </button>
@@ -134,37 +204,50 @@ export function CheckoutClient({ item }: CheckoutClientProps) {
         </section>
 
         <section>
-          <h2 className="mb-4 font-body text-label-md uppercase tracking-wider text-outline">Forma de entrega</h2>
+          <h2 className="mb-4 font-body text-label-md uppercase tracking-wider text-outline">Entrega</h2>
           <div className="space-y-4">
-            <FulfillmentOption
-              id="local"
-              checked={fulfillment === "local"}
-              onChange={() => setFulfillment("local")}
-              icon="storefront"
-              title="Recogida local"
-              description="Tostadora Santa Marta. Listo en 2 horas."
-              price="Gratis"
-            />
-            <FulfillmentOption
-              id="export"
-              checked={fulfillment === "export"}
-              onChange={() => setFulfillment("export")}
-              icon="flight_takeoff"
-              title="Exportación internacional"
-              description="Envío global vía DHL. 5-7 días hábiles."
-              price="$15.00"
-            />
+            {config.showLocal && (
+              <FulfillmentOption
+                id="local"
+                checked={fulfillment === "local"}
+                onChange={() => setFulfillment("local")}
+                icon="storefront"
+                title="Recogida en el Magdalena"
+                description="Santa Marta o Minca. Ideal si sigues viajando por la zona."
+                price="Gratis"
+              />
+            )}
+            {config.showExport && (
+              <FulfillmentOption
+                id="export"
+                checked={fulfillment === "export"}
+                onChange={() => setFulfillment("export")}
+                icon="flight_takeoff"
+                title="Exportación internacional"
+                description="Envío al exterior. Revisión del exportador Huella."
+                price="$15.00"
+              />
+            )}
           </div>
           {fulfillment === "export" && (
             <input
               type="text"
-              placeholder="País destino (ej. Alemania)"
+              placeholder="País destino (ej. Alemania, EE. UU.)"
               value={paisDestino}
               onChange={(e) => setPaisDestino(e.target.value)}
               className="mt-4 w-full rounded-xl border border-outline-variant bg-surface px-4 py-3 font-body text-body-md outline-none focus:border-secondary"
             />
           )}
         </section>
+
+        <SimulatedPayment
+          method={paymentMethod}
+          onMethodChange={setPaymentMethod}
+          cardName={cardName}
+          onCardNameChange={setCardName}
+          cardNumber={cardNumber}
+          onCardNumberChange={setCardNumber}
+        />
 
         <section className="border-t border-surface-variant/50 pt-8">
           <div className="space-y-3">
@@ -177,7 +260,7 @@ export function CheckoutClient({ item }: CheckoutClientProps) {
               <span className="font-body text-body-md">{formatted.shipping}</span>
             </div>
             <div className="flex items-end justify-between pt-4">
-              <span className="font-body text-label-md text-outline">Total</span>
+              <span className="font-body text-label-md text-outline">Total estimado</span>
               <span className="font-display text-display-lg text-primary">{formatted.total}</span>
             </div>
           </div>
@@ -189,11 +272,20 @@ export function CheckoutClient({ item }: CheckoutClientProps) {
           <button
             type="button"
             disabled={loading}
-            onClick={handleConfirm}
+            onClick={handlePay}
             className="flex h-14 w-full items-center justify-center gap-3 rounded-full bg-primary-container font-body text-label-md text-on-primary-container shadow-lg transition-transform hover:opacity-90 active:scale-[0.98] disabled:opacity-60"
           >
-            <MaterialIcon name="lock" filled className="text-[20px]" />
-            {loading ? "Confirmando…" : "Confirmar compra"}
+            {loading ? (
+              <>
+                <MaterialIcon name="progress_activity" className="animate-spin text-[20px]" />
+                Procesando pago…
+              </>
+            ) : (
+              <>
+                <MaterialIcon name="lock" filled className="text-[20px]" />
+                Pagar {formatted.total} (simulado)
+              </>
+            )}
           </button>
         </div>
       </div>

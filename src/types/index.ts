@@ -63,9 +63,26 @@ export interface Producer {
   yearsOfExperience: number;
 }
 
+export interface ProductBrandInfo {
+  name: string;
+  tagline?: string;
+  logoUrl?: string;
+  description?: string;
+}
+
+export interface ProductFarmInfo {
+  name: string;
+  companyName?: string;
+  description?: string;
+  municipality?: string;
+  region?: string;
+}
+
 export interface ProductDetailInfo {
   displayName: string;
   summary: string;
+  brand?: ProductBrandInfo;
+  farm?: ProductFarmInfo;
   tastingNotes?: string;
   specs: { label: string; value: string }[];
 }

@@ -4,6 +4,10 @@ export interface StoredPedido {
   totalUsd: number;
   estado: string;
   createdAt: string;
+  metodoPago?: string;
+  transaccionId?: string;
+  cantidad?: number;
+  tipoEnvio?: string;
 }
 
 const STORAGE_KEY = "huella_pedidos";

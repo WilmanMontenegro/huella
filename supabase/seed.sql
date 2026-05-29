@@ -1,5 +1,37 @@
 -- Huella · Seed MVP Finca La Esperanza
--- Ejecutar DESPUÉS de schema.sql
+-- Ejecutar DESPUÉS de schema.sql (incluye migración operador si falta en remoto)
+
+-- Operador turístico: columnas y tablas (idempotente)
+alter table agencias add column if not exists descripcion text;
+alter table agencias add column if not exists tagline text;
+alter table pedidos add column if not exists agencia_referente_id uuid references agencias(id);
+create table if not exists operador_usuarios (
+  user_id uuid primary key,
+  agencia_id uuid not null references agencias(id) on delete cascade,
+  created_at timestamptz default now()
+);
+create table if not exists referidos_eventos (
+  id uuid primary key default gen_random_uuid(),
+  agencia_id uuid not null references agencias(id) on delete cascade,
+  tipo text not null check (tipo in ('escaneo', 'pedido')),
+  lote_slug text,
+  pedido_id uuid references pedidos(id) on delete set null,
+  created_at timestamptz default now()
+);
+create index if not exists idx_referidos_agencia on referidos_eventos(agencia_id, created_at desc);
+create index if not exists idx_pedidos_agencia_ref on pedidos(agencia_referente_id);
+alter table operador_usuarios enable row level security;
+alter table referidos_eventos enable row level security;
+drop policy if exists "Operador usuarios lectura" on operador_usuarios;
+create policy "Operador usuarios lectura" on operador_usuarios for select using (true);
+drop policy if exists "Operador usuarios insert" on operador_usuarios;
+create policy "Operador usuarios insert" on operador_usuarios for insert with check (true);
+drop policy if exists "Referidos insert" on referidos_eventos;
+create policy "Referidos insert" on referidos_eventos for insert with check (true);
+drop policy if exists "Referidos lectura" on referidos_eventos;
+create policy "Referidos lectura" on referidos_eventos for select using (true);
+drop policy if exists "Agencias update MVP" on agencias;
+create policy "Agencias update MVP" on agencias for update using (true);
 
 -- IDs fijos para coherencia entre entornos
 -- Productor: Don José
@@ -48,6 +80,18 @@ values (
   array['Sierra Nevada', 'Variedad Castillo'],
   '{
     "displayName": "Café Castillo · Tostión media",
+    "brand": {
+      "name": "Esperanza Specialty Coffee",
+      "tagline": "Café de especialidad de la Sierra Nevada del Magdalena",
+      "description": "Marca comercial de exportación de la familia de Don José. Cada lote Castillo se identifica con trazabilidad Huella desde cosecha hasta empaque."
+    },
+    "farm": {
+      "name": "Finca La Esperanza",
+      "companyName": "La Esperanza Agrícola — empresa familiar",
+      "municipality": "Minca, Magdalena",
+      "region": "Sierra Nevada del Magdalena, Colombia",
+      "description": "Finca de altura con beneficio húmedo propio y secado al sol. Aquí se cultiva y procesa el café que acabas de escanear."
+    },
     "summary": "Es el mismo café que probaste en Santa Marta: acidez cítrica brillante, cuerpo medio y un final dulce a panela. Grano 100 % arábica, lavado y secado al sol en la finca.",
     "tastingNotes": "En taza: mandarina, panela y un toque de cacao amargo. Ideal en filtro Chemex o prensa francesa.",
     "specs": [
@@ -64,7 +108,8 @@ values (
 on conflict (slug) do update set
   estado_actual = excluded.estado_actual,
   blockchain_hash = excluded.blockchain_hash,
-  contract_address = excluded.contract_address;
+  contract_address = excluded.contract_address,
+  product_detail = excluded.product_detail;
 
 -- Segundo lote dashboard (banano — inspección)
 insert into lotes (
@@ -88,6 +133,18 @@ values (
   array['Sierra Nevada', 'Exportación', 'Gros Michel'],
   '{
     "displayName": "Banano Gros Michel · Lote Norte #3",
+    "brand": {
+      "name": "Esperanza Export Banano",
+      "tagline": "Fruta de exportación con origen verificable",
+      "description": "Línea de banano Gros Michel de Finca La Esperanza, etiquetada por lote para compradores internacionales y turistas."
+    },
+    "farm": {
+      "name": "Finca La Esperanza",
+      "companyName": "La Esperanza Agrícola — empresa familiar",
+      "municipality": "Minca, Magdalena",
+      "region": "Sierra Nevada del Magdalena, Colombia",
+      "description": "El banano de este QR proviene del Lote Norte #3, en la misma finca donde se cultiva el café Castillo de la familia de Don José."
+    },
     "summary": "Mismo origen que el café de Finca La Esperanza: fruta de exportación cultivada en suelos volcánicos de la Sierra Nevada, con trazabilidad por lote desde la finca hasta el empaque.",
     "tastingNotes": "Textura firme y aroma dulce característico del Gros Michel; lote en inspección final antes del empaque para mercado internacional.",
     "specs": [
@@ -162,13 +219,25 @@ insert into certificaciones (lote_id, tipo, label) values
   ('22222222-2222-2222-2222-222222222201', 'rainforest', 'Rainforest Alliance');
 
 -- Agencias
-insert into agencias (id, slug, nombre, whatsapp) values
-  ('33333333-3333-3333-3333-333333333301', 'experiencias-don-jose', 'Experiencias Don José', '573001234567'),
-  ('33333333-3333-3333-3333-333333333302', 'huella-tours', 'Huella Tours', '573009876543'),
-  ('33333333-3333-3333-3333-333333333303', 'sierra-coffee', 'Sierra Coffee Agency', null),
-  ('33333333-3333-3333-3333-333333333304', 'magdalena-roots', 'Magdalena Roots Travel', null),
-  ('33333333-3333-3333-3333-333333333305', 'andes-experience', 'Andes Experience Co.', null)
-on conflict (slug) do nothing;
+insert into agencias (id, slug, nombre, whatsapp, tagline, descripcion) values
+  ('33333333-3333-3333-3333-333333333301', 'experiencias-don-jose', 'Experiencias Don José', '573001234567', null, null),
+  (
+    '33333333-3333-3333-3333-333333333302',
+    'huella-tours',
+    'Huella Tours',
+    '573009876543',
+    'Tours bilingües en la Sierra Nevada del Magdalena',
+    'Conectamos turistas en Santa Marta y Minca con fincas trazables. Comparte el QR Huella y reserva experiencias por WhatsApp.'
+  ),
+  ('33333333-3333-3333-3333-333333333303', 'sierra-coffee', 'Sierra Coffee Agency', null, null, null),
+  ('33333333-3333-3333-3333-333333333304', 'magdalena-roots', 'Magdalena Roots Travel', null, null, null),
+  ('33333333-3333-3333-3333-333333333305', 'andes-experience', 'Andes Experience Co.', null, null, null)
+on conflict (id) do update set
+  slug = excluded.slug,
+  nombre = excluded.nombre,
+  whatsapp = excluded.whatsapp,
+  tagline = excluded.tagline,
+  descripcion = excluded.descripcion;
 
 -- Experiencias
 insert into experiencias (id, lote_id, slug, titulo, resumen, descripcion, imagen_url, orden)
@@ -182,7 +251,12 @@ values (
   'https://lh3.googleusercontent.com/aida-public/AB6AXuB7f2AT1G5fRQUIgib4Ww_tLuuV6NQ_F8zd9aferxtQSzjxpCSMeHdF-Ssq9pLDYVU__5lMti4SMie6f9pL1plvzfUewd9XEKPiNJ7P-IMCgEmdYnHdMsauN5HSuITWQbWBP1NHBYd7MJIvDrCKL66Db9QrwkdqcUXSUexaXwHnXXZ95x8du2gG2S7FEi8U7Haj59AZ0_WFYoUTNh8IuZ_8TlANJZyBnPnCO30b_wRyIN3PNPk__N4UflxMpjomVue1wxQ0ipkHDVyM',
   0
 )
-on conflict (lote_id, slug) do update set titulo = excluded.titulo;
+on conflict (id) do update set
+  titulo = excluded.titulo,
+  resumen = excluded.resumen,
+  descripcion = excluded.descripcion,
+  imagen_url = excluded.imagen_url,
+  orden = excluded.orden;
 
 insert into experiencias (id, lote_id, slug, titulo, resumen, descripcion, imagen_url, orden)
 values (
@@ -195,7 +269,12 @@ values (
   'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?q=80&w=1200&auto=format&fit=crop',
   1
 )
-on conflict (lote_id, slug) do nothing;
+on conflict (id) do update set
+  titulo = excluded.titulo,
+  resumen = excluded.resumen,
+  descripcion = excluded.descripcion,
+  imagen_url = excluded.imagen_url,
+  orden = excluded.orden;
 
 -- Proveedores experiencia 1
 delete from experiencia_proveedores where experiencia_id = '44444444-4444-4444-4444-444444444401';

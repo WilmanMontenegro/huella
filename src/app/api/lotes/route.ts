@@ -7,7 +7,10 @@ export async function POST(request: Request) {
     const result = await createLote(body);
 
     if (!result) {
-      return NextResponse.json({ error: "Could not create lot" }, { status: 500 });
+      return NextResponse.json(
+        { error: "No se pudo crear el lote. Verifica Supabase y políticas RLS." },
+        { status: 500 }
+      );
     }
 
     return NextResponse.json({ lote: result });

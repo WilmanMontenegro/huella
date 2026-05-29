@@ -13,6 +13,9 @@ export default function HomePage() {
           <Link href="/productor/dashboard" className="font-body text-label-md text-secondary hover:text-primary">
             Soy productor
           </Link>
+          <Link href="/operador" className="font-body text-label-md text-secondary hover:text-primary">
+            Soy operador
+          </Link>
         </div>
       </header>
 
@@ -41,8 +44,12 @@ export default function HomePage() {
         </div>
 
         <p className="mt-8 font-body text-label-sm text-outline">
+          <Link href="/aliado/huella-tours" className="text-secondary hover:underline">
+            Aliado turístico
+          </Link>
+          {" · "}
           <Link href="/exportador/dashboard" className="text-secondary hover:underline">
-            Vista exportador
+            Exportador
           </Link>
           {" · "}
           <Link href="/mis-pedidos" className="text-secondary hover:underline">
