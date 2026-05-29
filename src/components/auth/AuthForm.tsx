@@ -10,7 +10,7 @@ import {
   type HuellaRole,
   readRoleFromUserMetadata,
 } from "@/lib/auth/roles";
-import { sendMagicLink, signInWithPassword, signUpWithPassword } from "@/lib/auth/smart-auth";
+import { signInWithPassword, signUpWithPassword } from "@/lib/auth/smart-auth";
 import { createClientIfConfigured } from "@/lib/supabase/client";
 
 export type AuthFormMode = "login" | "register" | "unified";
@@ -27,7 +27,8 @@ interface AuthFormProps {
   needsRoleCompletion?: boolean;
 }
 
-type EmailMode = "magic-link" | "password";
+const inputClassName =
+  "h-12 w-full rounded-xl border border-outline-variant bg-surface px-4 font-body text-body-md text-on-surface outline-none ring-primary focus:border-primary focus:ring-2";
 
 function GoogleIcon() {
   return (
@@ -78,7 +79,7 @@ export function AuthForm({
   );
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [emailMode, setEmailMode] = useState<EmailMode>("magic-link");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState<"google" | "email" | "role" | null>(null);
   const [message, setMessage] = useState<string | null>(
     authError ? "No pudimos completar el acceso. Intenta de nuevo." : null
@@ -129,6 +130,22 @@ export function AuthForm({
     if (role) return role;
     setMessage("Elige cómo quieres usar Huella para continuar.");
     return null;
+  }
+
+  function validatePasswordPair(requireConfirm: boolean): boolean {
+    if (!password) {
+      setMessage("Escribe tu contraseña.");
+      return false;
+    }
+    if (password.length < 6) {
+      setMessage("La contraseña debe tener al menos 6 caracteres.");
+      return false;
+    }
+    if (requireConfirm && password !== confirmPassword) {
+      setMessage("Las contraseñas no coinciden.");
+      return false;
+    }
+    return true;
   }
 
   async function goAfterAuth(supabase: NonNullable<ReturnType<typeof createClientIfConfigured>>) {
@@ -202,9 +219,8 @@ export function AuthForm({
       return;
     }
 
-    if (!email.trim() || !password) {
+    if (!email.trim() || !validatePasswordPair(true)) {
       setLoading(null);
-      setMessage("Escribe correo y contraseña para crear tu cuenta.");
       return;
     }
 
@@ -244,22 +260,8 @@ export function AuthForm({
     const callbackUrl = buildCallbackUrl();
     const normalizedEmail = email.trim();
 
-    if (emailMode === "magic-link") {
-      const result = await sendMagicLink(supabase, normalizedEmail, callbackUrl, {
-        createUser: isRegister || isUnified,
-      });
+    if (!validatePasswordPair(isRegister)) {
       setLoading(null);
-      if (!result.ok) {
-        setMessage(result.message);
-        return;
-      }
-      setMessage(result.message);
-      return;
-    }
-
-    if (!password) {
-      setLoading(null);
-      setMessage("Escribe tu contraseña para continuar.");
       return;
     }
 
@@ -296,8 +298,9 @@ export function AuthForm({
       const needsRegister =
         result.message.includes("regístrate") || result.message.includes("registr");
       if (isUnified && needsRegister) {
+        if (!validatePasswordPair(true)) return;
         setUnifiedStep("pick-role");
-        setMessage("Cuenta nueva: elige tu perfil y crea tu contraseña abajo.");
+        setMessage("Cuenta nueva: elige tu perfil para terminar el registro.");
         return;
       }
       setMessage(result.message);
@@ -305,6 +308,71 @@ export function AuthForm({
     }
 
     await goAfterAuth(supabase);
+  }
+
+  function EmailPasswordFields({ idPrefix, showConfirm }: { idPrefix: string; showConfirm: boolean }) {
+    return (
+      <>
+        <div>
+          <label
+            htmlFor={`${idPrefix}-email`}
+            className="mb-1.5 block font-body text-label-sm text-on-surface-variant"
+          >
+            Correo electrónico
+          </label>
+          <input
+            id={`${idPrefix}-email`}
+            type="email"
+            autoComplete="email"
+            required
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="tu@correo.com"
+            className={inputClassName}
+          />
+        </div>
+        <div>
+          <label
+            htmlFor={`${idPrefix}-password`}
+            className="mb-1.5 block font-body text-label-sm text-on-surface-variant"
+          >
+            Contraseña
+          </label>
+          <input
+            id={`${idPrefix}-password`}
+            type="password"
+            autoComplete={showConfirm ? "new-password" : "current-password"}
+            required
+            minLength={6}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Mínimo 6 caracteres"
+            className={inputClassName}
+          />
+        </div>
+        {showConfirm && (
+          <div>
+            <label
+              htmlFor={`${idPrefix}-confirm-password`}
+              className="mb-1.5 block font-body text-label-sm text-on-surface-variant"
+            >
+              Confirmar contraseña
+            </label>
+            <input
+              id={`${idPrefix}-confirm-password`}
+              type="password"
+              autoComplete="new-password"
+              required
+              minLength={6}
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              placeholder="Repite tu contraseña"
+              className={inputClassName}
+            />
+          </div>
+        )}
+      </>
+    );
   }
 
   if (onPickRoleStep) {
@@ -347,33 +415,7 @@ export function AuthForm({
           </button>
         ) : (
           <form onSubmit={continueWithEmail} className="mt-6 space-y-4">
-            <div>
-              <label htmlFor="auth-email" className="mb-1.5 block font-body text-label-sm text-on-surface-variant">
-                Correo
-              </label>
-              <input
-                id="auth-email"
-                type="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="h-12 w-full rounded-xl border border-outline-variant bg-surface px-4 font-body text-body-md"
-              />
-            </div>
-            <div>
-              <label htmlFor="auth-password" className="mb-1.5 block font-body text-label-sm text-on-surface-variant">
-                Contraseña
-              </label>
-              <input
-                id="auth-password"
-                type="password"
-                required
-                minLength={6}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="h-12 w-full rounded-xl border border-outline-variant bg-surface px-4 font-body text-body-md"
-              />
-            </div>
+            <EmailPasswordFields idPrefix="pick-role" showConfirm />
             <button
               type="submit"
               disabled={loading !== null}
@@ -456,48 +498,15 @@ export function AuthForm({
           className="flex h-12 w-full items-center justify-center gap-2 rounded-full border border-outline-variant bg-surface font-body text-label-md text-on-surface transition-colors hover:bg-surface-container-high"
         >
           <MaterialIcon name="mail" className="text-lg" />
-          Continuar con correo
+          Usar correo y contraseña
         </button>
       ) : (
         <form onSubmit={continueWithEmail} className="space-y-4">
-          <div>
-            <label htmlFor="auth-email" className="mb-1.5 block font-body text-label-sm text-on-surface-variant">
-              Correo electrónico
-            </label>
-            <input
-              id="auth-email"
-              type="email"
-              autoComplete="email"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="tu@correo.com"
-              className="h-12 w-full rounded-xl border border-outline-variant bg-surface px-4 font-body text-body-md text-on-surface outline-none ring-primary focus:border-primary focus:ring-2"
-            />
-          </div>
-
-          {emailMode === "password" && (
-            <div>
-              <label
-                htmlFor="auth-password"
-                className="mb-1.5 block font-body text-label-sm text-on-surface-variant"
-              >
-                Contraseña
-              </label>
-              <input
-                id="auth-password"
-                type="password"
-                autoComplete={isRegister ? "new-password" : "current-password"}
-                required
-                minLength={6}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Mínimo 6 caracteres"
-                className="h-12 w-full rounded-xl border border-outline-variant bg-surface px-4 font-body text-body-md text-on-surface outline-none ring-primary focus:border-primary focus:ring-2"
-              />
-            </div>
-          )}
-
+          <EmailPasswordFields idPrefix="auth" showConfirm />
+          <p className="font-body text-label-sm text-outline">
+            ¿Ya tienes cuenta? Solo correo y contraseña. Si es tu primera vez, confirma la contraseña y
+            luego eliges tu perfil.
+          </p>
           <button
             type="submit"
             disabled={loading !== null}
@@ -506,35 +515,8 @@ export function AuthForm({
             {loading === "email" && (
               <MaterialIcon name="progress_activity" className="animate-spin text-lg" />
             )}
-            {isUnified ? "Continuar" : isRegister ? "Crear cuenta" : "Entrar"}
+            {isUnified ? "Entrar / Registrarse" : isRegister ? "Crear cuenta" : "Entrar"}
           </button>
-
-          <div className="flex flex-col gap-2 pt-1 text-center">
-            {emailMode === "magic-link" ? (
-              <button
-                type="button"
-                onClick={() => {
-                  setEmailMode("password");
-                  setMessage(null);
-                }}
-                className="font-body text-label-sm text-secondary hover:underline"
-              >
-                Prefiero usar contraseña
-              </button>
-            ) : (
-              <button
-                type="button"
-                onClick={() => {
-                  setEmailMode("magic-link");
-                  setPassword("");
-                  setMessage(null);
-                }}
-                className="font-body text-label-sm text-secondary hover:underline"
-              >
-                Prefiero enlace por correo
-              </button>
-            )}
-          </div>
         </form>
       )}
 
