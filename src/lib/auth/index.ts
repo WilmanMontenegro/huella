@@ -4,4 +4,5 @@
  */
 export * from "./roles";
 export * from "./navigation";
+export { isAuthDisabled } from "./presentation";
 export { buildAuthCallbackUrl, getClientAuthOrigin, PRODUCTION_APP_ORIGIN } from "./app-origin";

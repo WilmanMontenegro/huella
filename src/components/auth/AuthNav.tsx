@@ -6,6 +6,7 @@ import { createClientIfConfigured } from "@/lib/supabase/client";
 import {
   displayNameFromAuthUser,
   getPanelPathOrCompleteProfile,
+  isAuthDisabled,
   readRoleFromUserMetadata,
 } from "@/lib/auth";
 import { useSupabaseUser } from "@/hooks/useSupabaseUser";
@@ -29,13 +30,32 @@ export function AuthNav() {
   }
 
   if (!user) {
+    if (isAuthDisabled()) {
+      return (
+        <Link
+          href="/"
+          className="inline-flex h-10 items-center justify-center rounded-full border border-tertiary-container/50 bg-tertiary-fixed px-4 font-body text-label-md text-on-tertiary-container shadow-sm sm:px-5"
+        >
+          Perfiles demo
+        </Link>
+      );
+    }
+
     return (
-      <Link
-        href="/acceder"
-        className="inline-flex h-10 items-center justify-center rounded-full border border-outline-variant bg-surface px-4 font-body text-label-md text-on-surface shadow-sm transition-colors hover:bg-surface-container-high sm:px-5"
-      >
-        Entrar / Registrarse
-      </Link>
+      <div className="flex items-center gap-2 sm:gap-3">
+        <Link
+          href="/acceder"
+          className="inline-flex h-10 items-center justify-center rounded-full border border-outline-variant bg-surface px-3 font-body text-label-md text-on-surface shadow-sm transition-colors hover:bg-surface-container-high sm:px-4"
+        >
+          Iniciar sesión
+        </Link>
+        <Link
+          href="/registro"
+          className="inline-flex h-10 items-center justify-center rounded-full bg-primary px-3 font-body text-label-md text-on-primary shadow-sm transition-colors hover:bg-primary/90 sm:px-4"
+        >
+          Registrarse
+        </Link>
+      </div>
     );
   }
 

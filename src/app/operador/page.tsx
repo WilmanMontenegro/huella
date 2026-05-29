@@ -6,6 +6,7 @@ import { DEFAULT_OPERADOR_AGENCIA_SLUG } from "@/lib/constants/operador";
 import {
   buildAccederUrlForRole,
   getOperadorDashboardPath,
+  isAuthDisabled,
   readRoleFromUserMetadata,
 } from "@/lib/auth";
 import { createClientIfConfigured } from "@/lib/supabase/server";
@@ -13,10 +14,11 @@ import { isSupabaseConfigured } from "@/lib/supabase/env";
 
 const operadorDashboard = getOperadorDashboardPath();
 const accederOperador = buildAccederUrlForRole("operador");
+const operadorEntradaHref = isAuthDisabled() ? operadorDashboard : accederOperador;
 
 /** Vitrina del operador; el login único es /acceder (evita doble pantalla). */
 export default async function OperadorLandingPage() {
-  if (isSupabaseConfigured()) {
+  if (!isAuthDisabled() && isSupabaseConfigured()) {
     const supabase = await createClientIfConfigured();
     if (supabase) {
       const {
@@ -60,11 +62,11 @@ export default async function OperadorLandingPage() {
         </div>
 
         <Link
-          href={accederOperador}
+          href={operadorEntradaHref}
           className="inline-flex h-12 items-center justify-center gap-2 rounded-full bg-primary px-6 font-body text-label-md text-on-primary"
         >
-          <MaterialIcon name="login" />
-          Entrar / Registrarse
+          <MaterialIcon name={isAuthDisabled() ? "dashboard" : "login"} />
+          {isAuthDisabled() ? "Ir al panel operador" : "Entrar / Registrarse"}
         </Link>
 
         <p className="mt-6 font-body text-label-sm text-outline">

@@ -35,9 +35,14 @@ import {
 3. Si el panel necesita query (como operador + `agencia`), extender `getPanelPathForRole` en `navigation.ts`.
 4. Opcional: `landingCta` + `landingButtonClassName` para el botón en la landing.
 
+## Modo presentación (sin login)
+
+Variable `NEXT_PUBLIC_AUTH_DISABLED=true`: la home enlaza directo a cada panel, checkout sin sesión, `/acceder` redirige al inicio. Ver `presentation.ts`. **Desactivar después del pitch.**
+
 ## Archivos
 
 - `roles.ts` — tipos, metadata `huella_role`, textos de UI por rol
+- `presentation.ts` — flag de demo sin autenticación
 - `navigation.ts` — construcción de URLs (parámetros)
 - `app-origin.ts` — callback OAuth en producción
 - `smart-auth.ts` — correo/contraseña (Supabase)

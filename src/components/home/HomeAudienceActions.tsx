@@ -10,30 +10,46 @@ import {
   getPanelCtaLabel,
   getPanelPathForRole,
   getRoleLabel,
+  isAuthDisabled,
   LANDING_GUEST_ROLES,
   readRoleFromUserMetadata,
   type HuellaRole,
 } from "@/lib/auth";
 import { useSupabaseUser } from "@/hooks/useSupabaseUser";
+import { DEMO_LOT_ID } from "@/data/mock/lots";
+
+const DEMO_PRODUCT_PATH = `/producto/${DEMO_LOT_ID}`;
 
 function GuestAudienceActions() {
+  const presentation = isAuthDisabled();
+
   return (
     <div className="flex w-full max-w-sm flex-col items-stretch">
       <p className="mb-4 text-center font-body text-label-sm text-outline">
-        Elige cómo quieres usar Huella o escanea un producto
+        {presentation
+          ? "Elige el perfil a mostrar en la demo (sin login)"
+          : "Elige cómo quieres usar Huella o escanea un producto"}
       </p>
       <div className="flex flex-col items-stretch gap-3">
-        <ScanProductButton />
+        <ScanProductButton instantProductPath={DEMO_PRODUCT_PATH} />
         {LANDING_GUEST_ROLES.map((option) => (
           <Link
             key={option.id}
-            href={buildAccederUrlForRole(option.id)}
+            href={presentation ? getPanelPathForRole(option.id) : buildAccederUrlForRole(option.id)}
             className={option.landingButtonClassName}
           >
             <MaterialIcon name={option.icon} />
-            {option.landingCta}
+            {presentation ? option.title : option.landingCta}
           </Link>
         ))}
+        {presentation && (
+          <Link
+            href="/mis-pedidos"
+            className="text-center font-body text-label-sm text-secondary hover:underline"
+          >
+            Turista · ver mis pedidos (local)
+          </Link>
+        )}
       </div>
     </div>
   );
@@ -61,7 +77,7 @@ function LoggedInHomeMenu({
           <MaterialIcon name="badge" />
           Completar mi perfil
         </Link>
-        <ScanProductButton />
+        <ScanProductButton instantProductPath={DEMO_PRODUCT_PATH} />
       </div>
     );
   }
@@ -85,16 +101,7 @@ function LoggedInHomeMenu({
         {getPanelCtaLabel(role)}
       </Link>
 
-      <ScanProductButton />
-
-      {role === "turista" && (
-        <Link
-          href="/producto/finca-la-esperanza"
-          className="font-body text-label-sm text-secondary hover:underline"
-        >
-          Ver demo: Café Finca La Esperanza
-        </Link>
-      )}
+      <ScanProductButton instantProductPath={DEMO_PRODUCT_PATH} />
     </div>
   );
 }

@@ -6,8 +6,10 @@ import { TopAppBar } from "@/components/layout/TopAppBar";
 import { OperadorShareKit } from "@/components/operador/OperadorShareKit";
 import { createClientIfConfigured } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
-import { buildAccederUrl, buildAccederUrlForRole, getOperadorDashboardPath } from "@/lib/auth";
+import { buildAccederUrl, buildAccederUrlForRole, getOperadorDashboardPath, isAuthDisabled } from "@/lib/auth";
+import { DEFAULT_OPERADOR_AGENCIA_ID, DEFAULT_OPERADOR_AGENCIA_SLUG } from "@/lib/constants/operador";
 import {
+  getAgenciaBySlug,
   getAgenciaExperiences,
   getOperadorStats,
   resolveOperadorAgencia,
@@ -23,12 +25,27 @@ export default async function OperadorDashboardPage({ searchParams }: PageProps)
   const agenciaParam = searchParams.agencia;
   const loginNext = getOperadorDashboardPath(agenciaParam);
 
+  if (isAuthDisabled()) {
+    const slug = agenciaParam ?? DEFAULT_OPERADOR_AGENCIA_SLUG;
+    const agencia = await getAgenciaBySlug(slug);
+    return (
+      <OperadorDashboardContent
+        agenciaSlug={agencia?.slug ?? slug}
+        agenciaName={agencia?.name ?? "Huella Tours"}
+        agenciaId={agencia?.id ?? DEFAULT_OPERADOR_AGENCIA_ID}
+        userEmail={null}
+        demoMode
+        presentationMode
+      />
+    );
+  }
+
   if (!isSupabaseConfigured()) {
     return (
       <OperadorDashboardContent
-        agenciaSlug={agenciaParam ?? "huella-tours"}
+        agenciaSlug={agenciaParam ?? DEFAULT_OPERADOR_AGENCIA_SLUG}
         agenciaName="Huella Tours"
-        agenciaId="33333333-3333-3333-3333-333333333302"
+        agenciaId={DEFAULT_OPERADOR_AGENCIA_ID}
         userEmail={null}
         demoMode
       />
@@ -68,12 +85,14 @@ async function OperadorDashboardContent({
   agenciaId,
   userEmail,
   demoMode,
+  presentationMode = false,
 }: {
   agenciaSlug: string;
   agenciaName: string;
   agenciaId: string;
   userEmail: string | null;
   demoMode: boolean;
+  presentationMode?: boolean;
 }) {
   const [stats, experiences] = await Promise.all([
     getOperadorStats(agenciaId),
@@ -85,7 +104,7 @@ async function OperadorDashboardContent({
       <TopAppBar
         title="Panel operador"
         backHref="/operador"
-        rightAction={<SignOutButton redirectTo="/operador" />}
+        rightAction={presentationMode ? undefined : <SignOutButton redirectTo="/operador" />}
       />
       <main className="mx-auto max-w-content px-margin-mobile pb-24 pt-24 md:px-margin-desktop">
         <header className="mb-8">
@@ -95,7 +114,11 @@ async function OperadorDashboardContent({
             <p className="mt-1 font-body text-body-sm text-outline">Sesión: {userEmail}</p>
           )}
           {demoMode && (
-            <p className="mt-2 font-body text-label-sm text-error">Modo demo sin Supabase</p>
+            <p className="mt-2 font-body text-label-sm text-tertiary">
+              {presentationMode
+                ? "Modo presentación — panel sin inicio de sesión"
+                : "Modo demo sin Supabase"}
+            </p>
           )}
         </header>
 

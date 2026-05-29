@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { MaterialIcon } from "@/components/icons/MaterialIcon";
-import { buildAccederUrlForRole, getOperadorDashboardPath } from "@/lib/auth";
+import { buildAccederUrlForRole, getOperadorDashboardPath, isAuthDisabled } from "@/lib/auth";
 import { createClientIfConfigured } from "@/lib/supabase/client";
 
 interface OperadorAuthGateProps {
@@ -18,6 +18,11 @@ export function OperadorAuthGate({ children }: OperadorAuthGateProps) {
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
+    if (isAuthDisabled()) {
+      setReady(true);
+      return;
+    }
+
     const supabase = createClientIfConfigured();
     if (!supabase) {
       setReady(true);
@@ -47,7 +52,9 @@ export function OperadorAuthGate({ children }: OperadorAuthGateProps) {
 }
 
 export function OperadorLoginPrompt({ agenciaSlug }: { agenciaSlug?: string }) {
-  const href = buildAccederUrlForRole("operador", getOperadorDashboardPath(agenciaSlug));
+  const href = isAuthDisabled()
+    ? getOperadorDashboardPath(agenciaSlug)
+    : buildAccederUrlForRole("operador", getOperadorDashboardPath(agenciaSlug));
 
   return (
     <Link
@@ -55,7 +62,7 @@ export function OperadorLoginPrompt({ agenciaSlug }: { agenciaSlug?: string }) {
       className="inline-flex h-12 items-center justify-center gap-2 rounded-full bg-primary px-6 font-body text-label-md text-on-primary"
     >
       <MaterialIcon name="login" />
-      Entrar / Registrarse
+      {isAuthDisabled() ? "Ver panel operador" : "Entrar / Registrarse"}
     </Link>
   );
 }

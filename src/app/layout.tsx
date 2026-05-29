@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { EB_Garamond, Manrope } from "next/font/google";
 import { ChatRoot } from "@/components/chat/ChatRoot";
+import { PresentationModeBar } from "@/components/layout/PresentationModeBar";
 import "./globals.css";
 
 const ebGaramond = EB_Garamond({
@@ -34,6 +35,7 @@ export default function RootLayout({
         className={`${ebGaramond.variable} ${manrope.variable} bg-background font-body text-on-background antialiased`}
       >
         <ChatRoot>{children}</ChatRoot>
+        <PresentationModeBar />
       </body>
     </html>
   );

@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { MaterialIcon } from "@/components/icons/MaterialIcon";
-import { buildAccederUrl } from "@/lib/auth";
+import { buildAccederUrl, isAuthDisabled } from "@/lib/auth";
 import { createClientIfConfigured } from "@/lib/supabase/client";
 
 interface CheckoutAuthGateProps {
@@ -17,6 +17,11 @@ export function CheckoutAuthGate({ lotId, children }: CheckoutAuthGateProps) {
   const checkoutPath = `/checkout/${lotId}`;
 
   useEffect(() => {
+    if (isAuthDisabled()) {
+      setReady(true);
+      return;
+    }
+
     const supabase = createClientIfConfigured();
     if (!supabase) {
       setReady(true);

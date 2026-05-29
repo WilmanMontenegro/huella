@@ -18,7 +18,12 @@ function parseProductPath(text: string): string | null {
   }
 }
 
-export function ScanProductButton() {
+type ScanProductButtonProps = {
+  /** Un clic abre la ficha del lote (demo rápida) sin pedir cámara */
+  instantProductPath?: string;
+};
+
+export function ScanProductButton({ instantProductPath }: ScanProductButtonProps = {}) {
   const router = useRouter();
   const { registerFabSuppress } = useChat();
   const [open, setOpen] = useState(false);
@@ -96,7 +101,13 @@ export function ScanProductButton() {
     <>
       <button
         type="button"
-        onClick={() => setOpen(true)}
+        onClick={() => {
+          if (instantProductPath) {
+            router.push(instantProductPath);
+            return;
+          }
+          setOpen(true);
+        }}
         className="flex h-14 w-full items-center justify-center gap-2 rounded-full bg-primary font-body text-label-md text-on-primary shadow-lg transition-transform hover:bg-primary/90 active:scale-95"
       >
         <MaterialIcon name="qr_code_scanner" />
