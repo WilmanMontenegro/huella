@@ -1,6 +1,6 @@
-# Huellas Web
+# Huella Web
 
-App Next.js 14 del hackathon Huellas — trazabilidad agro-turística del Magdalena.
+App Next.js 14 del hackathon Huella — trazabilidad agro-turística del Magdalena.
 
 ## Stack
 

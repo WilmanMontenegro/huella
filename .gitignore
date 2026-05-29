@@ -35,6 +35,14 @@ yarn.lock
 .env.*
 !.env.example
 
+# Auth OAuth — URLs del proyecto cloud (ver supabase-auth.local.md, no subir)
+supabase-auth.local.md
+*.auth.local.md
+
+# Google OAuth — credenciales descargadas de Google Cloud (no subir)
+client_secret*.json
+.local/
+
 # vercel
 .vercel
 
