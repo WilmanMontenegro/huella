@@ -17,7 +17,7 @@ function getProductUrl(slug: string): string {
 }
 
 async function main() {
-  const outDir = path.join(process.cwd(), "qr");
+  const outDir = path.join(process.cwd(), "..", "pitch", "qr");
   await mkdir(outDir, { recursive: true });
 
   const manifest: Array<{

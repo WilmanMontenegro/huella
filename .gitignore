@@ -49,6 +49,9 @@ client_secret*.json
 # Pitch local del equipo (vive en ../pitch/, no en public/)
 /public/pitch/
 
+# QR imprimibles (se generan en ../pitch/qr/)
+/qr/
+
 # hardhat
 /blockchain/cache
 

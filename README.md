@@ -60,7 +60,7 @@ pnpm dev
 Abrir [http://localhost:3000](http://localhost:3000)
 
 **Demo trazabilidad:** `/producto/finca-la-esperanza`  
-**QR imprimible (repo):** [`qr/finca-la-esperanza.png`](qr/finca-la-esperanza.png) — ver [`qr/README.md`](qr/README.md)
+**QR imprimible (pitch local):** `../pitch/qr/finca-la-esperanza.png` — generar con `pnpm qr:generate`, ver `../pitch/qr/README.md`
 
 ## Rutas
 
