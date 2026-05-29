@@ -10,8 +10,8 @@ export interface RoleOption {
   icon: string;
   /** Texto del botón en landing (solo invitados). */
   landingCta?: string;
-  /** Clases Tailwind del botón en landing. */
-  landingButtonClassName?: string;
+  /** Círculo del icono en tarjetas de la landing. */
+  landingIconClassName?: string;
 }
 
 export const ROLE_OPTIONS: RoleOption[] = [
@@ -21,8 +21,7 @@ export const ROLE_OPTIONS: RoleOption[] = [
     description: "Escaneas QR, compras bolsas o sigues tus pedidos.",
     icon: "travel_explore",
     landingCta: "Soy turista / comprador",
-    landingButtonClassName:
-      "flex h-14 w-full items-center justify-center gap-2 rounded-full border border-secondary/40 bg-surface font-body text-label-md text-secondary transition-colors hover:bg-secondary/10",
+    landingIconClassName: "bg-secondary-container text-on-secondary-container",
   },
   {
     id: "productor",
@@ -30,8 +29,7 @@ export const ROLE_OPTIONS: RoleOption[] = [
     description: "Registras lotes, trazabilidad y QR en tu finca.",
     icon: "agriculture",
     landingCta: "Soy productor agrícola",
-    landingButtonClassName:
-      "flex h-14 w-full items-center justify-center gap-2 rounded-full border border-outline-variant bg-surface-container-low font-body text-label-md text-on-surface transition-colors hover:bg-surface-container-high",
+    landingIconClassName: "bg-primary-container/20 text-primary",
   },
   {
     id: "operador",
@@ -39,8 +37,7 @@ export const ROLE_OPTIONS: RoleOption[] = [
     description: "Compartes productos con turistas y ves referidos.",
     icon: "tour",
     landingCta: "Soy operador turístico",
-    landingButtonClassName:
-      "flex h-14 w-full items-center justify-center gap-2 rounded-full border border-primary-container bg-surface font-body text-label-md text-primary-container transition-colors hover:bg-primary-container hover:text-on-primary-container",
+    landingIconClassName: "bg-primary/10 text-primary",
   },
   {
     id: "exportador",
@@ -48,13 +45,60 @@ export const ROLE_OPTIONS: RoleOption[] = [
     description: "Revisas y apruebas pedidos de exportación.",
     icon: "local_shipping",
     landingCta: "Soy exportador",
-    landingButtonClassName:
-      "flex h-14 w-full items-center justify-center gap-2 rounded-full border border-secondary/40 bg-surface font-body text-label-md text-secondary transition-colors hover:bg-secondary/10",
+    landingIconClassName: "bg-tertiary-fixed text-on-tertiary-container",
   },
 ];
 
-/** Perfiles mostrados como botones en la landing (sin sesión). */
-export const LANDING_GUEST_ROLES = ROLE_OPTIONS.filter((r) => r.landingCta);
+/** Orden en la landing: consumidor primero, luego perfiles de gestión. */
+const LANDING_ROLE_ORDER: HuellaRole[] = ["turista", "productor", "operador", "exportador"];
+
+/** Perfiles mostrados en la landing (sin sesión). */
+export const LANDING_GUEST_ROLES = LANDING_ROLE_ORDER.map((id) =>
+  ROLE_OPTIONS.find((r) => r.id === id)
+).filter((r): r is RoleOption => Boolean(r?.landingCta));
+
+export function getRoleShortLabel(role: HuellaRole): string {
+  switch (role) {
+    case "turista":
+      return "Turista";
+    case "productor":
+      return "Productor";
+    case "operador":
+      return "Operador";
+    case "exportador":
+      return "Exportador";
+  }
+}
+
+export function getAccederIntro(role: HuellaRole | null): { title: string; subtitle: string } {
+  switch (role) {
+    case "turista":
+      return {
+        title: "Turista y comprador",
+        subtitle: "Entra para ver tus pedidos y seguir comprando con trazabilidad.",
+      };
+    case "productor":
+      return {
+        title: "Panel del productor",
+        subtitle: "Gestiona lotes, trazabilidad y QR desde tu finca.",
+      };
+    case "operador":
+      return {
+        title: "Panel del operador",
+        subtitle: "Referidos, tours y kit QR para compartir con turistas.",
+      };
+    case "exportador":
+      return {
+        title: "Panel del exportador",
+        subtitle: "Revisa y aprueba pedidos de exportación en un solo lugar.",
+      };
+    default:
+      return {
+        title: "Entrar a Huella",
+        subtitle: "Continúa con Google o correo. Después te llevamos a tu panel según tu perfil.",
+      };
+  }
+}
 
 export function parseHuellaRole(value: unknown): HuellaRole | null {
   if (value === "turista" || value === "productor" || value === "operador" || value === "exportador") {

@@ -11,9 +11,7 @@ interface RolePickerProps {
 export function RolePicker({ value, onChange }: RolePickerProps) {
   return (
     <fieldset className="space-y-2">
-      <legend className="mb-3 block w-full text-center font-body text-label-sm text-on-surface-variant">
-        ¿Cómo quieres usar Huella?
-      </legend>
+      <legend className="sr-only">Elige tu perfil en Huella</legend>
       <div className="grid gap-2">
         {ROLE_OPTIONS.map((option) => {
           const selected = value === option.id;

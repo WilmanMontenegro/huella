@@ -6,6 +6,7 @@ import { createClientIfConfigured } from "@/lib/supabase/client";
 import {
   displayNameFromAuthUser,
   getPanelPathOrCompleteProfile,
+  getRoleShortLabel,
   isAuthDisabled,
   readRoleFromUserMetadata,
 } from "@/lib/auth";
@@ -42,20 +43,13 @@ export function AuthNav() {
     }
 
     return (
-      <div className="flex items-center gap-2 sm:gap-3">
-        <Link
-          href="/acceder"
-          className="inline-flex h-10 items-center justify-center rounded-full border border-outline-variant bg-surface px-3 font-body text-label-md text-on-surface shadow-sm transition-colors hover:bg-surface-container-high sm:px-4"
-        >
-          Iniciar sesión
-        </Link>
-        <Link
-          href="/registro"
-          className="inline-flex h-10 items-center justify-center rounded-full bg-primary px-3 font-body text-label-md text-on-primary shadow-sm transition-colors hover:bg-primary/90 sm:px-4"
-        >
-          Registrarse
-        </Link>
-      </div>
+      <Link
+        href="/acceder"
+        className="inline-flex h-10 items-center justify-center gap-1.5 rounded-full bg-primary px-4 font-body text-label-md text-on-primary shadow-sm transition-colors hover:bg-primary/90 sm:px-5"
+      >
+        <MaterialIcon name="login" className="text-lg" />
+        Entrar
+      </Link>
     );
   }
 
@@ -66,6 +60,11 @@ export function AuthNav() {
 
   return (
     <div className="flex items-center gap-2 sm:gap-3">
+      {role && (
+        <span className="hidden rounded-full bg-surface-container-high px-2.5 py-1 font-body text-label-sm text-on-surface-variant sm:inline">
+          {getRoleShortLabel(role)}
+        </span>
+      )}
       <Link
         href={panelHref}
         className="inline-flex h-10 items-center justify-center gap-1.5 rounded-full bg-primary px-3 font-body text-label-md text-on-primary shadow-sm transition-colors hover:bg-primary/90 sm:px-4"
@@ -74,7 +73,7 @@ export function AuthNav() {
         <span className="hidden sm:inline">Mi panel</span>
       </Link>
       <span
-        className="max-w-[5.5rem] truncate font-body text-label-sm text-outline sm:max-w-[8rem] sm:text-label-md"
+        className="max-w-[5.5rem] truncate font-body text-label-sm text-outline sm:max-w-[7rem] sm:text-label-md"
         title={user.email ?? label}
       >
         {label}

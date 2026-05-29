@@ -3,10 +3,13 @@
 import Link from "next/link";
 import { useState } from "react";
 import { MaterialIcon } from "@/components/icons/MaterialIcon";
-import { HuellaLogo } from "@/components/brand/HuellaLogo";
+import { AuthFormCard } from "@/components/auth/AuthFormCard";
+import { RoleContextBanner } from "@/components/auth/RoleContextBanner";
 import { RolePicker } from "@/components/auth/RolePicker";
 import {
   buildAuthCallbackUrl,
+  getAccederIntro,
+  getPanelCtaLabel,
   getPanelPathForRole,
   type HuellaRole,
   readRoleFromUserMetadata,
@@ -94,6 +97,7 @@ export function AuthForm({
   const onPickRoleStep = isUnified && unifiedStep === "pick-role";
   const showConfirmPassword = isRegister || emailIntent === "sign-up";
   const showRolePicker = isRegister || onPickRoleStep;
+  const roleIntro = getAccederIntro(initialRole);
 
   function effectiveRedirect(forRole?: HuellaRole | null): string {
     const r = forRole ?? role;
@@ -393,13 +397,10 @@ export function AuthForm({
 
   if (onPickRoleStep) {
     return (
-      <div className="mx-auto w-full max-w-md rounded-xl border border-outline-variant bg-surface-container-lowest p-8 shadow-organic-lg">
-        <div className="mb-6 flex justify-center">
-          <HuellaLogo variant="vertical" href={undefined} priority />
-        </div>
+      <AuthFormCard>
         <h1 className="mb-2 text-center font-display text-headline-md text-primary">Elige tu perfil</h1>
         <p className="mb-6 text-center font-body text-body-md text-on-surface-variant">
-          Es tu primera vez en Huella. ¿Cómo vas a usar la plataforma?
+          Una sola vez. Luego entras directo a tu panel.
         </p>
 
         {message && (
@@ -427,7 +428,7 @@ export function AuthForm({
             {loading === "role" && (
               <MaterialIcon name="progress_activity" className="animate-spin text-lg" />
             )}
-            Continuar a mi panel
+            {role ? getPanelCtaLabel(role) : "Continuar a mi panel"}
           </button>
         ) : (
           <form onSubmit={continueWithEmail} className="mt-6 space-y-4">
@@ -444,26 +445,32 @@ export function AuthForm({
             </button>
           </form>
         )}
-      </div>
+      </AuthFormCard>
     );
   }
 
-  return (
-    <div className="mx-auto w-full max-w-md rounded-xl border border-outline-variant bg-surface-container-lowest p-8 shadow-organic-lg">
-      <div className="mb-6 flex justify-center">
-        <HuellaLogo variant="vertical" href={undefined} priority />
-      </div>
+  const signInTitle = isUnified
+    ? initialRole
+      ? roleIntro.title
+      : "Entrar a Huella"
+    : isRegister
+      ? "Crear cuenta"
+      : "Iniciar sesión";
 
-      <h1 className="mb-2 text-center font-display text-headline-md text-primary">
-        {isUnified ? "Entrar / Registrarse" : isRegister ? "Crear cuenta" : "Iniciar sesión"}
-      </h1>
-      <p className="mb-6 text-center font-body text-body-md text-on-surface-variant">
-        {isUnified
-          ? "Continúa con Google o correo. Si es tu primera vez, después eliges tu perfil."
-          : isRegister
-            ? "Elige tu perfil una sola vez. Luego entras directo a tu panel."
-            : "Entra con el correo con el que te registraste."}
-      </p>
+  const signInSubtitle = isUnified
+    ? initialRole
+      ? roleIntro.subtitle
+      : "Continúa con Google o correo. Si es tu primera vez, eliges tu perfil después."
+    : isRegister
+      ? "Elige tu perfil una sola vez. Luego entras directo a tu panel."
+      : "Entra con el correo con el que te registraste.";
+
+  return (
+    <AuthFormCard>
+      <h1 className="mb-2 text-center font-display text-headline-md text-primary">{signInTitle}</h1>
+      <p className="mb-6 text-center font-body text-body-md text-on-surface-variant">{signInSubtitle}</p>
+
+      {initialRole && <RoleContextBanner role={initialRole} />}
 
       {isRegister && (
         <div className="mb-6">
@@ -598,6 +605,6 @@ export function AuthForm({
           Escanear productos y ver trazabilidad no requiere cuenta.
         </p>
       )}
-    </div>
+    </AuthFormCard>
   );
 }

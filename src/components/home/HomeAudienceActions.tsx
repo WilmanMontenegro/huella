@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { ScanProductButton } from "@/components/product/ScanProductButton";
+import { RoleLandingLink } from "@/components/home/RoleLandingLink";
 import { MaterialIcon } from "@/components/icons/MaterialIcon";
 import {
   buildAccederUrl,
@@ -21,33 +22,43 @@ function GuestAudienceActions() {
   const presentation = isAuthDisabled();
 
   return (
-    <div className="flex w-full max-w-sm flex-col items-stretch">
-      <p className="mb-4 text-center font-body text-label-sm text-outline">
+    <div className="flex w-full max-w-md flex-col items-stretch">
+      <p className="mb-5 text-center font-body text-label-sm text-outline">
         {presentation
-          ? "Elige el perfil a mostrar en la demo (sin login)"
-          : "Elige cómo quieres usar Huella o escanea un producto"}
+          ? "Elige el perfil a mostrar en la demo"
+          : "Escanea un producto o entra con tu perfil"}
       </p>
-      <div className="flex flex-col items-stretch gap-3">
-        <ScanProductButton />
-        {LANDING_GUEST_ROLES.map((option) => (
-          <Link
-            key={option.id}
-            href={presentation ? getPanelPathForRole(option.id) : buildAccederUrlForRole(option.id)}
-            className={option.landingButtonClassName}
-          >
-            <MaterialIcon name={option.icon} />
-            {presentation ? option.title : option.landingCta}
-          </Link>
-        ))}
-        {presentation && (
-          <Link
-            href="/mis-pedidos"
-            className="text-center font-body text-label-sm text-secondary hover:underline"
-          >
-            Turista · ver mis pedidos (local)
-          </Link>
-        )}
+
+      <ScanProductButton />
+
+      <div className="relative my-6">
+        <div className="absolute inset-0 flex items-center" aria-hidden>
+          <div className="w-full border-t border-outline-variant/50" />
+        </div>
+        <p className="relative mx-auto w-fit bg-background px-3 font-body text-label-sm text-outline">
+          {presentation ? "Paneles de demo" : "Acceso con cuenta"}
+        </p>
       </div>
+
+      <div className="flex flex-col gap-2.5">
+        {LANDING_GUEST_ROLES.map((option) => (
+          <RoleLandingLink
+            key={option.id}
+            option={option}
+            href={presentation ? getPanelPathForRole(option.id) : buildAccederUrlForRole(option.id)}
+            presentation={presentation}
+          />
+        ))}
+      </div>
+
+      {!presentation && (
+        <p className="mt-5 text-center font-body text-label-sm text-outline">
+          ¿Solo explorar?{" "}
+          <Link href="/acceder" className="text-secondary hover:underline">
+            Iniciar sesión general
+          </Link>
+        </p>
+      )}
     </div>
   );
 }
@@ -63,13 +74,18 @@ function LoggedInHomeMenu({
 
   if (!role) {
     return (
-      <div className="flex w-full max-w-sm flex-col items-stretch gap-4">
-        <p className="font-body text-body-md text-on-surface-variant">
-          Hola, <span className="font-medium text-primary">{name}</span>. Falta elegir tu perfil en Huella.
-        </p>
+      <div className="flex w-full max-w-md flex-col items-stretch gap-4">
+        <div className="rounded-2xl border border-tertiary-container/40 bg-tertiary-fixed/30 px-5 py-4 text-left">
+          <p className="font-body text-body-md text-on-surface-variant">
+            Hola, <span className="font-semibold text-primary">{name}</span>
+          </p>
+          <p className="mt-1 font-body text-label-sm text-outline">
+            Falta elegir tu perfil para ir a tu panel.
+          </p>
+        </div>
         <Link
           href={buildAccederUrl({ completarPerfil: true })}
-          className="flex h-14 w-full items-center justify-center gap-2 rounded-full bg-primary font-body text-label-md text-on-primary shadow-lg hover:bg-primary/90"
+          className="flex h-14 w-full items-center justify-center gap-2 rounded-full bg-primary font-body text-label-md text-on-primary shadow-lg transition-transform hover:bg-primary/90 active:scale-[0.98]"
         >
           <MaterialIcon name="badge" />
           Completar mi perfil
@@ -80,12 +96,12 @@ function LoggedInHomeMenu({
   }
 
   return (
-    <div className="flex w-full max-w-sm flex-col items-stretch gap-4">
-      <div className="rounded-xl border border-outline-variant/60 bg-surface-container-lowest px-5 py-4 text-left organic-shadow">
+    <div className="flex w-full max-w-md flex-col items-stretch gap-4">
+      <div className="rounded-2xl border border-outline-variant/60 bg-surface-container-lowest px-5 py-4 text-left organic-shadow">
         <p className="font-body text-label-sm uppercase tracking-wider text-outline">Sesión activa</p>
         <p className="mt-1 font-display text-headline-md text-primary">Hola, {name}</p>
-        <p className="mt-1 flex items-center gap-1.5 font-body text-body-md text-on-surface-variant">
-          <MaterialIcon name="verified_user" className="text-lg text-secondary" />
+        <p className="mt-2 inline-flex items-center gap-1.5 rounded-full bg-surface-container-low px-3 py-1 font-body text-label-sm text-on-surface-variant">
+          <MaterialIcon name="verified_user" className="text-base text-secondary" />
           {getRoleLabel(role)}
         </p>
       </div>
@@ -109,7 +125,7 @@ export function HomeAudienceActions() {
 
   if (loading) {
     return (
-      <div className="flex h-32 w-full max-w-sm items-center justify-center">
+      <div className="flex h-32 w-full max-w-md items-center justify-center">
         <MaterialIcon name="progress_activity" className="animate-spin text-3xl text-primary" />
       </div>
     );

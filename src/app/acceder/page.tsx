@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { TopAppBar } from "@/components/layout/TopAppBar";
 import { AuthForm } from "@/components/auth/AuthForm";
 import {
+  getAccederIntro,
   isAuthDisabled,
   isValidNextPath,
   parseHuellaRole,
@@ -19,6 +20,7 @@ export default async function AccederPage({ searchParams }: PageProps) {
   const redirectTo = searchParams.next?.startsWith("/") ? searchParams.next : "/";
   const initialRole = parseHuellaRole(searchParams.rol);
   const needsRoleCompletion = searchParams.completar === "1";
+  const intro = getAccederIntro(initialRole);
 
   if (isAuthDisabled()) {
     redirect(isValidNextPath(searchParams.next) ? searchParams.next! : "/");
@@ -36,17 +38,14 @@ export default async function AccederPage({ searchParams }: PageProps) {
         if (role && !needsRoleCompletion) {
           redirect(resolveRedirectAfterAuth(redirectTo, role));
         }
-        if (role && needsRoleCompletion) {
-          redirect(resolveRedirectAfterAuth(redirectTo, role));
-        }
 
         return (
           <>
-            <TopAppBar
-              title={initialRole === "operador" ? "Operador turístico" : "Tu perfil en Huella"}
-              backHref="/"
-            />
+            <TopAppBar title={intro.title} backHref="/" />
             <main className="mx-auto flex min-h-screen max-w-content flex-col items-center justify-center px-margin-mobile pb-24 pt-24 md:px-margin-desktop">
+              <p className="mb-4 max-w-md text-center font-body text-body-sm text-on-surface-variant">
+                {intro.subtitle}
+              </p>
               <AuthForm
                 mode="unified"
                 redirectTo={redirectTo}
@@ -61,17 +60,13 @@ export default async function AccederPage({ searchParams }: PageProps) {
     }
   }
 
-  const operadorIntro = initialRole === "operador";
-
   return (
     <>
-      <TopAppBar title={operadorIntro ? "Operador turístico" : "Entrar / Registrarse"} backHref="/" />
+      <TopAppBar title={intro.title} backHref="/" />
       <main className="mx-auto flex min-h-screen max-w-content flex-col items-center justify-center px-margin-mobile pb-24 pt-24 md:px-margin-desktop">
-        {operadorIntro && (
-          <p className="mb-4 max-w-md text-center font-body text-body-sm text-on-surface-variant">
-            Un solo acceso con Google o correo. Después vas directo a tu panel de referidos y tours.
-          </p>
-        )}
+        <p className="mb-4 max-w-md text-center font-body text-body-sm text-on-surface-variant">
+          {intro.subtitle}
+        </p>
         <AuthForm
           mode="unified"
           redirectTo={redirectTo}
