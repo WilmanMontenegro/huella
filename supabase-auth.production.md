@@ -21,15 +21,12 @@ https://web-omega-lilac-31.vercel.app/**
 
 4. Guardar.
 
-### Vercel (variables de entorno)
+### Vercel — no hace falta tocar el panel
 
-En el proyecto **huella** en Vercel:
+La URL de producción ya está en el código (`PRODUCTION_APP_ORIGIN`) y en `vercel.json` del repo.  
+**No necesitas** editar Environment Variables en Vercel para que Google funcione.
 
-| Variable | Valor |
-|----------|--------|
-| `NEXT_PUBLIC_APP_URL` | `https://web-omega-lilac-31.vercel.app` |
-
-No debe quedar `localhost` en ninguna variable pública del deploy.
+Lo que sí debes cambiar es **Supabase** (arriba).
 
 ## Google Cloud
 
