@@ -3,7 +3,7 @@ import Link from "next/link";
 import { MaterialIcon } from "@/components/icons/MaterialIcon";
 import { HuellaLogo } from "@/components/brand/HuellaLogo";
 import { DEFAULT_OPERADOR_AGENCIA_SLUG } from "@/lib/constants/operador";
-import { getHomePathForRole, readRoleFromUserMetadata } from "@/lib/auth/roles";
+import { readRoleFromUserMetadata } from "@/lib/auth/roles";
 import { createClientIfConfigured } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
 
