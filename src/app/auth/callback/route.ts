@@ -33,10 +33,16 @@ async function applyRoleIfNeeded(
   }
 }
 
+function completarPerfilUrl(origin: string, next: string, rol: string | null) {
+  const q = new URLSearchParams({ completar: "1", next });
+  if (rol) q.set("rol", rol);
+  return `${origin}/acceder?${q.toString()}`;
+}
+
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url);
   const code = searchParams.get("code");
-  const roleParam = searchParams.get("role");
+  const roleParam = searchParams.get("role") ?? searchParams.get("pending_rol");
   let next = searchParams.get("next") ?? "/";
   if (!next.startsWith("/")) next = "/";
 
@@ -66,13 +72,14 @@ export async function GET(request: Request) {
       const {
         data: { user },
       } = await supabase.auth.getUser();
-      const role =
-        readRoleFromUserMetadata(user?.user_metadata as Record<string, unknown>) ??
-        parseHuellaRole(roleParam);
+      const role = readRoleFromUserMetadata(user?.user_metadata as Record<string, unknown>);
+
+      if (!role) {
+        return NextResponse.redirect(completarPerfilUrl(origin, next, roleParam));
+      }
 
       const path = resolveRedirectAfterAuth(next, role);
-      const dest = new URL(path, origin);
-      return NextResponse.redirect(dest);
+      return NextResponse.redirect(new URL(path, origin));
     }
     console.error("[auth/callback]", error.message);
   }

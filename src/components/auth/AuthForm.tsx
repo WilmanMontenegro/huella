@@ -10,22 +10,21 @@ import {
   type HuellaRole,
   readRoleFromUserMetadata,
 } from "@/lib/auth/roles";
-import {
-  sendMagicLink,
-  signInOrSignUpWithPassword,
-  signInWithPassword,
-  signUpWithPassword,
-} from "@/lib/auth/smart-auth";
+import { sendMagicLink, signInWithPassword, signUpWithPassword } from "@/lib/auth/smart-auth";
 import { createClientIfConfigured } from "@/lib/supabase/client";
 
 export type AuthFormMode = "login" | "register" | "unified";
+
+type UnifiedStep = "sign-in" | "pick-role";
 
 interface AuthFormProps {
   mode: AuthFormMode;
   redirectTo?: string;
   authError?: boolean;
-  /** Preselección desde /acceder?rol=operador|productor|… */
+  /** Preselección desde /acceder?rol=operador (solo paso de perfil) */
   initialRole?: HuellaRole | null;
+  /** Tras Google/correo sin rol: elegir perfil */
+  needsRoleCompletion?: boolean;
 }
 
 type EmailMode = "magic-link" | "password";
@@ -66,23 +65,31 @@ export function AuthForm({
   redirectTo = "/",
   authError = false,
   initialRole = null,
+  needsRoleCompletion = false,
 }: AuthFormProps) {
   const isRegister = mode === "register";
   const isUnified = mode === "unified";
-  const showRolePicker = isRegister || isUnified;
+
+  const [unifiedStep, setUnifiedStep] = useState<UnifiedStep>(
+    needsRoleCompletion ? "pick-role" : "sign-in"
+  );
   const [role, setRole] = useState<HuellaRole | null>(
-    isRegister ? (initialRole ?? null) : isUnified ? (initialRole ?? "turista") : "turista"
+    isRegister ? (initialRole ?? null) : initialRole ?? null
   );
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [emailMode, setEmailMode] = useState<EmailMode>("magic-link");
-  const [loading, setLoading] = useState<"google" | "email" | null>(null);
+  const [loading, setLoading] = useState<"google" | "email" | "role" | null>(null);
   const [message, setMessage] = useState<string | null>(
     authError ? "No pudimos completar el acceso. Intenta de nuevo." : null
   );
   const [showEmailForm, setShowEmailForm] = useState(false);
 
-  function effectiveRedirect(): string {
+  const onPickRoleStep = isUnified && unifiedStep === "pick-role";
+  const showRolePicker = isRegister || onPickRoleStep;
+
+  function effectiveRedirect(forRole?: HuellaRole | null): string {
+    const r = forRole ?? role;
     if (
       redirectTo.startsWith("/") &&
       redirectTo !== "/login" &&
@@ -91,16 +98,17 @@ export function AuthForm({
     ) {
       return redirectTo;
     }
-    if ((isRegister || isUnified) && role) return getHomePathForRole(role);
+    if (r) return getHomePathForRole(r);
     return redirectTo;
   }
 
-  function buildCallbackUrl(forRole?: HuellaRole) {
+  function buildCallbackUrl() {
     const next = encodeURIComponent(effectiveRedirect());
-    const base = `${window.location.origin}/auth/callback?next=${next}`;
-    const r = forRole ?? role;
-    if (r && (isRegister || isUnified)) return `${base}&role=${r}`;
-    return base;
+    let url = `${window.location.origin}/auth/callback?next=${next}`;
+    if (initialRole && isUnified && unifiedStep === "sign-in") {
+      url += `&pending_rol=${initialRole}`;
+    }
+    return url;
   }
 
   function getSupabase() {
@@ -109,7 +117,7 @@ export function AuthForm({
       setMessage(
         process.env.NODE_ENV === "production"
           ? "El acceso aún no está disponible. Si acabas de desplegar, espera un minuto y recarga."
-          : "Añade NEXT_PUBLIC_SUPABASE_URL y NEXT_PUBLIC_SUPABASE_ANON_KEY en .env.local (ver .env.example)."
+          : "Añade NEXT_PUBLIC_SUPABASE_URL y NEXT_PUBLIC_ANON_KEY en .env.local."
       );
       return null;
     }
@@ -119,7 +127,7 @@ export function AuthForm({
   function requireRole(): HuellaRole | null {
     if (!showRolePicker) return "turista";
     if (role) return role;
-    setMessage("Elige cómo quieres usar Huella antes de continuar.");
+    setMessage("Elige cómo quieres usar Huella para continuar.");
     return null;
   }
 
@@ -128,13 +136,19 @@ export function AuthForm({
       data: { user },
     } = await supabase.auth.getUser();
     const storedRole = readRoleFromUserMetadata(user?.user_metadata as Record<string, unknown>);
-    window.location.href = storedRole ? getHomePathForRole(storedRole) : effectiveRedirect();
+    if (storedRole) {
+      window.location.href = getHomePathForRole(storedRole);
+      return;
+    }
+    if (isUnified) {
+      setUnifiedStep("pick-role");
+      setMessage("¡Bienvenido! Elige tu perfil para terminar el registro.");
+      return;
+    }
+    window.location.href = effectiveRedirect();
   }
 
   async function continueWithGoogle() {
-    const pickedRole = requireRole();
-    if (!pickedRole) return;
-
     const supabase = getSupabase();
     if (!supabase) return;
 
@@ -144,7 +158,7 @@ export function AuthForm({
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: buildCallbackUrl(pickedRole),
+        redirectTo: buildCallbackUrl(),
         queryParams: { prompt: "select_account" },
       },
     });
@@ -155,10 +169,71 @@ export function AuthForm({
     }
   }
 
-  async function continueWithEmail(e: React.FormEvent) {
-    e.preventDefault();
+  async function saveRoleAndContinue() {
     const pickedRole = requireRole();
     if (!pickedRole) return;
+
+    setLoading("role");
+    setMessage(null);
+
+    const supabase = getSupabase();
+    if (!supabase) {
+      setLoading(null);
+      return;
+    }
+
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (user) {
+      const res = await fetch("/api/auth/complete-profile", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ role: pickedRole }),
+      });
+      setLoading(null);
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        setMessage(body.error ?? "No pudimos guardar tu perfil.");
+        return;
+      }
+      window.location.href = getHomePathForRole(pickedRole);
+      return;
+    }
+
+    if (!email.trim() || !password) {
+      setLoading(null);
+      setMessage("Escribe correo y contraseña para crear tu cuenta.");
+      return;
+    }
+
+    const result = await signUpWithPassword(
+      supabase,
+      email.trim(),
+      password,
+      pickedRole,
+      buildCallbackUrl()
+    );
+    setLoading(null);
+    if (!result.ok) {
+      setMessage(result.message);
+      return;
+    }
+    if (result.kind === "sign-up-pending") {
+      setMessage(result.message);
+      return;
+    }
+    window.location.href = getHomePathForRole(pickedRole);
+  }
+
+  async function continueWithEmail(e: React.FormEvent) {
+    e.preventDefault();
+
+    if (onPickRoleStep) {
+      await saveRoleAndContinue();
+      return;
+    }
 
     const supabase = getSupabase();
     if (!supabase || !email.trim()) return;
@@ -166,13 +241,12 @@ export function AuthForm({
     setLoading("email");
     setMessage(null);
 
-    const callbackUrl = buildCallbackUrl(pickedRole);
+    const callbackUrl = buildCallbackUrl();
     const normalizedEmail = email.trim();
 
     if (emailMode === "magic-link") {
       const result = await sendMagicLink(supabase, normalizedEmail, callbackUrl, {
         createUser: isRegister || isUnified,
-        role: showRolePicker ? pickedRole : undefined,
       });
       setLoading(null);
       if (!result.ok) {
@@ -190,6 +264,11 @@ export function AuthForm({
     }
 
     if (isRegister) {
+      const pickedRole = requireRole();
+      if (!pickedRole) {
+        setLoading(null);
+        return;
+      }
       const result = await signUpWithPassword(
         supabase,
         normalizedEmail,
@@ -210,34 +289,105 @@ export function AuthForm({
       return;
     }
 
-    if (isUnified) {
-      const result = await signInOrSignUpWithPassword(
-        supabase,
-        normalizedEmail,
-        password,
-        callbackUrl,
-        pickedRole
-      );
-      setLoading(null);
-      if (!result.ok) {
-        setMessage(result.message);
-        return;
-      }
-      if (result.kind === "sign-up-pending") {
-        setMessage(result.message);
-        return;
-      }
-      await goAfterAuth(supabase);
-      return;
-    }
-
     const result = await signInWithPassword(supabase, normalizedEmail, password);
     setLoading(null);
+
     if (!result.ok) {
+      const needsRegister =
+        result.message.includes("regístrate") || result.message.includes("registr");
+      if (isUnified && needsRegister) {
+        setUnifiedStep("pick-role");
+        setMessage("Cuenta nueva: elige tu perfil y crea tu contraseña abajo.");
+        return;
+      }
       setMessage(result.message);
       return;
     }
+
     await goAfterAuth(supabase);
+  }
+
+  if (onPickRoleStep) {
+    return (
+      <div className="mx-auto w-full max-w-md rounded-xl border border-outline-variant bg-surface-container-lowest p-8 shadow-organic-lg">
+        <div className="mb-6 flex justify-center">
+          <HuellaLogo variant="vertical" href={undefined} priority />
+        </div>
+        <h1 className="mb-2 text-center font-display text-headline-md text-primary">Elige tu perfil</h1>
+        <p className="mb-6 text-center font-body text-body-md text-on-surface-variant">
+          Es tu primera vez en Huella. ¿Cómo vas a usar la plataforma?
+        </p>
+
+        {message && (
+          <div
+            className={`mb-6 rounded-lg px-4 py-3 font-body text-body-sm ${
+              isSuccessMessage(message)
+                ? "bg-tertiary-fixed text-on-tertiary-container"
+                : "bg-error-container/20 text-error"
+            }`}
+            role="status"
+          >
+            {message}
+          </div>
+        )}
+
+        <RolePicker value={role} onChange={setRole} />
+
+        {needsRoleCompletion ? (
+          <button
+            type="button"
+            onClick={saveRoleAndContinue}
+            disabled={loading !== null}
+            className="mt-6 flex h-14 w-full items-center justify-center gap-2 rounded-full bg-primary font-body text-label-md text-on-primary shadow-lg hover:bg-primary/90 disabled:opacity-60"
+          >
+            {loading === "role" && (
+              <MaterialIcon name="progress_activity" className="animate-spin text-lg" />
+            )}
+            Continuar a mi panel
+          </button>
+        ) : (
+          <form onSubmit={continueWithEmail} className="mt-6 space-y-4">
+            <div>
+              <label htmlFor="auth-email" className="mb-1.5 block font-body text-label-sm text-on-surface-variant">
+                Correo
+              </label>
+              <input
+                id="auth-email"
+                type="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="h-12 w-full rounded-xl border border-outline-variant bg-surface px-4 font-body text-body-md"
+              />
+            </div>
+            <div>
+              <label htmlFor="auth-password" className="mb-1.5 block font-body text-label-sm text-on-surface-variant">
+                Contraseña
+              </label>
+              <input
+                id="auth-password"
+                type="password"
+                required
+                minLength={6}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="h-12 w-full rounded-xl border border-outline-variant bg-surface px-4 font-body text-body-md"
+              />
+            </div>
+            <button
+              type="submit"
+              disabled={loading !== null}
+              className="flex h-14 w-full items-center justify-center rounded-full bg-primary font-body text-label-md text-on-primary disabled:opacity-60"
+            >
+              {loading !== null && (
+                <MaterialIcon name="progress_activity" className="mr-2 animate-spin" />
+              )}
+              Crear cuenta
+            </button>
+          </form>
+        )}
+      </div>
+    );
   }
 
   return (
@@ -251,13 +401,13 @@ export function AuthForm({
       </h1>
       <p className="mb-6 text-center font-body text-body-md text-on-surface-variant">
         {isUnified
-          ? "Si ya tienes cuenta, entras; si no, la creamos con el perfil que elijas abajo."
+          ? "Continúa con Google o correo. Si es tu primera vez, después eliges tu perfil."
           : isRegister
             ? "Elige tu perfil una sola vez. Luego entras directo a tu panel."
             : "Entra con el correo con el que te registraste."}
       </p>
 
-      {showRolePicker && (
+      {isRegister && (
         <div className="mb-6">
           <RolePicker value={role} onChange={setRole} />
         </div>
@@ -287,8 +437,11 @@ export function AuthForm({
         ) : (
           <GoogleIcon />
         )}
-        {isUnified ? "Continuar con Google" : isRegister ? "Registrarse con Google" : "Continuar con Google"}
+        Continuar con Google
       </button>
+      <p className="mt-2 text-center font-body text-label-sm text-outline">
+        Si ya tienes cuenta, entras al instante.
+      </p>
 
       <div className="my-8 flex items-center gap-4">
         <div className="h-px flex-1 bg-outline-variant" />
