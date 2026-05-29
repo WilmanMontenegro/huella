@@ -86,8 +86,13 @@ export function AuthForm({
     authError ? "No pudimos completar el acceso. Intenta de nuevo." : null
   );
   const [showEmailForm, setShowEmailForm] = useState(false);
+  /** unified: entrar (solo correo+clave) vs crear cuenta (pide confirmar) */
+  const [emailIntent, setEmailIntent] = useState<"sign-in" | "sign-up">(
+    isRegister ? "sign-up" : "sign-in"
+  );
 
   const onPickRoleStep = isUnified && unifiedStep === "pick-role";
+  const showConfirmPassword = isRegister || emailIntent === "sign-up";
   const showRolePicker = isRegister || onPickRoleStep;
 
   function effectiveRedirect(forRole?: HuellaRole | null): string {
@@ -261,8 +266,15 @@ export function AuthForm({
     const callbackUrl = buildCallbackUrl();
     const normalizedEmail = email.trim();
 
-    if (!validatePasswordPair(isRegister)) {
+    if (!validatePasswordPair(showConfirmPassword)) {
       setLoading(null);
+      return;
+    }
+
+    if (isUnified && emailIntent === "sign-up") {
+      setLoading(null);
+      setUnifiedStep("pick-role");
+      setMessage("Elige tu perfil para terminar el registro.");
       return;
     }
 
@@ -503,11 +515,42 @@ export function AuthForm({
         </button>
       ) : (
         <form onSubmit={continueWithEmail} className="space-y-4">
-          <EmailPasswordFields idPrefix="auth" showConfirm />
-          <p className="font-body text-label-sm text-outline">
-            ¿Ya tienes cuenta? Solo correo y contraseña. Si es tu primera vez, confirma la contraseña y
-            luego eliges tu perfil.
-          </p>
+          <EmailPasswordFields idPrefix="auth" showConfirm={showConfirmPassword} />
+          {isUnified && (
+            <p className="font-body text-label-sm text-outline">
+              {emailIntent === "sign-in" ? (
+                <>
+                  ¿Primera vez?{" "}
+                  <button
+                    type="button"
+                    className="text-secondary hover:underline"
+                    onClick={() => {
+                      setEmailIntent("sign-up");
+                      setConfirmPassword("");
+                      setMessage(null);
+                    }}
+                  >
+                    Crear cuenta
+                  </button>
+                </>
+              ) : (
+                <>
+                  ¿Ya tienes cuenta?{" "}
+                  <button
+                    type="button"
+                    className="text-secondary hover:underline"
+                    onClick={() => {
+                      setEmailIntent("sign-in");
+                      setConfirmPassword("");
+                      setMessage(null);
+                    }}
+                  >
+                    Iniciar sesión
+                  </button>
+                </>
+              )}
+            </p>
+          )}
           <button
             type="submit"
             disabled={loading !== null}
@@ -516,7 +559,13 @@ export function AuthForm({
             {loading === "email" && (
               <MaterialIcon name="progress_activity" className="animate-spin text-lg" />
             )}
-            {isUnified ? "Entrar / Registrarse" : isRegister ? "Crear cuenta" : "Entrar"}
+            {isUnified
+              ? emailIntent === "sign-up"
+                ? "Continuar"
+                : "Entrar"
+              : isRegister
+                ? "Crear cuenta"
+                : "Entrar"}
           </button>
         </form>
       )}
