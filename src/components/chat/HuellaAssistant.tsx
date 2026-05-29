@@ -164,22 +164,20 @@ export function HuellaAssistant() {
         >
           <span
             className={cn(
-              "flex h-14 w-14 items-center justify-center gap-2.5 rounded-full sm:rounded-[14px]",
-              "bg-tertiary-fixed sm:bg-surface-container-lowest",
-              "sm:h-auto sm:w-auto sm:justify-start sm:py-2.5 sm:pl-2.5 sm:pr-4"
+              "flex items-center justify-center gap-2 rounded-full sm:rounded-xl",
+              "bg-tertiary-fixed text-on-tertiary-fixed sm:bg-surface-container-lowest",
+              "h-14 w-14 sm:h-auto sm:w-auto sm:justify-start sm:py-1.5 sm:pl-1.5 sm:pr-3"
             )}
           >
-            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-tertiary-fixed text-on-tertiary-fixed shadow-[0_4px_14px_rgba(201,169,0,0.35)]">
-              <MaterialIcon
-                name="auto_awesome"
-                className="text-2xl transition-transform group-hover:rotate-12 md:text-[26px]"
-              />
-            </span>
-            <span className="hidden min-w-0 flex-col items-start sm:flex">
+            <MaterialIcon
+              name="auto_awesome"
+              className="shrink-0 text-[30px] transition-transform group-hover:rotate-12 sm:text-[32px]"
+            />
+            <span className="hidden min-w-0 flex-col items-start leading-none sm:flex">
               <span className="font-body text-[10px] font-semibold uppercase tracking-wider text-secondary">
                 Asistente
               </span>
-              <span className="font-display text-[15px] leading-tight text-primary">Huella</span>
+              <span className="font-display text-[15px] text-primary">Huella</span>
             </span>
           </span>
         </button>
