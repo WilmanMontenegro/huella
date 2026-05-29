@@ -153,31 +153,25 @@ export function HuellaAssistant() {
           type="button"
           onClick={openChat}
           className={cn(
-            "group fixed z-40 flex items-center gap-2.5 overflow-hidden rounded-2xl",
-            "border border-outline-variant/25 bg-surface-container-lowest/95 text-primary backdrop-blur-md",
-            "shadow-organic-lg transition-all duration-300",
-            "hover:-translate-y-0.5 hover:border-outline-variant/50 hover:shadow-organic active:scale-[0.98]",
+            "group fixed z-40 flex items-center justify-center gap-2.5 overflow-hidden rounded-full sm:rounded-2xl",
+            "border border-tertiary-fixed-dim bg-tertiary-fixed text-on-tertiary-fixed shadow-fab-yellow",
+            "transition-all duration-300 hover:scale-105 hover:bg-tertiary-fixed-dim active:scale-95",
             "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-tertiary-container/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background",
-            "h-12 w-12 justify-center p-0 sm:h-auto sm:w-auto sm:justify-start sm:py-3 sm:pl-3 sm:pr-5",
+            "h-14 w-14 p-0 sm:h-auto sm:w-auto sm:justify-start sm:py-3 sm:pl-3.5 sm:pr-5",
             "right-margin-mobile md:right-margin-desktop",
             fabBottomClass
           )}
           aria-label="Abrir asistente Huella"
         >
-          <span
-            className={cn(
-              "flex shrink-0 items-center justify-center rounded-full bg-primary text-on-primary shadow-md",
-              "h-9 w-9 transition-transform group-hover:scale-105 sm:h-10 sm:w-10"
-            )}
-            aria-hidden
-          >
-            <MaterialIcon name="auto_awesome" filled className="text-[20px] sm:text-[22px]" />
-          </span>
+          <MaterialIcon
+            name="auto_awesome"
+            className="text-2xl transition-transform group-hover:rotate-12 md:text-3xl"
+          />
           <span className="hidden min-w-0 flex-col items-start pr-0.5 sm:flex">
-            <span className="font-body text-[10px] font-medium uppercase tracking-wider text-outline">
+            <span className="font-body text-[10px] font-medium uppercase tracking-wider text-on-tertiary-fixed/80">
               Asistente
             </span>
-            <span className="font-display text-[15px] leading-tight text-primary">Huella</span>
+            <span className="font-display text-[15px] leading-tight text-on-tertiary-fixed">Huella</span>
           </span>
         </button>
       )}
