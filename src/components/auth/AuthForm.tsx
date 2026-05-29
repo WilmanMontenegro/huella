@@ -5,8 +5,8 @@ import { useState } from "react";
 import { MaterialIcon } from "@/components/icons/MaterialIcon";
 import { HuellaLogo } from "@/components/brand/HuellaLogo";
 import { RolePicker } from "@/components/auth/RolePicker";
+import { getPanelPathForRole } from "@/lib/auth/panel-path";
 import {
-  getHomePathForRole,
   type HuellaRole,
   readRoleFromUserMetadata,
 } from "@/lib/auth/roles";
@@ -105,7 +105,7 @@ export function AuthForm({
     ) {
       return redirectTo;
     }
-    if (r) return getHomePathForRole(r);
+    if (r) return getPanelPathForRole(r);
     return redirectTo;
   }
 
@@ -160,7 +160,7 @@ export function AuthForm({
     } = await supabase.auth.getUser();
     const storedRole = readRoleFromUserMetadata(user?.user_metadata as Record<string, unknown>);
     if (storedRole) {
-      window.location.href = getHomePathForRole(storedRole);
+      window.location.href = getPanelPathForRole(storedRole);
       return;
     }
     if (isUnified) {
@@ -221,7 +221,7 @@ export function AuthForm({
         setMessage(body.error ?? "No pudimos guardar tu perfil.");
         return;
       }
-      window.location.href = getHomePathForRole(pickedRole);
+      window.location.href = getPanelPathForRole(pickedRole);
       return;
     }
 
@@ -246,7 +246,7 @@ export function AuthForm({
       setMessage(result.message);
       return;
     }
-    window.location.href = getHomePathForRole(pickedRole);
+    window.location.href = getPanelPathForRole(pickedRole);
   }
 
   async function continueWithEmail(e: React.FormEvent) {

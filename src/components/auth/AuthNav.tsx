@@ -1,8 +1,10 @@
 "use client";
 
 import Link from "next/link";
+import { MaterialIcon } from "@/components/icons/MaterialIcon";
 import { createClientIfConfigured } from "@/lib/supabase/client";
-import { getHomePathForRole, readRoleFromUserMetadata } from "@/lib/auth/roles";
+import { getPanelPathForRole } from "@/lib/auth/panel-path";
+import { readRoleFromUserMetadata } from "@/lib/auth/roles";
 import { useSupabaseUser } from "@/hooks/useSupabaseUser";
 
 export function AuthNav() {
@@ -35,7 +37,7 @@ export function AuthNav() {
   }
 
   const role = readRoleFromUserMetadata(user.user_metadata as Record<string, unknown>);
-  const panelHref = role ? getHomePathForRole(role) : "/mis-pedidos";
+  const panelHref = role ? getPanelPathForRole(role) : "/acceder?completar=1";
 
   const label =
     user.user_metadata?.full_name ??
@@ -44,14 +46,20 @@ export function AuthNav() {
     "Mi cuenta";
 
   return (
-    <div className="flex items-center gap-3">
+    <div className="flex items-center gap-2 sm:gap-3">
       <Link
         href={panelHref}
-        className="max-w-[8rem] truncate font-body text-label-md text-primary hover:underline"
+        className="inline-flex h-10 items-center justify-center gap-1.5 rounded-full bg-primary px-3 font-body text-label-md text-on-primary shadow-sm transition-colors hover:bg-primary/90 sm:px-4"
+      >
+        <MaterialIcon name="dashboard" className="text-lg" />
+        <span className="hidden sm:inline">Mi panel</span>
+      </Link>
+      <span
+        className="max-w-[5.5rem] truncate font-body text-label-sm text-outline sm:max-w-[8rem] sm:text-label-md"
         title={user.email ?? label}
       >
         {label}
-      </Link>
+      </span>
       <button
         type="button"
         onClick={signOut}

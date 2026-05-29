@@ -58,6 +58,24 @@ export function getHomePathForRole(role: HuellaRole): string {
   }
 }
 
+export function getRoleLabel(role: HuellaRole): string {
+  return ROLE_OPTIONS.find((r) => r.id === role)?.title ?? "Huella";
+}
+
+export function getPanelCtaLabel(role: HuellaRole): string {
+  switch (role) {
+    case "productor":
+      return "Ir a mi panel de finca";
+    case "operador":
+      return "Ir a mi panel de operador";
+    case "exportador":
+      return "Ir a mi panel de exportador";
+    case "turista":
+    default:
+      return "Ver mis pedidos";
+  }
+}
+
 /** Tras login: respeta `next` explícito; si no, usa el rol guardado en la cuenta. */
 export function resolveRedirectAfterAuth(
   next: string | undefined,
