@@ -153,10 +153,10 @@ export function HuellaAssistant() {
           type="button"
           onClick={openChat}
           className={cn(
-            "group fixed z-40 p-[2.5px] rounded-full sm:rounded-2xl",
-            "bg-gradient-to-br from-primary via-secondary to-tertiary-container shadow-fab-yellow",
+            "group fixed z-40 p-[2px] rounded-full sm:rounded-2xl",
+            "bg-gradient-to-br from-primary/80 via-tertiary-fixed-dim to-tertiary-container shadow-fab-yellow",
             "transition-all duration-300 hover:scale-105 active:scale-95",
-            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-tertiary-container/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background",
             "right-margin-mobile md:right-margin-desktop",
             fabBottomClass
           )}
