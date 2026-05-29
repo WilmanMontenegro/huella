@@ -24,7 +24,7 @@ export default function HomePage() {
           dónde viene. Huella conecta cada lote con su agricultor, su trazabilidad y su compra.
         </p>
 
-        <div className="flex justify-center">
+        <div className="mx-auto flex w-full max-w-sm justify-center">
           <HomeAudienceActions />
         </div>
 

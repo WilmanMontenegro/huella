@@ -18,11 +18,11 @@ import { useSupabaseUser } from "@/hooks/useSupabaseUser";
 
 function GuestAudienceActions() {
   return (
-    <>
-      <p className="mb-4 font-body text-label-sm text-outline">
+    <div className="flex w-full max-w-sm flex-col items-stretch">
+      <p className="mb-4 text-center font-body text-label-sm text-outline">
         Elige cómo quieres usar Huella o escanea un producto
       </p>
-      <div className="flex w-full max-w-sm flex-col items-stretch gap-3">
+      <div className="flex flex-col items-stretch gap-3">
         <ScanProductButton />
         {LANDING_GUEST_ROLES.map((option) => (
           <Link
@@ -35,7 +35,7 @@ function GuestAudienceActions() {
           </Link>
         ))}
       </div>
-    </>
+    </div>
   );
 }
 
