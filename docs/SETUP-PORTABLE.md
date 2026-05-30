@@ -36,6 +36,6 @@ setup/engram/config.json   → .engram/config.json
 
 En Windows, si MCP no arranca, edita `mcp.json` y usa la ruta absoluta a `engram.exe`.
 
-## Secretos (no están en GitHub)
+## Secretos (temporal en el repo)
 
-Ver [setup/SECRETS-MANUAL.md](../setup/SECRETS-MANUAL.md) — llevar en USB o gestor de contraseñas.
+Están en **`setup/local-secrets/`** — copia a su sitio y **borra esa carpeta del repo** cuando termines. Ver `setup/local-secrets/README.md`.
